@@ -3,7 +3,7 @@
    ============================================================ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const POST_ENDPOINT = "/api/lead-propietario"; // reutiliza tabla de propietarios (origen distinto)
+const POST_ENDPOINT = "/api/lead-administracion";
 
 /* comunas R.M. para autocompletar */
 const RM = ["Santiago (Centro)","Cerrillos","Cerro Navia","Conchalí","El Bosque","Estación Central","Huechuraba","Independencia","La Cisterna","La Florida","La Granja","La Pintana","La Reina","Las Condes","Lo Barnechea","Lo Espejo","Lo Prado","Macul","Maipú","Ñuñoa","Pedro Aguirre Cerda","Peñalolén","Providencia","Pudahuel","Quilicura","Quinta Normal","Recoleta","Renca","San Joaquín","San Miguel","San Ramón","Vitacura","Puente Alto","Pirque","San José de Maipo","San Bernardo","Buin","Calera de Tango","Paine","Colina","Lampa","Tiltil","Talagante","El Monte","Isla de Maipo","Padre Hurtado","Peñaflor","Melipilla","Curacaví","Villarrica","Pucón"];
@@ -61,11 +61,20 @@ $('#adminForm').addEventListener('submit', async (e) => {
   if (data.valor) data.valor = Number(String(data.valor).replace(/\D/g, '')) || undefined;
 
   const btn = e.target.querySelector('button[type=submit]');
+  const original = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="ico"></i>Enviando…'; if (window.lucide) lucide.createIcons();
-  try { await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } catch (err) { /* preview sin backend */ }
-  $('#adminForm').style.display = 'none';
-  $('#adminOk').classList.add('show');
-  $('#adminOk').scrollIntoView({ block: 'center', behavior: 'smooth' });
+
+  try {
+    const res = await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('No se pudo guardar la solicitud');
+    $('#adminForm').style.display = 'none';
+    $('#adminOk').classList.add('show');
+    $('#adminOk').scrollIntoView({ block: 'center', behavior: 'smooth' });
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = original;
+    alert('No se pudo enviar la solicitud. Por favor intenta nuevamente o escríbenos por WhatsApp.');
+  }
   if (window.lucide) lucide.createIcons();
 });
 
