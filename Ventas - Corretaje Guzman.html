@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>En Venta · Corretaje Guzmán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
+  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
+  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--dark-2:#1d1630;--wa:#1faf54;
+  --radius:16px;--radius-sm:11px;
+  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
+  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
+  --shadow-pop:0 12px 34px rgba(22,18,31,.16);
+  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1500px;--navh:76px;--barh:70px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.ico{width:20px;height:20px;stroke-width:1.85}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-violet{background:var(--violet);color:#fff;padding:12px 20px;font-size:14.5px;box-shadow:var(--shadow-violet)}
+.btn-violet:hover{background:var(--violet-d)}
+.btn-ghost{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:11px 16px;font-size:14px}
+.btn-ghost:hover{border-color:var(--violet);color:var(--violet-d)}
+
+/* NAV */
+header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:30px;height:var(--navh);max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.nav-inner .logo{height:32px;width:auto}
+.nav-links{display:flex;gap:26px;margin-left:6px}
+.nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
+.nav-right .tel .ico{color:var(--violet)}
+.nav-burger{display:none;color:#fff;width:42px;height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center}
+
+/* FILTER BAR */
+.filterbar{position:sticky;top:var(--navh);z-index:60;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.fb-inner{max-width:var(--maxw);margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.searchbox{flex:1;min-width:240px;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 15px}
+.searchbox .ico{width:18px;height:18px;color:var(--violet)}
+.searchbox input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;font-weight:500;color:var(--ink);width:100%}
+.fchips{display:flex;gap:9px;flex-wrap:wrap}
+.chip{position:relative}
+.chip>button{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:11px 15px;font-weight:600;font-size:14px;color:var(--ink-2);transition:all .15s;white-space:nowrap}
+.chip>button:hover{border-color:var(--violet);color:var(--violet-d)}
+.chip>button .ico{width:16px;height:16px}
+.chip>button .cv{color:var(--violet-d)}
+.chip.active>button{border-color:var(--violet);color:var(--violet-d);background:var(--violet-tint)}
+.chip>button .chev{transition:transform .18s}
+.chip.open>button .chev{transform:rotate(180deg)}
+.pop{position:absolute;top:calc(100% + 8px);left:0;z-index:40;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-pop);padding:20px;min-width:264px;display:none;animation:pin .14s ease}
+.pop.r{left:auto;right:0}
+.chip.open .pop{display:block}
+@keyframes pin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.pop h4{font-size:15px;font-weight:700;margin-bottom:14px}
+.seg-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{min-width:44px;text-align:center;border:1px solid var(--line);border-radius:50px;padding:9px 14px;font-weight:600;font-size:14px;color:var(--ink-2);background:var(--surface);transition:all .15s}
+.pill:hover{border-color:var(--violet)}
+.pill.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.range{display:flex;align-items:center;gap:10px;margin-top:4px}
+.range input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-family:inherit;font-size:14.5px;color:var(--ink)}
+.range input:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-tint)}
+.range span{color:var(--ink-3)}
+.moneda-seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:3px;gap:3px;margin-bottom:14px}
+.moneda-seg button{padding:7px 16px;border-radius:7px;font-weight:700;font-size:13.5px;color:var(--ink-2)}
+.moneda-seg button.on{background:var(--violet);color:#fff}
+.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px}
+.eq{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer}
+.eq input{display:none}
+.eq .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:grid;place-items:center;color:#fff;transition:all .15s}
+.eq input:checked+.box{background:var(--violet);border-color:var(--violet)}
+.eq .box .ico{width:13px;height:13px;opacity:0}
+.eq input:checked+.box .ico{opacity:1}
+.pop-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.pop-foot .clear{font-size:13.5px;font-weight:600;color:var(--ink-3)}
+.pop-foot .clear:hover{color:var(--violet-d)}
+.pop-foot .btn-violet{padding:10px 18px;font-size:13.5px}
+
+/* SUBBAR */
+.subbar{max-width:var(--maxw);margin:0 auto;padding:14px 26px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.subbar .count{font-size:15px;color:var(--ink-2)}
+.subbar .count b{color:var(--ink);font-weight:700}
+.subbar .right{display:flex;align-items:center;gap:10px}
+.selct{position:relative}
+.selct select{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:10px 38px 10px 14px;font-family:inherit;font-weight:600;font-size:14px;color:var(--ink);cursor:pointer}
+.selct select:focus{outline:none;border-color:var(--violet)}
+.selct .ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-3);pointer-events:none}
+.viewtoggle{display:none;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px}
+.viewtoggle button{padding:9px 15px;border-radius:8px;font-weight:600;font-size:13.5px;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.viewtoggle button .ico{width:16px;height:16px}
+.viewtoggle button.on{background:var(--violet);color:#fff}
+
+/* SPLIT */
+.split{max-width:var(--maxw);margin:0 auto;padding:0 26px 26px;display:grid;grid-template-columns:1fr 0.92fr;gap:22px;align-items:start}
+.list-col{min-width:0}
+.plist{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.map-col{position:sticky;top:calc(var(--navh) + var(--barh) + 8px);height:calc(100vh - var(--navh) - var(--barh) - 24px);border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--line-2)}
+#map{width:100%;height:100%}
+
+/* CARD */
+.pcardm{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface);transition:transform .16s,box-shadow .16s,border-color .16s;display:block;position:relative}
+.pcardm:hover,.pcardm.hl{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--violet-tint-2)}
+.pcardm .ph{height:188px;position:relative;overflow:hidden;background:var(--line-2)}
+.pcardm .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pcardm:hover .ph img{transform:scale(1.05)}
+.pcardm .ph .tag{position:absolute;top:13px;left:13px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 12px;border-radius:50px;color:#fff;background:var(--violet)}
+.pcardm .ph .fav{position:absolute;top:11px;right:11px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--ink)}
+.pcardm .ph .fav:hover{color:var(--violet-d)}
+.pcardm .ph .nav-a{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.86);display:grid;place-items:center;color:var(--ink);opacity:0;transition:opacity .15s}
+.pcardm:hover .ph .nav-a{opacity:1}
+.pcardm .ph .pv{left:10px}.pcardm .ph .nx{right:10px}
+.pcardm .bd{padding:16px 17px}
+.pcardm .pr{font-size:20px;font-weight:700;font-family:'Sora'}
+.pcardm .pr .per,.pcardm .pr .uf-approx{font-size:12.5px;color:var(--ink-3);font-family:'Hanken Grotesk';font-weight:600}
+.pcardm .ti{font-size:14.5px;font-weight:600;margin-top:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.pcardm .ad{font-size:12.5px;color:var(--ink-3);margin-top:5px;display:flex;align-items:center;gap:5px}
+.pcardm .ad .ico{width:13px;height:13px;flex:none}
+.pcardm .ft{display:flex;gap:14px;margin-top:13px;padding-top:13px;border-top:1px solid var(--line)}
+.pcardm .ft .f{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);font-weight:500}
+.pcardm .ft .f .ico{width:15px;height:15px;color:var(--violet)}
+.empty{grid-column:1/-1;text-align:center;color:var(--ink-3);padding:60px 20px;font-size:16px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.empty .ico{width:42px;height:42px;color:var(--violet-tint-2)}
+
+/* MAP placeholder */
+.map-ph{position:relative;width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(125deg,#ece8f6,#e3e0f2)}
+.map-ph-grid{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px) 0 0/100% 44px,linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px) 0 0/58px 100%}
+.map-ph .mk{position:absolute;width:34px;height:34px;border-radius:50% 50% 50% 3px;background:var(--violet);transform:rotate(45deg) translate(-50%,-50%);box-shadow:0 6px 16px rgba(124,58,237,.4);display:grid;place-items:center;cursor:pointer;transition:transform .15s}
+.map-ph .mk b{transform:rotate(-45deg);color:#fff;font-size:11px;font-weight:700;font-family:'Sora'}
+.map-ph .mk:hover,.map-ph .mk.hl{background:var(--violet-dd);z-index:5}
+.map-ph-card{position:relative;z-index:2;background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;max-width:320px;text-align:center;display:flex;flex-direction:column;gap:9px;align-items:center;box-shadow:var(--shadow-md);color:var(--violet-d)}
+.map-ph-card b{font-family:'Sora';font-size:17px;color:var(--ink)}
+.map-ph-card span{font-size:13.5px;color:var(--ink-2);line-height:1.55}
+.map-hint{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:4;background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:50px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--ink-2);box-shadow:var(--shadow-sm);white-space:nowrap}
+
+/* FOOTER */
+footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px;margin-top:10px}
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 26px 40px;display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px}
+.foot-grid .logo{height:34px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78)}.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{max-width:var(--maxw);margin:0 auto;padding:24px 26px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+.dbanner{display:flex;align-items:center;gap:10px;justify-content:center;font-size:13px;font-weight:600;padding:9px 16px;background:var(--violet-tint);color:var(--violet-dd);border-bottom:1px solid var(--violet-tint-2)}
+.dbanner .ico{width:16px;height:16px}.dbanner.live{background:#e7f7ee;color:#10733c;border-color:#cdeedb}
+
+/* PROJECT BANNER (Ventas) — cintillo full-width con overlay */
+.projbanner{grid-column:1 / -1;position:relative;height:152px;border-radius:14px;overflow:hidden;color:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center}
+.projbanner .pb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.projbanner::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(38,16,79,.95) 0%,rgba(60,28,120,.82) 36%,rgba(76,29,149,.32) 68%,rgba(76,29,149,.04) 100%)}
+.projbanner .pb-content{position:relative;z-index:2;width:100%;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.projbanner .pb-text{display:flex;flex-direction:column;gap:5px;min-width:0}
+.projbanner .pb-eyebrow{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dccbff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.projbanner .pb-eyebrow .ico{width:13px;height:13px;flex:none}
+.projbanner h3{font-size:21px;font-weight:700;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.projbanner .pb-sub{font-size:13.5px;color:rgba(255,255,255,.9);display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.projbanner .pb-sub b{font-family:'Sora';font-weight:700;font-size:15px;color:#fff}
+.projbanner .pb-sub .dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.5);flex:none}
+.projbanner .btn-light{flex:0 0 auto;white-space:nowrap;background:#fff;color:var(--violet-dd);padding:11px 19px;font-size:13.5px;font-weight:700;border-radius:10px;display:inline-flex;align-items:center;gap:8px}
+.projbanner .btn-light:hover{background:var(--violet-tint)}
+.projbanner .pb-close{position:absolute;top:10px;right:10px;z-index:4;width:28px;height:28px;border-radius:50%;background:rgba(20,15,30,.4);color:#fff;display:grid;place-items:center}
+.projbanner .pb-close:hover{background:rgba(20,15,30,.6)}
+.projbanner .pb-close .ico{width:15px;height:15px}
+@media(max-width:760px){.projbanner{height:142px}.projbanner h3{font-size:18px}}
+@media(max-width:560px){.projbanner{height:auto}.projbanner::before{background:linear-gradient(90deg,rgba(38,16,79,.95),rgba(50,24,100,.78))}.projbanner .pb-content{flex-direction:column;align-items:flex-start;padding:18px;gap:13px}.projbanner .btn-light{width:100%;justify-content:center}.projbanner h3,.projbanner .pb-sub,.projbanner .pb-eyebrow{white-space:normal}}
+
+/* MOBILE ACTION BAR (Portal-style) */
+.mbar{display:none;position:sticky;top:var(--navh);z-index:58;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.mbar-inner{display:flex}
+.mbar button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 6px;font-weight:700;font-size:14px;color:var(--violet-d)}
+.mbar button+button{border-left:1px solid var(--line)}
+.mbar button .ico{width:18px;height:18px}
+.mbar button .dot{display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:50px;background:var(--violet);color:#fff;font-size:11px;font-weight:700;font-family:'Sora'}
+
+/* MAP COUNT (mobile full-screen) */
+.map-count{display:none;position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:6;background:var(--surface);border:1px solid var(--line);border-radius:50px;padding:9px 18px;font-size:13.5px;font-weight:700;color:var(--ink);box-shadow:var(--shadow-md);white-space:nowrap}
+.map-count b{color:var(--violet-d)}
+
+/* BOTTOM SHEET */
+.sheet{position:fixed;inset:0;z-index:95;display:none}
+.sheet.open{display:block}
+.sheet-bg{position:absolute;inset:0;background:rgba(20,15,30,.5);animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet-panel{position:absolute;left:0;right:0;bottom:0;max-height:92vh;background:var(--surface);border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:up .24s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sheet-grab{width:42px;height:5px;border-radius:50px;background:var(--line);margin:10px auto 0}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 16px;border-bottom:1px solid var(--line)}
+.sheet-head h3{font-size:19px;font-weight:700}
+.sheet-head .x{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}
+.sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 20px 12px}
+.sheet-sec{padding:20px 0;border-bottom:1px solid var(--line-2)}
+.sheet-sec:last-child{border-bottom:none}
+.sheet-sec h4{font-size:14.5px;font-weight:700;margin-bottom:14px}
+.sheet-foot{display:flex;gap:12px;padding:14px 20px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface)}
+.sheet-foot .clear{flex:none;padding:15px 20px;border:1px solid var(--line);border-radius:13px;font-weight:600;font-size:15px;color:var(--ink-2)}
+.sheet-foot .btn-violet{flex:1;padding:15px;font-size:15.5px}
+.sheet .seg-pills .pill{padding:11px 17px;font-size:15px}
+.sheet .range input{padding:14px 14px;font-size:15.5px}
+.sheet .eq-grid{grid-template-columns:1fr 1fr;gap:15px 16px}
+.sheet .eq{font-size:15px}
+.quick-label{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 12px}
+.quick-comunas{display:flex;flex-wrap:wrap;gap:9px}
+.qc{border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:10px 16px;font-weight:600;font-size:14px;color:var(--ink-2)}
+.qc.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.msearch{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-top:6px}
+.msearch .ico{width:19px;height:19px;color:var(--violet)}
+.msearch input{border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;font-weight:500;color:var(--ink);width:100%}
+
+/* RESPONSIVE */
+@media(max-width:1180px){.split{grid-template-columns:1fr 0.8fr}}
+@media(max-width:1024px){
+  .nav-links,.nav-right .tel{display:none}.nav-burger{display:grid}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+}
+@media(max-width:860px){
+  .mbar{display:block}
+  .filterbar{display:none}
+  .subbar .viewtoggle{display:none}
+  .map-count{display:block}
+  body.show-map .subbar{display:none}
+  .split{grid-template-columns:1fr;padding-top:14px}
+  .map-col{display:none;position:fixed;inset:calc(var(--navh) + 50px) 0 0 0;height:auto;width:100%;z-index:55;border-radius:0;border:none}
+  body.show-map .map-col{display:block}
+  body.show-map .list-col{display:none}
+  .plist{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .subbar{padding:12px 16px}.split{padding:12px 16px 20px}
+  .plist{grid-template-columns:1fr}
+  .pop{left:0;right:0;min-width:0;width:calc(100vw - 32px)}
+  .nav-inner{padding:0 16px}
+}
+
+/* CTA ¿No encuentras arriendo? */
+.cta-arriendo{background:var(--bg);padding:8px 0 56px}
+.cta-arriendo-inner{max-width:var(--maxw,1260px);margin:0 auto;padding:40px 44px;border-radius:22px;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;box-shadow:var(--shadow-md)}
+.cta-arriendo-inner::after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
+.cta-arriendo-inner::before{content:"";position:absolute;left:-70px;bottom:-130px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05)}
+.cta-arriendo .cta-tx{position:relative;z-index:2;min-width:260px;flex:1 1 380px}
+.cta-arriendo .cta-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ede6fc}
+.cta-arriendo .cta-eyebrow .ico{width:14px;height:14px}
+.cta-arriendo h2{font-family:'Sora',sans-serif;letter-spacing:-.02em;font-size:30px;font-weight:700;margin-top:14px;line-height:1.1}
+.cta-arriendo p{font-size:15.5px;color:rgba(255,255,255,.86);max-width:60ch;margin-top:10px;line-height:1.55}
+.cta-arriendo .cta-btn{position:relative;z-index:2;flex:0 0 auto;display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--violet-dd);font-weight:700;font-size:15px;padding:16px 24px;border-radius:13px;transition:transform .12s,background .15s;box-shadow:0 8px 22px rgba(20,15,30,.22)}
+.cta-arriendo .cta-btn:hover{background:var(--violet-tint);transform:translateY(-1px)}
+.cta-arriendo .cta-btn:active{transform:translateY(1px)}
+.cta-arriendo .cta-btn .ico{width:19px;height:19px}
+@media(max-width:680px){.cta-arriendo{padding:0 0 40px}.cta-arriendo-inner{padding:30px 22px;border-radius:0;flex-direction:column;align-items:flex-start}.cta-arriendo h2{font-size:24px}.cta-arriendo .cta-btn{width:100%;justify-content:center}}
+
+
+/* nav móvil — WhatsApp dentro del menú (igual al Home) */
+.nav-wa-full{display:inline-flex}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:69;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+@media(max-width:1024px){.nav-wa-full{display:none}.nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}}
+</style>
+</head>
+<body>
+
+<div class="dbanner" id="dbanner"><i data-lucide="database" class="ico"></i><span id="dbannerTxt">Cargando…</span></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="Home - Corretaje Guzman.html"><img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <nav class="nav-links">
+      <a href="Arriendos - Corretaje Guzman.html">Arrendar</a>
+      <a href="Ventas - Corretaje Guzman.html" class="active">Comprar</a>
+      <a href="Parcelas - Corretaje Guzman.html">Parcelas</a>
+      <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm0 21.82c-1.78 0-3.53-.48-5.06-1.38l-.36-.21-3.67.96.98-3.58-.24-.37A9.8 9.8 0 1 1 12 21.82zm5.37-7.35c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menú"><i data-lucide="menu" class="ico"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="Arriendos - Corretaje Guzman.html">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Ventas - Corretaje Guzman.html">Comprar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Parcelas - Corretaje Guzman.html">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a class="mm-wa" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+  </div>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filterbar">
+  <div class="fb-inner">
+    <div class="searchbox">
+      <i data-lucide="search" class="ico"></i>
+      <input id="qInput" type="text" placeholder="Buscar por comuna, sector o dirección…">
+    </div>
+    <div class="fchips" id="fchips">
+      <div class="chip" data-pop="tipo">
+        <button><i data-lucide="building-2" class="ico"></i><span>Tipo</span><span class="cv" id="cvTipo"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop">
+          <h4>Tipo de propiedad</h4>
+          <div class="seg-pills" id="tipoPills">
+            <button class="pill on" data-v="">Todos</button>
+            <button class="pill" data-v="Departamento">Depto</button>
+            <button class="pill" data-v="Casa">Casa</button>
+            <button class="pill" data-v="Estudio">Estudio</button>
+            <button class="pill" data-v="Parcela">Parcela</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip" data-pop="condicion">
+        <button><i data-lucide="sparkles" class="ico"></i><span>Nuevo/Usado</span><span class="cv" id="cvCond"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop">
+          <h4>Condición</h4>
+          <div class="seg-pills" id="condPills">
+            <button class="pill on" data-v="">Todas</button>
+            <button class="pill" data-v="Nuevo">Nuevo</button>
+            <button class="pill" data-v="Usado">Usado</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip" data-pop="precio">
+        <button><i data-lucide="banknote" class="ico"></i><span>Precio</span><span class="cv" id="cvPrecio"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop">
+          <h4>Rango de precio</h4>
+          <div class="moneda-seg" id="monedaSeg">
+            <button class="on" data-m="CLP">$ Pesos</button>
+            <button data-m="UF">UF</button>
+          </div>
+          <div class="range"><input id="prMin" type="number" min="0" placeholder="Desde"><span>—</span><input id="prMax" type="number" min="0" placeholder="Hasta"></div>
+          <div class="pop-foot"><button class="clear" data-clear="precio">Limpiar</button><button class="btn btn-violet" data-apply>Aplicar</button></div>
+        </div>
+      </div>
+      <div class="chip" data-pop="dorm">
+        <button><i data-lucide="bed-double" class="ico"></i><span>Dormitorios</span><span class="cv" id="cvDorm"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop">
+          <h4>Dormitorios (mínimo)</h4>
+          <div class="seg-pills" id="dormPills">
+            <button class="pill on" data-v="0">Todos</button>
+            <button class="pill" data-v="1">1+</button>
+            <button class="pill" data-v="2">2+</button>
+            <button class="pill" data-v="3">3+</button>
+            <button class="pill" data-v="4">4+</button>
+            <button class="pill" data-v="5">5+</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip" data-pop="banos">
+        <button><i data-lucide="bath" class="ico"></i><span>Baños</span><span class="cv" id="cvBanos"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop">
+          <h4>Baños (mínimo)</h4>
+          <div class="seg-pills" id="banosPills">
+            <button class="pill on" data-v="0">Todos</button>
+            <button class="pill" data-v="1">1+</button>
+            <button class="pill" data-v="2">2+</button>
+            <button class="pill" data-v="3">3+</button>
+            <button class="pill" data-v="4">4+</button>
+          </div>
+        </div>
+      </div>
+      <div class="chip" data-pop="mas">
+        <button><i data-lucide="sliders-horizontal" class="ico"></i><span>Más filtros</span><span class="cv" id="cvMas"></span><i data-lucide="chevron-down" class="ico chev"></i></button>
+        <div class="pop r">
+          <h4>Superficie útil (m²)</h4>
+          <div class="range"><input id="arMin" type="number" min="0" placeholder="Desde"><span>—</span><input id="arMax" type="number" min="0" placeholder="Hasta"></div>
+          <h4 style="margin-top:18px">Equipamiento</h4>
+          <div class="eq-grid" id="eqGrid">
+            <label class="eq"><input type="checkbox" value="estacionamiento"><span class="box"><i data-lucide="check" class="ico"></i></span>Estacionamiento</label>
+            <label class="eq"><input type="checkbox" value="bodega"><span class="box"><i data-lucide="check" class="ico"></i></span>Bodega</label>
+            <label class="eq"><input type="checkbox" value="amoblad"><span class="box"><i data-lucide="check" class="ico"></i></span>Amoblado</label>
+            <label class="eq"><input type="checkbox" value="piscina"><span class="box"><i data-lucide="check" class="ico"></i></span>Piscina</label>
+            <label class="eq"><input type="checkbox" value="gimnasio"><span class="box"><i data-lucide="check" class="ico"></i></span>Gimnasio</label>
+            <label class="eq"><input type="checkbox" value="terraza"><span class="box"><i data-lucide="check" class="ico"></i></span>Terraza</label>
+          </div>
+          <div class="pop-foot"><button class="clear" data-clear="mas">Limpiar</button><button class="btn btn-violet" data-apply>Aplicar</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE ACTION BAR -->
+<div class="mbar">
+  <div class="mbar-inner">
+    <button id="mbViewBtn"><i data-lucide="map" class="ico"></i><span id="mbViewLbl">Ver mapa</span></button>
+    <button id="mbSearchBtn"><i data-lucide="search" class="ico"></i>Buscar</button>
+    <button id="mbFilterBtn"><i data-lucide="sliders-horizontal" class="ico"></i>Filtrar<span class="dot" id="mbCount" style="display:none">0</span></button>
+  </div>
+</div>
+
+<!-- SUBBAR -->
+<div class="subbar">
+  <div class="count" id="count">—</div>
+  <div class="right">
+    <div class="viewtoggle" id="viewtoggle">
+      <button class="on" data-view="lista"><i data-lucide="layout-list" class="ico"></i>Lista</button>
+      <button data-view="mapa"><i data-lucide="map" class="ico"></i>Mapa</button>
+    </div>
+    <div class="selct">
+      <select id="sortSel">
+        <option value="rel">Más relevantes</option>
+        <option value="priceAsc">Precio: menor a mayor</option>
+        <option value="priceDesc">Precio: mayor a menor</option>
+        <option value="areaDesc">Superficie: mayor a menor</option>
+        <option value="recent">Más recientes</option>
+      </select>
+      <i data-lucide="chevron-down" class="ico"></i>
+    </div>
+  </div>
+</div>
+
+<!-- SPLIT -->
+<div class="split">
+  <div class="list-col">
+    <div class="projbanner" id="projBanner">
+      <img class="pb-img" src="https://corretajeguzman.com/wp-content/uploads/2026/04/9a18846c88e6412d8b86a31bdf4c3679.jpeg" alt="Proyecto Mirador Ñuñoa">
+      <div class="pb-content">
+        <div class="pb-text">
+          <span class="pb-eyebrow"><i data-lucide="sparkles" class="ico"></i>Proyecto destacado · Entrega inmediata</span>
+          <h3>Mirador Ñuñoa — departamentos nuevos</h3>
+          <div class="pb-sub"><b>Desde UF 3.450</b><span class="dot"></span>1 a 2 dormitorios<span class="dot"></span>Ñuñoa</div>
+        </div>
+        <a class="btn-light" href="Ficha Propiedad - Corretaje Guzman v2.html?id=rec-NUN-302"><i data-lucide="arrow-right" class="ico" style="width:16px;height:16px"></i>Conoce más</a>
+      </div>
+      <button class="pb-close" id="projBannerClose" aria-label="Cerrar"><i data-lucide="x" class="ico"></i></button>
+    </div>
+    <div class="plist" id="plist"></div>
+  </div>
+  <div class="map-col">
+    <div class="map-count" id="mapCount">—</div>
+    <div id="map"></div>
+  </div>
+</div>
+
+<!-- MOBILE SEARCH SHEET -->
+<div class="sheet" id="searchSheet">
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-grab"></div>
+    <div class="sheet-head"><h3>¿Dónde buscas?</h3><button class="x" data-close aria-label="Cerrar"><i data-lucide="x" class="ico"></i></button></div>
+    <div class="sheet-body">
+      <div class="msearch"><i data-lucide="search" class="ico"></i><input id="mQInput" type="text" placeholder="Comuna, sector o dirección"></div>
+      <div class="quick-label">Comunas con propiedades</div>
+      <div class="quick-comunas" id="quickComunas"></div>
+    </div>
+    <div class="sheet-foot"><button class="clear" id="mQClear">Limpiar</button><button class="btn btn-violet" id="mQApply">Ver resultados</button></div>
+  </div>
+</div>
+
+<!-- MOBILE FILTER SHEET -->
+<div class="sheet" id="filterSheet">
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-grab"></div>
+    <div class="sheet-head"><h3>Filtrar</h3><button class="x" data-close aria-label="Cerrar"><i data-lucide="x" class="ico"></i></button></div>
+    <div class="sheet-body">
+      <div class="sheet-sec">
+        <h4>Tipo de propiedad</h4>
+        <div class="seg-pills" id="mTipoPills">
+          <button class="pill on" data-v="">Todos</button>
+          <button class="pill" data-v="Departamento">Depto</button>
+          <button class="pill" data-v="Casa">Casa</button>
+          <button class="pill" data-v="Estudio">Estudio</button>
+          <button class="pill" data-v="Parcela">Parcela</button>
+        </div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Condición</h4>
+        <div class="seg-pills" id="mCondPills">
+          <button class="pill on" data-v="">Todas</button>
+          <button class="pill" data-v="Nuevo">Nuevo</button>
+          <button class="pill" data-v="Usado">Usado</button>
+        </div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Rango de precio</h4>
+        <div class="moneda-seg" id="mMonedaSeg">
+          <button class="on" data-m="CLP">$ Pesos</button>
+          <button data-m="UF">UF</button>
+        </div>
+        <div class="range"><input id="mPrMin" type="number" min="0" placeholder="Desde"><span>—</span><input id="mPrMax" type="number" min="0" placeholder="Hasta"></div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Dormitorios (mínimo)</h4>
+        <div class="seg-pills" id="mDormPills">
+          <button class="pill on" data-v="0">Todos</button>
+          <button class="pill" data-v="1">1+</button>
+          <button class="pill" data-v="2">2+</button>
+          <button class="pill" data-v="3">3+</button>
+          <button class="pill" data-v="4">4+</button>
+          <button class="pill" data-v="5">5+</button>
+        </div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Baños (mínimo)</h4>
+        <div class="seg-pills" id="mBanosPills">
+          <button class="pill on" data-v="0">Todos</button>
+          <button class="pill" data-v="1">1+</button>
+          <button class="pill" data-v="2">2+</button>
+          <button class="pill" data-v="3">3+</button>
+          <button class="pill" data-v="4">4+</button>
+        </div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Superficie útil (m²)</h4>
+        <div class="range"><input id="mArMin" type="number" min="0" placeholder="Desde"><span>—</span><input id="mArMax" type="number" min="0" placeholder="Hasta"></div>
+      </div>
+      <div class="sheet-sec">
+        <h4>Equipamiento</h4>
+        <div class="eq-grid" id="mEqGrid">
+          <label class="eq"><input type="checkbox" value="estacionamiento"><span class="box"><i data-lucide="check" class="ico"></i></span>Estacionamiento</label>
+          <label class="eq"><input type="checkbox" value="bodega"><span class="box"><i data-lucide="check" class="ico"></i></span>Bodega</label>
+          <label class="eq"><input type="checkbox" value="amoblad"><span class="box"><i data-lucide="check" class="ico"></i></span>Amoblado</label>
+          <label class="eq"><input type="checkbox" value="piscina"><span class="box"><i data-lucide="check" class="ico"></i></span>Piscina</label>
+          <label class="eq"><input type="checkbox" value="gimnasio"><span class="box"><i data-lucide="check" class="ico"></i></span>Gimnasio</label>
+          <label class="eq"><input type="checkbox" value="terraza"><span class="box"><i data-lucide="check" class="ico"></i></span>Terraza</label>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-foot"><button class="clear" id="mFClear">Limpiar</button><button class="btn btn-violet" id="mFApply">Ver propiedades</button></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán">
+      <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+    </div>
+    <div>
+      <h4>Acceso rápido</h4>
+      <div class="foot-links"><a href="Arriendos - Corretaje Guzman.html">Arrendar</a><a href="Ventas - Corretaje Guzman.html">Comprar</a><a href="Parcelas - Corretaje Guzman.html">Parcelas</a><a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a><a href="Administracion de Propiedades - Corretaje Guzman.html">Administración de propiedades</a><a href="Se Corredor - Corretaje Guzman.html">Sé corredor</a><a href="Formulario de Arriendo - Corretaje Guzman.html">Formulario de arriendo</a></div>
+    </div>
+    <div>
+      <h4>Contacto y sucursales</h4>
+      <div class="foot-contact">
+        <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+        <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+        <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/corretaje_guzman/" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+        <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+        <a href="https://www.tiktok.com/@corretaje_guzman?_r=1&_t=ZS-97FUNwb0CKz" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.GUZMAN_OP = 'venta';</script>
+<script src="data-propiedades.js"></script>
+<script src="guzman-shared.js"></script>
+<script src="arriendos.js"></script>
+<script>
+(function(){
+  var b=document.getElementById('navBurger'), mn=document.getElementById('mobileMenu');
+  if(b&&mn){
+    b.addEventListener('click',function(e){e.stopPropagation();mn.classList.toggle('open');});
+    document.addEventListener('click',function(e){if(!mn.contains(e.target)&&!b.contains(e.target))mn.classList.remove('open');});
+    mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mn.classList.remove('open');});});
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corretaje Guzmán · Inmuebles en Chile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
+  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
+  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--dark-2:#1d1630;--wa:#1faf54;
+  --radius:16px;--radius-sm:11px;
+  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
+  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
+  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1260px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3,.disp{font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+.ico{width:20px;height:20px;stroke-width:1.85}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-violet{background:var(--violet);color:#fff;padding:13px 22px;font-size:14.5px;box-shadow:var(--shadow-violet)}
+.btn-violet:hover{background:var(--violet-d)}
+.btn-wa{background:var(--wa);color:#fff;padding:12px 18px;font-size:14.5px}
+.btn-wa:hover{filter:brightness(.95)}
+.btn-ghost{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:12px 18px;font-size:14.5px}
+.btn-ghost:hover{border-color:var(--violet);color:var(--violet-d)}
+.btn-light{background:#fff;color:var(--violet-dd);padding:13px 22px;font-size:14.5px;font-weight:700}
+.btn-light:hover{background:var(--violet-tint)}
+.btn-outline{background:var(--surface);border:1px solid var(--violet);color:var(--violet-d);padding:13px 18px;font-size:14.5px}
+.btn-outline:hover{background:var(--violet-tint)}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+
+/* NAV */
+header.nav{position:sticky;top:0;z-index:60;background:rgba(20,15,30,.86);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:30px;height:76px}
+.nav-inner .logo{height:34px;width:auto}
+.nav-links{display:flex;gap:28px;margin-left:6px}
+.nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
+.nav-right .tel .ico{color:var(--violet)}
+.nav-burger{display:none;color:#fff;width:44px;height:44px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center;flex:none}
+.nav-wa-full{display:inline-flex}
+.mobile-menu{display:none;position:fixed;top:76px;left:0;right:0;z-index:59;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+
+/* HERO */
+.hero{position:relative;background:var(--dark);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:1;background-image:url('assets/home-apartamento.jpg')}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(20,15,30,.82) 0%,rgba(60,28,120,.6) 50%,rgba(124,58,237,.4) 100%)}
+.hero-inner{position:relative;z-index:2;padding:120px 0 128px;text-align:center}
+.hero .eyebrow{color:#c9b8f5;margin-bottom:18px;display:block}
+.hero h1{font-size:60px;font-weight:800;line-height:1.05;max-width:18ch;margin:0 auto;text-wrap:balance;text-shadow:0 2px 24px rgba(20,15,30,.4)}
+.hero h1 .hl{color:#c9b8f5}
+.hero p{font-size:20px;color:rgba(255,255,255,.82);margin-top:18px;font-weight:400}
+.search{margin:42px auto 0;max-width:980px;background:rgba(255,255,255,.97);border-radius:18px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px;box-shadow:0 24px 60px rgba(20,15,30,.4);text-align:left}
+.sf{display:flex;flex-direction:column;gap:5px;padding:8px 12px;border-radius:11px}
+.sf+.sf{border-left:1px solid var(--line)}
+.sf label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.sf .ctl{display:flex;align-items:center;gap:8px}
+.sf .ctl .ico{width:17px;height:17px;color:var(--violet);flex:none}
+.sf select,.sf input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15.5px;font-weight:600;color:var(--ink);width:100%;cursor:pointer}
+.sf input{cursor:text}
+.search-btns{display:flex;gap:8px;align-items:stretch}
+.search-btns .btn{padding:0 20px;font-size:14.5px}
+.hero-stats{position:relative;z-index:2;display:flex;justify-content:center;gap:54px;padding:0;margin:10px auto 0;flex-wrap:wrap;max-width:1240px}
+.hstat{text-align:center}
+.hstat b{font-family:'Sora';font-size:32px;font-weight:700;display:block}
+.hstat span{font-size:13.5px;color:rgba(255,255,255,.7);font-weight:500}
+
+/* WA BAND */
+.waband{background:var(--violet);color:#fff}
+.waband .in{display:flex;align-items:center;justify-content:center;gap:18px;padding:18px 0;flex-wrap:wrap}
+.waband .in .ico{width:24px;height:24px}
+.waband .in p{font-size:17px;font-weight:500}
+.waband .in b{font-weight:700}
+
+/* SECTION */
+section.sec{padding:80px 0}
+.sec-head{text-align:center;max-width:660px;margin:0 auto 38px}
+.sec-head .eyebrow{display:block;margin-bottom:10px}
+.sec-head h2{font-size:36px;font-weight:700}
+.sec-head p{font-size:17px;color:var(--ink-2);margin-top:12px}
+
+/* TABS */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px;flex-wrap:wrap}
+.ftabs,.vtabs{display:flex;gap:10px;flex-wrap:wrap}
+.ftab{border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:10px 22px;font-weight:600;font-size:14.5px;color:var(--ink-2);transition:all .15s}
+.ftab:hover{border-color:var(--violet)}
+.ftab.on{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:var(--shadow-violet)}
+.vtabs{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.vtab{padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.vtab .ico{width:16px;height:16px}
+.vtab.on{background:var(--violet);color:#fff}
+
+/* GRID */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.pcardm{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface);transition:transform .18s,box-shadow .18s;display:block}
+.pcardm:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.pcardm .ph{height:218px;position:relative;overflow:hidden;background:var(--line-2)}
+.pcardm .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pcardm:hover .ph img{transform:scale(1.05)}
+.pcardm .ph .tag{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 13px;border-radius:50px;color:#fff;background:var(--violet)}
+.pcardm .ph .fav{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--ink)}
+.pcardm .ph .fav:hover{color:var(--violet-d)}
+.pcardm .bd{padding:20px}
+.pcardm .pr{font-size:23px;font-weight:700;font-family:'Sora'}
+.pcardm .pr .per{font-size:13px;color:var(--ink-3);font-family:'Hanken Grotesk';font-weight:600}
+.uf-approx{font-size:13px;color:var(--ink-3);font-family:'Hanken Grotesk';font-weight:600}
+.pcardm .ti{font-size:15.5px;font-weight:600;margin-top:6px;line-height:1.3}
+.pcardm .ad{font-size:13px;color:var(--ink-3);margin-top:6px;display:flex;align-items:center;gap:5px}
+.pcardm .ad .ico{width:14px;height:14px;flex:none}
+.pcardm .ft{display:flex;gap:18px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.pcardm .ft .f{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-2);font-weight:500}
+.pcardm .ft .f .ico{width:16px;height:16px;color:var(--violet)}
+.empty{grid-column:1/-1;text-align:center;color:var(--ink-3);padding:50px;font-size:16px}
+.sec-cta{text-align:center;margin-top:42px}
+
+/* MAP VIEW */
+.mapview{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;height:640px}
+#map{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--line-2);height:100%}
+.map-side{display:flex;flex-direction:column;min-height:0}
+.map-side .mh{font-size:13px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.map-list{overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-right:6px}
+.map-list .pcardm .ph{height:150px}
+.map-ph{position:relative;width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(125deg,#ece8f6,#e3e0f2)}
+.map-ph-grid{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px) 0 0/56px 100%}
+.map-ph-card{position:relative;z-index:2;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;max-width:340px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;box-shadow:var(--shadow-md);color:var(--violet-d)}
+.map-ph-card b{font-family:'Sora';font-size:18px;color:var(--ink)}
+.map-ph-card span{font-size:14px;color:var(--ink-2);line-height:1.6}
+
+/* CATEGORIES */
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cat{position:relative;border-radius:18px;overflow:hidden;min-height:210px;display:flex;align-items:flex-end;padding:24px;color:#fff;background:var(--dark);transition:transform .18s,box-shadow .18s}
+.cat:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(76,29,149,.28)}
+.cat .cbg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.66;transition:transform .5s,opacity .3s}
+.cat:hover .cbg{transform:scale(1.06);opacity:.78}
+.cat::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.05) 30%,rgba(40,18,86,.6) 65%,rgba(76,29,149,.92))}
+.cat .ct{position:relative;z-index:2}
+.cat .ct .ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;margin-bottom:14px;backdrop-filter:blur(4px)}
+.cat .ct h3{font-size:21px;font-weight:700}
+.cat .ct span{font-size:13.5px;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:6px;margin-top:6px}
+.cat .ct span .ico{width:15px;height:15px}
+
+/* VALUE */
+.valsec{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.vals{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.val{text-align:center;padding:14px}
+.val .ic{width:62px;height:62px;border-radius:18px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin:0 auto 20px}
+.val .ic .ico{width:28px;height:28px}
+.val h3{font-size:20px;font-weight:700}
+.val p{font-size:15.5px;color:var(--ink-2);margin-top:10px;line-height:1.6}
+
+/* REVIEWS — carrusel estilo TocToc */
+.reviews-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 2px 10px;scrollbar-width:none}
+.reviews-grid::-webkit-scrollbar{display:none}
+.review{flex:0 0 360px;max-width:360px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.review .rv-quote{width:34px;height:34px;border-radius:10px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin-bottom:14px}
+.review .rv-quote .ico{width:19px;height:19px}
+.review p{font-size:15.5px;color:var(--ink);line-height:1.6;flex:1}
+.review .rv-top{display:flex;align-items:center;gap:13px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.review .rv-top img{width:50px;height:50px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--violet-tint-2)}
+.review .rv-top b{font-size:15.5px;display:block}
+.review .stars{display:inline-flex;gap:2px;color:var(--violet);margin-top:3px}
+.review .rv-src{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-3)}
+.reviews-dots{display:flex;justify-content:center;gap:8px;margin-top:22px}
+.reviews-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--violet-tint-2);transition:all .2s;cursor:pointer}
+.reviews-dots .dot.on{width:26px;border-radius:50px;background:var(--violet)}
+
+/* SELL BAND */
+.sellband{background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;border-radius:24px;padding:56px;display:flex;align-items:center;gap:40px;justify-content:space-between;flex-wrap:wrap}
+.sellband .l{max-width:560px}
+.sellband .eyebrow{color:#d8c9fa;display:block;margin-bottom:12px}
+.sellband h2{font-size:34px;font-weight:700}
+.sellband p{font-size:17px;color:rgba(255,255,255,.85);margin-top:12px}
+.sellband .r{display:flex;gap:14px;flex-wrap:wrap}
+
+/* FOOTER */
+footer{background:var(--dark);color:#cfc9da;padding:64px 0 34px}
+.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px;padding-bottom:42px}
+.foot-grid .logo{height:36px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78);transition:color .15s}
+.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}
+.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+.dbanner{display:flex;align-items:center;gap:10px;justify-content:center;font-size:13px;font-weight:600;padding:9px 16px;background:var(--violet-tint);color:var(--violet-dd);border-bottom:1px solid var(--violet-tint-2)}
+.dbanner .ico{width:16px;height:16px}
+.dbanner.live{background:#e7f7ee;color:#10733c;border-color:#cdeedb}
+
+@media(min-width:981px){
+  .hero-inner{max-width:1240px;margin-left:auto;margin-right:auto;padding-left:64px;padding-right:64px;padding-top:84px;padding-bottom:44px}
+  .search{width:min(980px,100%);max-width:980px;margin:36px auto 0}
+  .hero-stats{margin:8px auto 0;gap:64px;align-items:flex-start}
+  .hstat{min-width:150px;text-align:center}
+}
+
+@media(max-width:980px){
+  .nav-links,.nav-right .tel,.nav-wa-full{display:none}.nav-burger{display:grid}
+  .hero h1{font-size:42px}.search{grid-template-columns:1fr 1fr}.search-btns{grid-column:1/-1}.sf+.sf{border-left:none}
+  .pgrid{grid-template-columns:1fr 1fr}.cats{grid-template-columns:1fr 1fr}.vals{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr 1fr}
+  .foot-grid{grid-template-columns:1fr;gap:34px}.sellband{padding:40px}
+  .mapview{grid-template-columns:1fr;height:auto}#map{height:380px}.map-list{max-height:520px}
+}
+@media(max-width:620px){
+  .nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}
+  .mobile-menu{top:64px}
+  .wrap{padding:0 18px}.hero h1{font-size:34px}.hero p{font-size:17px}
+  .hero-inner{padding:96px 4px 18px}
+  .hero .eyebrow{font-size:10.5px;letter-spacing:.12em;margin-bottom:13px;line-height:1.5}
+  .search{grid-template-columns:1fr;gap:7px;padding:18px 16px;border-radius:20px;margin:28px auto 0;width:calc(100% - 32px);max-width:430px;box-sizing:border-box}
+  .sf{padding:15px 16px}
+  .sf+.sf{border-top:1px solid var(--line);border-left:none}
+  .sf label{font-size:12px;margin-bottom:2px}
+  .sf select,.sf input{font-size:16.5px}
+  .search-btns{flex-direction:column;gap:8px;margin-top:8px}
+  .search-btns .btn{padding:15px 20px;font-size:16px}
+  .hero-stats{gap:18px;justify-content:center;width:100%;margin:-8px auto 0;padding:0}
+  .hstat{flex:1;min-width:0;text-align:center}
+  .hstat b{font-size:26px}
+  .hstat span{font-size:12px}
+  .pgrid{grid-template-columns:1fr}.cats{grid-template-columns:1fr}
+  .reviews-grid{grid-template-columns:1fr}
+  .sec-head h2{font-size:28px}.sellband h2{font-size:26px}.bar{justify-content:center}
+  .waband .in{flex-direction:column;text-align:center;gap:14px;padding:26px 0}
+  .waband .in p{font-size:16px;padding:0 8px}
+}
+
+/* CTA ¿No encuentras arriendo? */
+.cta-arriendo{background:var(--bg);padding:8px 0 56px}
+.cta-arriendo-inner{max-width:var(--maxw,1260px);margin:0 auto;padding:40px 44px;border-radius:22px;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;box-shadow:var(--shadow-md)}
+.cta-arriendo-inner::after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
+.cta-arriendo-inner::before{content:"";position:absolute;left:-70px;bottom:-130px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05)}
+.cta-arriendo .cta-tx{position:relative;z-index:2;min-width:260px;flex:1 1 380px}
+.cta-arriendo .cta-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ede6fc}
+.cta-arriendo .cta-eyebrow .ico{width:14px;height:14px}
+.cta-arriendo h2{font-family:'Sora',sans-serif;letter-spacing:-.02em;font-size:30px;font-weight:700;margin-top:14px;line-height:1.1}
+.cta-arriendo p{font-size:15.5px;color:rgba(255,255,255,.86);max-width:60ch;margin-top:10px;line-height:1.55}
+.cta-arriendo .cta-btn{position:relative;z-index:2;flex:0 0 auto;display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--violet-dd);font-weight:700;font-size:15px;padding:16px 24px;border-radius:13px;transition:transform .12s,background .15s;box-shadow:0 8px 22px rgba(20,15,30,.22)}
+.cta-arriendo .cta-btn:hover{background:var(--violet-tint);transform:translateY(-1px)}
+.cta-arriendo .cta-btn:active{transform:translateY(1px)}
+.cta-arriendo .cta-btn .ico{width:19px;height:19px}
+@media(max-width:680px){.cta-arriendo{padding:0 0 40px}.cta-arriendo-inner{padding:30px 22px;border-radius:0;flex-direction:column;align-items:flex-start}.cta-arriendo h2{font-size:24px}.cta-arriendo .cta-btn{width:100%;justify-content:center}}
+
+</style>
+</head>
+<body>
+
+<div class="dbanner" id="dbanner"><i data-lucide="database" class="ico"></i><span id="dbannerTxt">Cargando propiedades…</span></div>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#"><img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <nav class="nav-links">
+      <a href="Arriendos - Corretaje Guzman.html">Arrendar</a>
+      <a href="Ventas - Corretaje Guzman.html">Comprar</a>
+      <a href="Parcelas - Corretaje Guzman.html">Parcelas</a>
+      <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm0 21.82c-1.78 0-3.53-.48-5.06-1.38l-.36-.21-3.67.96.98-3.58-.24-.37A9.8 9.8 0 1 1 12 21.82zm5.37-7.35c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menú"><i data-lucide="menu" class="ico"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="Arriendos - Corretaje Guzman.html">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Ventas - Corretaje Guzman.html">Comprar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Parcelas - Corretaje Guzman.html">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a class="mm-wa" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="bg" id="heroBg"></div>
+  <div class="wrap hero-inner" style="padding: 120px 0px 128px">
+    <span class="eyebrow" style="display:inline-block;margin-bottom:16px;letter-spacing:.14em">Empresa de corretaje chilena de primer nivel</span>
+    <h1 style="letter-spacing: -1.2px; padding: 0px">Tu propiedad,
+ nuestra prioridad.</h1>
+
+    <form class="search" id="search">
+      <div class="sf">
+        <label>Operación</label>
+        <div class="ctl"><i data-lucide="key-round" class="ico"></i>
+          <select id="fOp"><option value="">Arriendo o venta</option><option value="arriendo">Arriendo</option><option value="venta">Venta</option></select>
+        </div>
+      </div>
+      <div class="sf">
+        <label>Tipo</label>
+        <div class="ctl"><i data-lucide="building-2" class="ico"></i>
+          <select id="fTipo"><option value="">Todos los tipos</option><option>Departamento</option><option>Casa</option><option>Estudio</option><option>Parcela</option></select>
+        </div>
+      </div>
+      <div class="sf">
+        <label>Ubicación</label>
+        <div class="ctl"><i data-lucide="map-pin" class="ico"></i>
+          <input id="fComuna" type="text" placeholder="Ingresa ciudad o comuna">
+        </div>
+      </div>
+      <div class="search-btns">
+        <button class="btn btn-violet" type="submit"><i data-lucide="search" class="ico"></i>Buscar</button>
+        <button class="btn btn-outline" type="button" id="searchMap"><i data-lucide="map" class="ico"></i>Mapa</button>
+      </div>
+    </form>
+  </div>
+  <div class="hero-stats" style="margin: 8px 1px 0px 61px">
+    <div class="hstat"><b id="stTotal" style="font-size: 32px; line-height: 1.5; letter-spacing: 0px; margin: 0px; height: 48px">—</b><span>Propiedades publicadas</span></div>
+    <div class="hstat"><b id="stArr" style="line-height: 1.5">—</b><span>En arriendo</span></div>
+    <div class="hstat"><b id="stVen">—</b><span>En venta</span></div>
+  </div>
+</section>
+
+<!-- WA BAND -->
+<div class="waband" id="contacto">
+  <div class="wrap in">
+    <i data-lucide="message-circle" class="ico"></i>
+    <p>Contáctanos directamente por <b>WhatsApp</b> y agenda tu visita hoy</p>
+    <a class="btn btn-light" href="https://wa.me/56944637680" target="_blank">Escríbenos</a>
+  </div>
+</div>
+
+<!-- DESTACADOS -->
+<section class="sec" id="destacados">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Alternativas exclusivas para ti</span>
+      <h2>Destacados de Corretaje Guzmán</h2>
+      <p>Propiedades seleccionadas en arriendo y venta, actualizadas en tiempo real.</p>
+    </div>
+    <div class="bar">
+      <div class="ftabs" id="ftabs">
+        <button class="ftab on" data-f="todos">Todas</button>
+        <button class="ftab" data-f="arriendo">Arriendo</button>
+        <button class="ftab" data-f="venta">Venta</button>
+      </div>
+      <div class="vtabs" id="vtabs">
+        <button class="vtab on" data-v="lista"><i data-lucide="layout-grid" class="ico"></i>Lista</button>
+        <button class="vtab" data-v="mapa"><i data-lucide="map" class="ico"></i>Mapa</button>
+      </div>
+    </div>
+
+    <div id="listView">
+      <div class="pgrid" id="grid"></div>
+    </div>
+
+    <div id="mapView" style="display:none">
+      <div class="mapview">
+        <div id="map"></div>
+        <div class="map-side">
+          <div class="mh" id="mapCount">—</div>
+          <div class="map-list" id="mapList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-cta"><a class="btn btn-ghost" href="#">Ver todas las propiedades <i data-lucide="arrow-right" class="ico" style="width:17px;height:17px"></i></a></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="sec" id="categorias" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Explora por categoría</span><h2>¿Qué estás buscando?</h2></div>
+    <div class="cats">
+      <a class="cat" href="Arriendos - Corretaje Guzman.html">
+        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900&q=80')"></div>
+        <div class="ct"><div class="ic"><i data-lucide="key-round" class="ico"></i></div><h3>Arriendos</h3><span>Ver propiedades <i data-lucide="arrow-right" class="ico"></i></span></div>
+      </a>
+      <a class="cat" href="Ventas - Corretaje Guzman.html">
+        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80')"></div>
+        <div class="ct"><div class="ic"><i data-lucide="home" class="ico"></i></div><h3>En Venta</h3><span>Ver propiedades <i data-lucide="arrow-right" class="ico"></i></span></div>
+      </a>
+      <a class="cat" href="Parcelas - Corretaje Guzman.html">
+        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900&q=80')"></div>
+        <div class="ct"><div class="ic"><i data-lucide="trees" class="ico"></i></div><h3>Parcelas</h3><span>Ver terrenos <i data-lucide="arrow-right" class="ico"></i></span></div>
+      </a>
+      <a class="cat" href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">
+        <div class="cbg" style="background-image:url('assets/home-apartamento.jpg')"></div>
+        <div class="ct"><div class="ic"><i data-lucide="key-round" class="ico"></i></div><h3>Arrendar mi propiedad</h3><span>Publica con nosotros <i data-lucide="arrow-right" class="ico"></i></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE -->
+<div class="valsec">
+  <section class="sec wrap">
+    <div class="sec-head"><span class="eyebrow">Por qué Corretaje Guzmán</span><h2>Acompañamiento de primer nivel</h2></div>
+    <div class="vals">
+      <div class="val"><div class="ic"><i data-lucide="user-check" class="ico"></i></div><h3>Asesoría personalizada</h3><p>Un ejecutivo dedicado te guía en cada paso, desde la primera visita hasta la firma.</p></div>
+      <div class="val"><div class="ic"><i data-lucide="megaphone" class="ico"></i></div><h3>Máxima difusión</h3><p>Publicamos tu propiedad en los principales portales y redes para llegar a más interesados.</p></div>
+      <div class="val"><div class="ic"><i data-lucide="shield-check" class="ico"></i></div><h3>Gestión confiable</h3><p>Coordinamos visitas, evaluamos postulantes y resguardamos cada etapa del proceso.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- REVIEWS -->
+<section class="sec" id="resenas">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Reseñas</span>
+      <h2>Lo que piensan nuestros clientes</h2>
+      <p>Opiniones destacadas desde nuestra base de reseñas y respaldadas por Facebook.</p>
+    </div>
+    <div class="reviews-grid" id="reviews"></div>
+    <div class="reviews-dots" id="reviewsDots"></div>
+    <div class="sec-cta"><a class="btn btn-ghost" id="reviewsLink" href="#" target="_blank">Ver todas las reseñas <i data-lucide="external-link" class="ico" style="width:17px;height:17px"></i></a></div>
+  </div>
+</section>
+
+<!-- SELL BAND -->
+<section class="sec" id="vender" style="padding-top:0">
+  <div class="wrap">
+    <div class="sellband">
+      <div class="l">
+        <span class="eyebrow">¿Tienes una propiedad?</span>
+        <h2>Vende o arrienda con nosotros</h2>
+        <p>Tasamos tu propiedad y la publicamos con asesoría experta. Cuéntanos qué tienes y te contactamos.</p>
+      </div>
+      <div class="r">
+        <a class="btn btn-light" href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html"><i data-lucide="key-round" class="ico"></i>Arrienda con nosotros</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán">
+        <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+      </div>
+      <div>
+        <h4>Acceso rápido</h4>
+        <div class="foot-links"><a href="Arriendos - Corretaje Guzman.html">Arrendar</a><a href="Ventas - Corretaje Guzman.html">Comprar</a><a href="Parcelas - Corretaje Guzman.html">Parcelas</a><a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a><a href="Administracion de Propiedades - Corretaje Guzman.html">Administración de propiedades</a><a href="Se Corredor - Corretaje Guzman.html">Sé corredor</a><a href="Formulario de Arriendo - Corretaje Guzman.html">Formulario de arriendo</a></div>
+      </div>
+      <div>
+        <h4>Contacto y sucursales</h4>
+        <div class="foot-contact">
+          <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+          <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+          <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+        </div>
+        <div class="socials">
+          <a href="https://www.instagram.com/corretaje_guzman/" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+          <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+          <a href="https://www.tiktok.com/@corretaje_guzman?_r=1&_t=ZS-97FUNwb0CKz" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="data-propiedades.js"></script>
+<script src="data-rentando.js"></script>
+<script src="guzman-shared.js"></script>
+<script src="home.js"></script>
+<script>
+(function(){
+  var b=document.getElementById('navBurger'), m=document.getElementById('mobileMenu');
+  if(b&&m){
+    b.addEventListener('click',function(e){e.stopPropagation();m.classList.toggle('open');});
+    document.addEventListener('click',function(e){if(!m.contains(e.target)&&!b.contains(e.target))m.classList.remove('open');});
+    m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');});});
+  }
+})();
+</script>
+</body>
+</html>
