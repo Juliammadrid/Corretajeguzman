@@ -5,6 +5,7 @@
 (function () {
   const CFG = window.GUZMAN_CONFIG || {};
   const nf = new Intl.NumberFormat('es-CL');
+  const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
 
   function priceText(p) {
     if (p.currency === 'UF') return 'UF ' + nf.format(p.priceValue);
@@ -45,6 +46,27 @@
     return null;
   }
 
+  function validPhotoUrl(url) {
+    return typeof url === 'string' && /^https?:\/\//.test(url) || typeof url === 'string' && /^assets\//.test(url);
+  }
+
+  function normalizeOperation(p) {
+    const text = `${p.operation || ''} ${p.title || ''} ${p.source || ''}`.toLowerCase();
+    return text.includes('vent') ? 'venta' : 'arriendo';
+  }
+
+  function normalizeLoadedProperty(p) {
+    const photos = Array.isArray(p.photos) ? p.photos.filter(validPhotoUrl) : [];
+    if (validPhotoUrl(p.coverPhoto) && !photos.includes(p.coverPhoto)) photos.unshift(p.coverPhoto);
+    if (!photos.length) photos.push(FALLBACK_PHOTO);
+    return {
+      ...p,
+      operation: normalizeOperation(p),
+      photos,
+      coverPhoto: photos[0]
+    };
+  }
+
   async function loadProperties() {
     let data = null, live = false;
     if (CFG.endpoint) {
@@ -52,6 +74,7 @@
       if (j) { data = Array.isArray(j) ? j : (j.propiedades || j.properties || j.records || null); if (data && data.length) live = true; }
     }
     if (!data || !data.length) data = window.GUZMAN_FALLBACK || [];
+    data = data.map(normalizeLoadedProperty);
     return { data, live };
   }
   async function loadReviews() {
