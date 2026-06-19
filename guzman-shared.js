@@ -67,8 +67,9 @@
     const raw = p.propertyType || p.tipo || p.type || '';
     const text = cleanText(`${raw} ${p.title || ''}`);
     if (/\b(parcela|terreno|lote|sitio)\b/.test(text)) return 'Parcela';
+    if (/\b(local comercial|local|comercial)\b/.test(text)) return 'Local';
     if (/\b(casa|townhouse)\b/.test(text)) return 'Casa';
-    if (/\b(oficina|local|comercial)\b/.test(text)) return 'Oficina';
+    if (/\b(oficina)\b/.test(text)) return 'Oficina';
     if (/\b(estudio|studio)\b/.test(text)) return 'Estudio';
     if (/\b(depto|departamento|dpto|apto|apartamento)\b/.test(text)) return 'Departamento';
     return raw ? String(raw).trim() : 'Departamento';
