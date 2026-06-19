@@ -1,72 +1,30 @@
-const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
-const TABLE = process.env.AIRTABLE_ADMIN_TABLE_ID || "Leads administración";
-
-const ADMIN_MAP = {
-  nombre: "Nombre",
-  whatsapp: "WhatsApp",
-  email: "Correo",
-  tipo: "Tipo de propiedad",
-  comuna: "Comuna",
-  estado_arriendo: "Está arrendada hoy",
-  valor: "Valor de arriendo",
-  mensaje: "Mensaje",
-  servicio: "Servicio",
-  plan: "Plan",
-  acepta: "Acepta condiciones",
-  origen: "Origen",
-  fecha_envio: "Fecha de envío",
-  estado_lead: "Estado lead"
-};
-
-exports.handler = async function (event) {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "Método no permitido" }) };
-  }
-
-  const token = process.env.AIRTABLE_API_KEY || process.env.AIRTABLE_TOKEN;
-  if (!token) return { statusCode: 500, body: JSON.stringify({ error: "Falta AIRTABLE_API_KEY" }) };
-
-  let data;
-  try { data = JSON.parse(event.body || "{}"); }
-  catch (e) { return { statusCode: 400, body: JSON.stringify({ error: "JSON inválido" }) }; }
-
-  if (data._gotcha) return { statusCode: 200, body: JSON.stringify({ ok: true }) };
-
-  const fields = {};
-  const put = (k, v) => {
-    const col = ADMIN_MAP[k];
-    if (col && v !== undefined && v !== null && v !== "") fields[col] = v;
+exports.handler = async function(event){
+  if(event.httpMethod!=="POST") return {statusCode:405,body:JSON.stringify({error:"Método no permitido"})};
+  const token=process.env.AIRTABLE_API_KEY||process.env.AIRTABLE_TOKEN;
+  if(!token) return {statusCode:500,body:JSON.stringify({error:"Falta AIRTABLE_API_KEY"})};
+  let data={};
+  try{data=JSON.parse(event.body||"{}");}catch(e){return {statusCode:400,body:JSON.stringify({error:"JSON inválido"})};}
+  const fields={
+    "fldvJeO1VJXmEfLd2":data.nombre||"",
+    "fld9o47WAxg7IgZRV":data.whatsapp||"",
+    "fldRX5Gsu5s7mtOXh":data.email||"",
+    "fldqnhWsuPjcWia7g":data.tipo||"Otro",
+    "fldpStohruGzVOMYY":data.comuna||"",
+    "fld6j2F78AaFmTOkX":data.estado_arriendo||"No, está disponible",
+    "fld7nkwPsacARsZeo":data.mensaje||"",
+    "fldt5nzvP4ApZwGCi":data.servicio||"Administración de propiedades",
+    "fld7XbwJlRoyqm1HF":data.plan||"Administración",
+    "fldujEfB9AOwlJ5ls":data.acepta==="on"||data.acepta===true?"Sí":"No",
+    "fldUZ0akPMHhjdWQI":data.origen||"Administración de propiedades",
+    "fldqjXvHSeP1PCRRi":data.fecha_envio||new Date().toISOString(),
+    "fld4zI7BVnfgQ920h":"Nuevo"
   };
-
-  put("nombre", data.nombre);
-  put("whatsapp", data.whatsapp);
-  put("email", data.email);
-  put("tipo", data.tipo);
-  put("comuna", data.comuna);
-  put("estado_arriendo", data.estado_arriendo);
-  put("valor", Number(data.valor) || undefined);
-  put("mensaje", data.mensaje);
-  put("servicio", data.servicio || "Administración de propiedades");
-  put("plan", data.plan || "Administración ($350.000 anual / 7% mensual)");
-  put("acepta", data.acepta === "on" || data.acepta === true ? "Sí" : "No");
-  put("origen", data.origen || "Administración de propiedades");
-  put("fecha_envio", data.fecha_envio || new Date().toISOString());
-  put("estado_lead", data.estado_lead || "Nuevo");
-
-  try {
-    const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ records: [{ fields }], typecast: true })
-    });
-    if (!r.ok) {
-      const t = await r.text();
-      return { statusCode: 502, body: JSON.stringify({ error: "Airtable " + r.status, detail: t }) };
-    }
-    const j = await r.json();
-    return { statusCode: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ok: true, id: (j.records && j.records[0] && j.records[0].id) || null }) };
-  } catch (e) {
-    return { statusCode: 502, body: JSON.stringify({ error: String(e.message || e) }) };
-  }
+  const valor=Number(String(data.valor||"").replace(/[^0-9]/g,""));
+  if(valor) fields["fld9FS8klmttiH9du"]=valor;
+  const base=process.env.AIRTABLE_BASE_ID||"appkG5ldIIHTVkXf6";
+  const table=process.env.AIRTABLE_ADMIN_TABLE_ID||"tblqGaWqSMaE42cTL";
+  const r=await fetch("https://api.airtable.com/v0/"+base+"/"+table,{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({records:[{fields}],typecast:true})});
+  const text=await r.text();
+  if(!r.ok) return {statusCode:502,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:"Airtable "+r.status,detail:text})};
+  return {statusCode:200,headers:{"Content-Type":"application/json"},body:JSON.stringify({ok:true})};
 };
