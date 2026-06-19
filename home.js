@@ -10,12 +10,14 @@ let ALL = [], filterOp = 'todos', view = 'lista', gmap = null, markers = [];
 const COMMUNE_COORDS = {
   santiago: [-33.4489, -70.6693],
   'santiago centro': [-33.4489, -70.6693],
+  independencia: [-33.4159, -70.6659],
   nunoa: [-33.4569, -70.5986],
   'ñuñoa': [-33.4569, -70.5986],
   providencia: [-33.4314, -70.6093],
   'las condes': [-33.4088, -70.5671],
   'la reina': [-33.4469, -70.5340],
   macul: [-33.4866, -70.5992],
+  'la florida': [-33.5225, -70.5983],
   'san miguel': [-33.5008, -70.6510],
   'estacion central': [-33.4622, -70.6985],
   'estación central': [-33.4622, -70.6985],
@@ -23,8 +25,10 @@ const COMMUNE_COORDS = {
   maipu: [-33.5100, -70.7569],
   'maipú': [-33.5100, -70.7569],
   'puente alto': [-33.6117, -70.5758],
+  'san bernardo': [-33.5922, -70.6996],
+  colina: [-33.2047, -70.6744],
+  lampa: [-33.2863, -70.8756],
   buin: [-33.7306, -70.7428],
-  curacavi: [-33.4007, -71.1276],
   curacavi: [-33.4007, -71.1276],
   villarica: [-39.2857, -72.2279],
   villarrica: [-39.2857, -72.2279]
@@ -60,12 +64,9 @@ function normText(v) {
 }
 function coordsFor(p, index) {
   if (p.latitude != null && p.longitude != null) return { lat: +p.latitude, lng: +p.longitude, exact: true };
-  const key = normText(p.commune || p.address || 'santiago');
-  let pair = COMMUNE_COORDS[key];
-  if (!pair) {
-    const found = Object.keys(COMMUNE_COORDS).find(k => key.includes(k) || k.includes(key));
-    pair = found ? COMMUNE_COORDS[found] : COMMUNE_COORDS.santiago;
-  }
+  const key = normText(`${p.commune || ''} ${p.fullAddress || ''} ${p.address || ''}`) || 'santiago';
+  let found = Object.keys(COMMUNE_COORDS).find(k => key.includes(k));
+  let pair = found ? COMMUNE_COORDS[found] : COMMUNE_COORDS.santiago;
   const spread = 0.012;
   const angle = (index * 137.5) * Math.PI / 180;
   const radius = spread * (0.35 + (index % 7) / 8);
@@ -74,9 +75,12 @@ function coordsFor(p, index) {
 
 function matches(p) {
   if (filterOp !== 'todos' && p.operation !== filterOp) return false;
-  const tipo = $('#fTipo').value, com = $('#fComuna').value.trim().toLowerCase();
-  if (tipo && (p.propertyType || '') !== tipo) return false;
-  if (com) { const hay = `${p.commune || ''} ${p.address || ''} ${p.title || ''}`.toLowerCase(); if (!hay.includes(com)) return false; }
+  const tipo = $('#fTipo').value, com = normText($('#fComuna').value);
+  if (tipo && normText(p.propertyType) !== normText(tipo)) return false;
+  if (com) {
+    const hay = normText(`${p.commune || ''} ${p.address || ''} ${p.fullAddress || ''} ${p.title || ''}`);
+    if (!hay.includes(com)) return false;
+  }
   return true;
 }
 
