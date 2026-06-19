@@ -50,18 +50,39 @@
     return typeof url === 'string' && /^https?:\/\//.test(url) || typeof url === 'string' && /^assets\//.test(url);
   }
 
+  function cleanText(v) {
+    return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
   function normalizeOperation(p) {
     const text = `${p.operation || ''} ${p.title || ''} ${p.source || ''}`.toLowerCase();
     return text.includes('vent') ? 'venta' : 'arriendo';
+  }
+
+  function normalizePropertyType(p) {
+    const raw = p.propertyType || p.tipo || p.type || '';
+    const text = cleanText(`${raw} ${p.title || ''}`);
+    if (/\b(parcela|terreno|lote|sitio)\b/.test(text)) return 'Parcela';
+    if (/\b(casa|townhouse)\b/.test(text)) return 'Casa';
+    if (/\b(oficina|local|comercial)\b/.test(text)) return 'Oficina';
+    if (/\b(estudio|studio)\b/.test(text)) return 'Estudio';
+    if (/\b(depto|departamento|dpto|apto|apartamento)\b/.test(text)) return 'Departamento';
+    return raw ? String(raw).trim() : 'Departamento';
   }
 
   function normalizeLoadedProperty(p) {
     const photos = Array.isArray(p.photos) ? p.photos.filter(validPhotoUrl) : [];
     if (validPhotoUrl(p.coverPhoto) && !photos.includes(p.coverPhoto)) photos.unshift(p.coverPhoto);
     if (!photos.length) photos.push(FALLBACK_PHOTO);
+    const address = p.address || p.direccionPublica || p['Direccion publica'] || p['Dirección pública'] || '';
+    const commune = p.commune || p.comuna || '';
     return {
       ...p,
       operation: normalizeOperation(p),
+      address,
+      commune,
+      fullAddress: p.fullAddress || [address, commune, 'Chile'].filter(Boolean).join(', '),
+      propertyType: normalizePropertyType(p),
       photos,
       coverPhoto: photos[0]
     };
