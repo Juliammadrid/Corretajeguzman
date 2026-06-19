@@ -1,28 +1,23 @@
 /* ============================================================
  *  Netlify Function · /.netlify/functions/lead-arriendo
  *  Recibe el Formulario de Arriendo (POST JSON) y crea un
- *  registro en una tabla de Airtable (solicitudes de arriendo).
+ *  registro en la tabla Leads web de Airtable.
  *
  *  Variables de entorno (Netlify → Environment variables):
  *    AIRTABLE_API_KEY            = patXXXX...  (con data.records:write)
- *    AIRTABLE_BASE_ID            = appkG5ldIIHTVkXf6  (por defecto)
- *    AIRTABLE_LEADS_TABLE_ID     = nombre o id de la tabla de solicitudes
- *                                  (def: "Solicitudes Arriendo")
- *
- *  Ajusta LEAD_MAP con los nombres EXACTOS de las columnas de tu
- *  tabla de solicitudes en Airtable (izq = campo del form,
- *  der = nombre de tu columna).
+ *    AIRTABLE_BASE_ID            = appkG5ldIIHTVkXf6
+ *    AIRTABLE_LEADS_TABLE_ID     = id real de la tabla Leads web
  * ============================================================ */
 
 const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
-const TABLE = process.env.AIRTABLE_LEADS_TABLE_ID || "Solicitudes Arriendo";
+const TABLE = process.env.AIRTABLE_LEADS_TABLE_ID || "Leads web";
 
 const LEAD_MAP = {
   nombre:            "Nombre",
   whatsapp:          "WhatsApp",
   email:             "Correo",
   fecha_cambio:      "Fecha de cambio",
-  comunas:           "Comunas de interés",   // multi-select en Airtable (o texto separado por coma)
+  comunas:           "Comunas de interés",
   presupuesto:       "Presupuesto arriendo",
   dormitorios:       "Dormitorios",
   estacionamiento:   "Estacionamiento",
@@ -57,18 +52,16 @@ exports.handler = async function (event) {
   put("whatsapp", data.whatsapp);
   put("email", data.email);
   put("fecha_cambio", data.fecha_cambio);
-  // Comunas → arreglo para campo "Multiple select" de Airtable (typecast crea las opciones).
-  // Si tu columna fuese de texto simple, cambia esta línea por: data.comunas.join(", ")
-  put("comunas", Array.isArray(data.comunas) ? data.comunas : (data.comunas ? String(data.comunas).split(/,\s*/) : undefined));
+  put("comunas", Array.isArray(data.comunas) ? data.comunas.join(", ") : data.comunas);
   put("presupuesto", Number(data.presupuesto) || undefined);
-  put("dormitorios", data.dormitorios);
+  put("dormitorios", Number(data.dormitorios) || undefined);
   put("estacionamiento", data.estacionamiento);
   put("renta", Number(data.renta) || undefined);
-  put("personas", data.personas);
+  put("personas", Number(data.personas) || undefined);
   put("complementa", data.complementa);
   put("renta_complemento", Number(data.renta_complemento) || undefined);
   put("mascotas", data.mascotas);
-  put("acepta", data.acepta === "on" || data.acepta === true ? true : false);
+  put("acepta", data.acepta === "on" || data.acepta === true ? "Sí" : "No");
   put("origen", data.origen || "Formulario de Arriendo");
   put("fecha_envio", data.fecha_envio || new Date().toISOString());
 
