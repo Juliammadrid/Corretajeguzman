@@ -5,14 +5,12 @@
  *
  *  Variables de entorno:
  *    AIRTABLE_API_KEY              = patXXXX...  (data.records:write)
- *    AIRTABLE_BASE_ID             = appkG5ldIIHTVkXf6 (por defecto)
- *    AIRTABLE_OWNERS_TABLE_ID     = nombre o id (def: "Propietarios")
- *
- *  Ajusta OWNER_MAP con los nombres EXACTOS de tus columnas.
+ *    AIRTABLE_BASE_ID             = appkG5ldIIHTVkXf6
+ *    AIRTABLE_OWNERS_TABLE_ID     = id real de la tabla Leads propietarios
  * ============================================================ */
 
 const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
-const TABLE = process.env.AIRTABLE_OWNERS_TABLE_ID || "Propietarios";
+const TABLE = process.env.AIRTABLE_OWNERS_TABLE_ID || "Leads propietarios";
 
 const OWNER_MAP = {
   nombre:      "Nombre",
@@ -48,8 +46,8 @@ exports.handler = async function (event) {
   put("tipo", data.tipo);
   put("comuna", data.comuna);
   put("direccion", data.direccion);
-  put("dormitorios", data.dormitorios);
-  put("banos", data.banos);
+  put("dormitorios", Number(data.dormitorios) || undefined);
+  put("banos", Number(data.banos) || undefined);
   put("valor", Number(data.valor) || undefined);
   put("plan", data.plan);
   put("etapa", data.etapa);
