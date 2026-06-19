@@ -4,12 +4,8 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-const POST_ENDPOINT = "/api/lead-arriendo"; // guarda en Airtable (ver INTEGRACION)
+const POST_ENDPOINT = "/api/lead-arriendo";
 
-/* ---------- comunas R.M. (multiselect agrupado) ----------
-   Estructura pensada para Airtable: el valor enviado es un
-   arreglo de comunas (mapeable a un campo "Multiple select").
-   GRUPOS = provincias de la Región Metropolitana de Santiago. */
 const RM_COMUNAS = {
   "Provincia de Santiago": ["Santiago (Centro)", "Cerrillos", "Cerro Navia", "Conchalí", "El Bosque", "Estación Central", "Huechuraba", "Independencia", "La Cisterna", "La Florida", "La Granja", "La Pintana", "La Reina", "Las Condes", "Lo Barnechea", "Lo Espejo", "Lo Prado", "Macul", "Maipú", "Ñuñoa", "Pedro Aguirre Cerda", "Peñalolén", "Providencia", "Pudahuel", "Quilicura", "Quinta Normal", "Recoleta", "Renca", "San Joaquín", "San Miguel", "San Ramón", "Vitacura"],
   "Provincia Cordillera": ["Puente Alto", "Pirque", "San José de Maipo"],
@@ -58,7 +54,6 @@ function toggleComuna(c, on, silent) {
   else { comunas = comunas.filter(x => x !== c); }
   if (!silent) { renderTags(); renderCount(); clearErr(MS.closest('.field')); updateProgress(); }
 }
-
 function renderTags() {
   msTags.innerHTML = '';
   if (!comunas.length) { msTags.innerHTML = '<span class="ms-ph">Selecciona una o varias comunas de la R.M.</span>'; hidden.value = ''; return; }
@@ -75,7 +70,6 @@ function renderTags() {
 }
 function renderCount() { msCount.textContent = `${comunas.length} seleccionada${comunas.length === 1 ? '' : 's'}`; }
 function renderAll(filter) { renderTags(); renderCount(); buildList(filter || ''); }
-
 function openMS() { MS.classList.add('open'); msControl.setAttribute('aria-expanded', 'true'); buildList(msSearch.value); setTimeout(() => msSearch.focus(), 60); }
 function closeMS() { MS.classList.remove('open'); msControl.setAttribute('aria-expanded', 'false'); }
 msControl.addEventListener('click', () => { MS.classList.contains('open') ? closeMS() : openMS(); });
@@ -83,10 +77,8 @@ msSearch.addEventListener('input', () => buildList(msSearch.value));
 $('#comunaClear').addEventListener('click', () => { comunas = []; renderAll(msSearch.value); clearErr(MS.closest('.field')); updateProgress(); });
 $('#comunaDone').addEventListener('click', closeMS);
 document.addEventListener('click', e => { if (!e.target.closest('#comunaMS')) closeMS(); });
-
 renderTags(); renderCount();
 
-/* ---------- formato moneda ---------- */
 function bindMoney(id) {
   const e = $('#' + id); if (!e) return;
   e.addEventListener('input', () => {
@@ -97,13 +89,11 @@ function bindMoney(id) {
 }
 ['presupuesto', 'renta', 'renta_complemento'].forEach(bindMoney);
 
-/* ---------- reveal condicional (complementar renta) ---------- */
 $$('input[name="complementa"]').forEach(r => r.addEventListener('change', () => {
   const show = r.value === 'Sí' && r.checked;
   $('#rentaComp').classList.toggle('show', show);
 }));
 
-/* ---------- validación + errores ---------- */
 function setErr(field) { if (field) field.classList.add('err'); }
 function clearErr(field) { if (field) field.classList.remove('err'); }
 $$('#leadForm input, #leadForm select, #leadForm textarea').forEach(el => {
@@ -114,9 +104,8 @@ $$('#leadForm input, #leadForm select, #leadForm textarea').forEach(el => {
 function validate() {
   let firstBad = null;
   const fail = (node) => { if (!firstBad) firstBad = node; };
-  // campos simples requeridos
   $$('#leadForm [required]').forEach(el => {
-    if (el.type === 'radio') return; // se evalúan por grupo abajo
+    if (el.type === 'radio') return;
     if (el.type === 'checkbox') return;
     const field = el.closest('.field');
     const val = (el.value || '').trim();
@@ -125,28 +114,23 @@ function validate() {
     if (ok && el.name === 'whatsapp') ok = val.replace(/\D/g, '').length >= 8;
     if (!ok) { setErr(field); fail(field); } else clearErr(field);
   });
-  // comunas
   if (!comunas.length) { setErr(MS.closest('.field')); fail(MS.closest('.field')); }
-  // grupos radio requeridos
   ['estacionamiento', 'complementa', 'mascotas'].forEach(name => {
     const grp = $$(`input[name="${name}"]`);
     const field = grp[0].closest('.field');
     if (!grp.some(r => r.checked)) { setErr(field); fail(field); } else clearErr(field);
   });
-  // acepta condiciones
   const acc = $('#acceptBox'), accInput = $('input[name="acepta"]');
   if (!accInput.checked) { acc.classList.add('err'); $('#acceptErr').style.display = 'block'; fail(acc); }
   else { acc.classList.remove('err'); $('#acceptErr').style.display = 'none'; }
   return firstBad;
 }
 
-/* ---------- progreso (marca secciones completas) ---------- */
 function sectionComplete(step) {
   const sec = $(`.sec[data-step="${step}"]`);
   if (!sec) return false;
   const reqs = $$('[required]', sec).filter(el => el.offsetParent !== null || el.type === 'radio');
   if (step === 2 && !comunas.length) return false;
-  // radios por grupo
   const radioNames = [...new Set($$('input[type=radio][required]', sec).map(r => r.name))];
   for (const n of radioNames) if (!$$(`input[name="${n}"]`).some(r => r.checked)) return false;
   for (const el of reqs) {
@@ -157,10 +141,7 @@ function sectionComplete(step) {
   return true;
 }
 function updateProgress() {
-  $$('#stepsNav .step').forEach((s, i) => {
-    s.classList.toggle('done', sectionComplete(i));
-  });
-  // sección activa = primera incompleta
+  $$('#stepsNav .step').forEach((s, i) => { s.classList.toggle('done', sectionComplete(i)); });
   let active = 0; for (let i = 0; i < 5; i++) { if (!sectionComplete(i)) { active = i; break; } active = i; }
   $$('#stepsNav .step').forEach((s, i) => s.classList.toggle('active', i === active && !s.classList.contains('done')));
 }
@@ -170,7 +151,6 @@ $$('#stepsNav .step').forEach(s => s.addEventListener('click', () => {
   if (sec) { const y = sec.getBoundingClientRect().top + window.scrollY - 92; window.scrollTo({ top: y, behavior: 'smooth' }); }
 }));
 
-/* ---------- submit ---------- */
 $('#leadForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const bad = validate();
@@ -185,14 +165,20 @@ $('#leadForm').addEventListener('submit', async (e) => {
   data.fecha_envio = new Date().toISOString();
 
   const btn = $('#leadForm button[type=submit]');
+  const original = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="ico"></i>Enviando…'; if (window.lucide) lucide.createIcons();
 
-  // Intenta guardar en backend (Airtable). Si no existe el endpoint, igual mostramos éxito.
-  try { await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } catch (err) { /* sin backend en preview */ }
-
-  $('#leadForm').style.display = 'none';
-  const ok = $('#success'); ok.classList.add('show');
-  window.scrollTo({ top: ok.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+  try {
+    const res = await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error('No se pudo guardar en Airtable');
+    $('#leadForm').style.display = 'none';
+    const ok = $('#success'); ok.classList.add('show');
+    window.scrollTo({ top: ok.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = original;
+    alert('No se pudo enviar la solicitud. Por favor intenta nuevamente o escríbenos por WhatsApp.');
+  }
   if (window.lucide) lucide.createIcons();
 });
 
