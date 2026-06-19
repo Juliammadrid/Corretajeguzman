@@ -4,6 +4,7 @@
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const POST_ENDPOINT = "/api/lead-administracion";
+const NETLIFY_FORM_NAME = "lead-administracion";
 
 /* comunas R.M. para autocompletar */
 const RM = ["Santiago (Centro)","Cerrillos","Cerro Navia","Conchalí","El Bosque","Estación Central","Huechuraba","Independencia","La Cisterna","La Florida","La Granja","La Pintana","La Reina","Las Condes","Lo Barnechea","Lo Espejo","Lo Prado","Macul","Maipú","Ñuñoa","Pedro Aguirre Cerda","Peñalolén","Providencia","Pudahuel","Quilicura","Quinta Normal","Recoleta","Renca","San Joaquín","San Miguel","San Ramón","Vitacura","Puente Alto","Pirque","San José de Maipo","San Bernardo","Buin","Calera de Tango","Paine","Colina","Lampa","Tiltil","Talagante","El Monte","Isla de Maipo","Padre Hurtado","Peñaflor","Melipilla","Curacaví","Villarrica","Pucón"];
@@ -48,6 +49,40 @@ function validate(form) {
   return firstBad;
 }
 
+function showSuccess() {
+  $('#adminForm').style.display = 'none';
+  $('#adminOk').classList.add('show');
+  $('#adminOk').scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+async function submitAirtable(data) {
+  const res = await fetch(POST_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    let detail = '';
+    try { detail = await res.text(); } catch (e) {}
+    throw new Error(detail || 'No se pudo guardar la solicitud en Airtable');
+  }
+}
+
+async function submitNetlifyForm(data) {
+  const payload = new URLSearchParams();
+  payload.set('form-name', NETLIFY_FORM_NAME);
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) payload.set(key, String(value));
+  });
+
+  const res = await fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: payload.toString()
+  });
+  if (!res.ok) throw new Error('No se pudo guardar la solicitud en Netlify Forms');
+}
+
 $('#adminForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const bad = validate(e.target);
@@ -65,14 +100,17 @@ $('#adminForm').addEventListener('submit', async (e) => {
   btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="ico"></i>Enviando…'; if (window.lucide) lucide.createIcons();
 
   try {
-    const res = await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-    if (!res.ok) throw new Error('No se pudo guardar la solicitud');
-    $('#adminForm').style.display = 'none';
-    $('#adminOk').classList.add('show');
-    $('#adminOk').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    try {
+      await submitAirtable(data);
+    } catch (airtableError) {
+      console.warn('Airtable lead failed, trying Netlify Forms fallback:', airtableError);
+      await submitNetlifyForm(data);
+    }
+    showSuccess();
   } catch (err) {
     btn.disabled = false;
     btn.innerHTML = original;
+    console.error('No se pudo enviar la solicitud:', err);
     alert('No se pudo enviar la solicitud. Por favor intenta nuevamente o escríbenos por WhatsApp.');
   }
   if (window.lucide) lucide.createIcons();
