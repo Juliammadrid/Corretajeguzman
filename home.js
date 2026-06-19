@@ -6,7 +6,8 @@ const $ = (s) => document.querySelector(s);
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const HOME_FEATURED_LIMIT = 12;
 
-let ALL = [], filterOp = 'todos', view = 'lista', gmap = null, markers = [];
+let ALL = [], filterOp = 'todos', view = 'lista', gmap = null, markers = [], geocoder = null, mapRenderRun = 0;
+const GEO_CACHE = new Map();
 
 const COMMUNE_COORDS = {
   santiago: [-33.4489, -70.6693],
@@ -63,8 +64,7 @@ function heroBg() { /* el fondo del hero es el departamento (CSS); no se sobrees
 function normText(v) {
   return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 }
-function coordsFor(p, index) {
-  if (p.latitude != null && p.longitude != null) return { lat: +p.latitude, lng: +p.longitude, exact: true };
+function approxCoordsFor(p, index) {
   const key = normText(`${p.commune || ''} ${p.fullAddress || ''} ${p.address || ''}`) || 'santiago';
   let found = Object.keys(COMMUNE_COORDS).find(k => key.includes(k));
   let pair = found ? COMMUNE_COORDS[found] : COMMUNE_COORDS.santiago;
@@ -72,6 +72,37 @@ function coordsFor(p, index) {
   const angle = (index * 137.5) * Math.PI / 180;
   const radius = spread * (0.35 + (index % 7) / 8);
   return { lat: pair[0] + Math.sin(angle) * radius, lng: pair[1] + Math.cos(angle) * radius, exact: false };
+}
+function publicAddressFor(p) {
+  const address = p.fullAddress || [p.address, p.commune, 'Chile'].filter(Boolean).join(', ');
+  return String(address || '').replace(/,\s*,/g, ',').trim();
+}
+async function coordsFor(p, index) {
+  if (p.latitude != null && p.longitude != null) return { lat: +p.latitude, lng: +p.longitude, exact: true, source: 'airtable' };
+  const address = publicAddressFor(p);
+  if (!address || !(window.google && google.maps)) return approxCoordsFor(p, index);
+  const cacheKey = normText(address);
+  if (GEO_CACHE.has(cacheKey)) return GEO_CACHE.get(cacheKey);
+  try {
+    geocoder = geocoder || new google.maps.Geocoder();
+    const result = await new Promise(resolve => {
+      geocoder.geocode({ address, componentRestrictions: { country: 'CL' } }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const loc = results[0].geometry.location;
+          resolve({ lat: loc.lat(), lng: loc.lng(), exact: true, source: 'google' });
+        } else {
+          resolve(null);
+        }
+      });
+    });
+    const pos = result || approxCoordsFor(p, index);
+    GEO_CACHE.set(cacheKey, pos);
+    return pos;
+  } catch (e) {
+    const pos = approxCoordsFor(p, index);
+    GEO_CACHE.set(cacheKey, pos);
+    return pos;
+  }
 }
 
 function matches(p) {
@@ -153,23 +184,27 @@ function loadGMaps(cb) {
 }
 function drawMap(list) {
   const panel = $('#map');
-  loadGMaps(() => {
+  const run = ++mapRenderRun;
+  loadGMaps(async () => {
     if (!(window.google && window.google.maps) || !GZ.CFG.mapsKey) { panel.innerHTML = placeholderMap(list); if (window.lucide) lucide.createIcons(); return; }
     if (!gmap) {
       gmap = new google.maps.Map(panel, { center: { lat: -33.45, lng: -70.66 }, zoom: 11, mapTypeControl: false, streetViewControl: false, styles: MAP_STYLE });
     }
     markers.forEach(m => m.setMap(null)); markers = [];
     const bounds = new google.maps.LatLngBounds();
-    list.forEach((p, i) => {
-      const c = coordsFor(p, i);
+    let n = 0;
+    for (let i = 0; i < list.length; i++) {
+      if (run !== mapRenderRun) return;
+      const p = list[i];
+      const c = await coordsFor(p, i);
       const pos = { lat: c.lat, lng: c.lng };
       const m = new google.maps.Marker({ position: pos, map: gmap, title: p.title, icon: c.exact ? PIN : APPROX_PIN });
-      const precision = c.exact ? 'Ubicación exacta' : 'Ubicación aproximada por comuna';
+      const precision = c.exact ? 'Ubicación calculada desde dirección pública' : 'Ubicación aproximada por comuna';
       const iw = new google.maps.InfoWindow({ content: `<div style="font-family:sans-serif;max-width:220px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><small style="color:#6b6280">${precision}</small><br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}" style="color:#7c3aed;font-weight:700">Ver ficha →</a></div>` });
       m.addListener('click', () => iw.open(gmap, m));
-      markers.push(m); bounds.extend(pos);
-    });
-    if (markers.length) gmap.fitBounds(bounds, 60);
+      markers.push(m); bounds.extend(pos); n++;
+    }
+    if (n) gmap.fitBounds(bounds, 60);
   });
 }
 function placeholderMap(list) {
@@ -179,7 +214,7 @@ function placeholderMap(list) {
     <div class="map-ph-card">
       <i data-lucide="map" class="ico" style="width:34px;height:34px"></i>
       <b>Vista de mapa</b>
-      <span>${conPin} propiedades listas para mapa. Algunas se muestran con ubicación aproximada por comuna hasta cargar latitud y longitud en Airtable.</span>
+      <span>${conPin} propiedades listas para mapa. El sitio puede calcular pines automáticamente desde Dirección pública usando Google Maps.</span>
     </div>
   </div>`;
 }
