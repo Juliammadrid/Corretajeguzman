@@ -7,6 +7,10 @@
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
 
+  const style = document.createElement('style');
+  style.textContent = '.dbanner{display:none!important}';
+  document.head.appendChild(style);
+
   function priceText(p) {
     if (p.currency === 'UF') return 'UF ' + nf.format(p.priceValue);
     return '$' + nf.format(p.priceValue);
@@ -135,17 +139,9 @@
     return CFG;
   }
 
-  function banner(live, n) {
-    const b = document.getElementById('dbanner'); if (!b) return;
-    const t = document.getElementById('dbannerTxt');
-    if (live) {
-      b.classList.add('live');
-      const ic = b.querySelector('.ico'); if (ic) ic.setAttribute('data-lucide', 'check-circle');
-      const hasRentando = Array.isArray(window.GUZMAN_RENTANDO) && window.GUZMAN_RENTANDO.some(p => p && p.activa !== false);
-      t.textContent = `Conectado a Airtable${hasRentando ? ' + Rentando' : ''} · ${n} propiedad${n === 1 ? '' : 'es'} en vivo`;
-    } else {
-      t.textContent = 'Vista previa con datos de ejemplo · conecta tu Airtable para ver tus propiedades en vivo';
-    }
+  function banner() {
+    const b = document.getElementById('dbanner');
+    if (b) b.style.display = 'none';
   }
 
   window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, loadConfig, loadProperties, loadReviews, banner };
