@@ -54,6 +54,12 @@
   to = "/.netlify/functions/lead-propietario"
   status = 200
 
+# Administración de propiedades
+[[redirects]]
+  from = "/api/lead-administracion"
+  to = "/.netlify/functions/lead-administracion"
+  status = 200
+
 # Postulación de corredores (Sé corredor)
 [[redirects]]
   from = "/api/lead-corredor"
