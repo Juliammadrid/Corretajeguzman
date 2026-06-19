@@ -1,5 +1,5 @@
 /* ============================================================
-   Corretaje Guzmán — Home
+   Corretaje Guzman — Home
    ============================================================ */
 const FICHA_URL = "Ficha Propiedad - Corretaje Guzman v2.html";
 const $ = (s) => document.querySelector(s);
@@ -7,15 +7,45 @@ const el = (t, c, h) => { const e = document.createElement(t); if (c) e.classNam
 
 let ALL = [], filterOp = 'todos', view = 'lista', gmap = null, markers = [];
 
+const COMMUNE_COORDS = {
+  santiago: [-33.4489, -70.6693],
+  'santiago centro': [-33.4489, -70.6693],
+  nunoa: [-33.4569, -70.5986],
+  'ñuñoa': [-33.4569, -70.5986],
+  providencia: [-33.4314, -70.6093],
+  'las condes': [-33.4088, -70.5671],
+  'la reina': [-33.4469, -70.5340],
+  macul: [-33.4866, -70.5992],
+  'san miguel': [-33.5008, -70.6510],
+  'estacion central': [-33.4622, -70.6985],
+  'estación central': [-33.4622, -70.6985],
+  'quinta normal': [-33.4284, -70.6992],
+  maipu: [-33.5100, -70.7569],
+  'maipú': [-33.5100, -70.7569],
+  'puente alto': [-33.6117, -70.5758],
+  buin: [-33.7306, -70.7428],
+  curacavi: [-33.4007, -71.1276],
+  curacavi: [-33.4007, -71.1276],
+  villarica: [-39.2857, -72.2279],
+  villarrica: [-39.2857, -72.2279]
+};
+
 async function init() {
   await GZ.loadConfig();
   const { data, live } = await GZ.loadProperties();
   ALL = data;
   GZ.banner(live, data.length);
+  cleanHeroStats();
   stats();
   renderReviews(await GZ.loadReviews());
   render(); bind();
   if (window.lucide) lucide.createIcons();
+}
+
+function cleanHeroStats() {
+  const statsBox = document.querySelector('.hero-stats');
+  if (statsBox) statsBox.removeAttribute('style');
+  document.querySelectorAll('.hero-stats [style]').forEach(n => n.removeAttribute('style'));
 }
 
 function stats() {
@@ -24,6 +54,23 @@ function stats() {
   $('#stVen').textContent = ALL.filter(p => p.operation === 'venta').length;
 }
 function heroBg() { /* el fondo del hero es el departamento (CSS); no se sobreescribe */ }
+
+function normText(v) {
+  return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+function coordsFor(p, index) {
+  if (p.latitude != null && p.longitude != null) return { lat: +p.latitude, lng: +p.longitude, exact: true };
+  const key = normText(p.commune || p.address || 'santiago');
+  let pair = COMMUNE_COORDS[key];
+  if (!pair) {
+    const found = Object.keys(COMMUNE_COORDS).find(k => key.includes(k) || k.includes(key));
+    pair = found ? COMMUNE_COORDS[found] : COMMUNE_COORDS.santiago;
+  }
+  const spread = 0.012;
+  const angle = (index * 137.5) * Math.PI / 180;
+  const radius = spread * (0.35 + (index % 7) / 8);
+  return { lat: pair[0] + Math.sin(angle) * radius, lng: pair[1] + Math.cos(angle) * radius, exact: false };
+}
 
 function matches(p) {
   if (filterOp !== 'todos' && p.operation !== filterOp) return false;
@@ -57,6 +104,17 @@ function card(p) {
     </div>`;
   return a;
 }
+function compactCard(p) {
+  const a = el('a', 'pcardm map-compact');
+  a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id);
+  a.innerHTML = `
+    <div class="bd">
+      <div class="pr">${GZ.priceHTML(p)}</div>
+      <div class="ti">${p.title}</div>
+      <div class="ad"><i data-lucide="map-pin" class="ico"></i>${p.address || p.commune || ''}</div>
+    </div>`;
+  return a;
+}
 
 function render() {
   const list = ALL.filter(matches);
@@ -70,7 +128,9 @@ function render() {
     else list.forEach(p => grid.appendChild(card(p)));
   } else {
     const ml = $('#mapList'); ml.innerHTML = '';
-    list.forEach(p => ml.appendChild(card(p)));
+    const side = list.slice(0, 12);
+    side.forEach(p => ml.appendChild(compactCard(p)));
+    if (list.length > side.length) ml.appendChild(el('div', 'empty', `Mostrando ${side.length} de ${list.length}. Usa filtros para acotar la búsqueda.`));
     $('#mapCount').textContent = `${list.length} propiedad${list.length === 1 ? '' : 'es'}`;
     drawMap(list);
   }
@@ -95,11 +155,12 @@ function drawMap(list) {
     }
     markers.forEach(m => m.setMap(null)); markers = [];
     const bounds = new google.maps.LatLngBounds();
-    list.forEach(p => {
-      if (p.latitude == null || p.longitude == null) return;
-      const pos = { lat: +p.latitude, lng: +p.longitude };
-      const m = new google.maps.Marker({ position: pos, map: gmap, title: p.title, icon: PIN });
-      const iw = new google.maps.InfoWindow({ content: `<div style="font-family:sans-serif;max-width:200px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}">Ver ficha →</a></div>` });
+    list.forEach((p, i) => {
+      const c = coordsFor(p, i);
+      const pos = { lat: c.lat, lng: c.lng };
+      const m = new google.maps.Marker({ position: pos, map: gmap, title: p.title, icon: c.exact ? PIN : APPROX_PIN });
+      const precision = c.exact ? 'Ubicación exacta' : 'Ubicación aproximada por comuna';
+      const iw = new google.maps.InfoWindow({ content: `<div style="font-family:sans-serif;max-width:220px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><small style="color:#6b6280">${precision}</small><br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}" style="color:#7c3aed;font-weight:700">Ver ficha →</a></div>` });
       m.addListener('click', () => iw.open(gmap, m));
       markers.push(m); bounds.extend(pos);
     });
@@ -107,13 +168,13 @@ function drawMap(list) {
   });
 }
 function placeholderMap(list) {
-  const conPin = list.filter(p => p.latitude != null).length;
+  const conPin = list.length;
   return `<div class="map-ph">
     <div class="map-ph-grid"></div>
     <div class="map-ph-card">
       <i data-lucide="map" class="ico" style="width:34px;height:34px"></i>
       <b>Vista de mapa</b>
-      <span>${conPin} de ${list.length} propiedades con ubicación exacta. Activa tu <b>Google Maps API key</b> (restringida por dominio) para ver los pines en vivo.</span>
+      <span>${conPin} propiedades listas para mapa. Algunas se muestran con ubicación aproximada por comuna hasta cargar latitud y longitud en Airtable.</span>
     </div>
   </div>`;
 }
@@ -121,6 +182,7 @@ const PIN = {
   path: "M12 0C6.5 0 2 4.5 2 10c0 7 10 16 10 16s10-9 10-16C22 4.5 17.5 0 12 0z",
   fillColor: "#7c3aed", fillOpacity: 1, strokeColor: "#ffffff", strokeWeight: 2, scale: 1.3, anchor: { x: 12, y: 26 }
 };
+const APPROX_PIN = { ...PIN, fillColor: '#9b7cf0', fillOpacity: .9 };
 const MAP_STYLE = [{ featureType: "poi", stylers: [{ visibility: "off" }] }, { featureType: "transit", stylers: [{ visibility: "simplified" }] }];
 
 /* ---------- reseñas ---------- */
@@ -139,7 +201,6 @@ function renderReviews(list) {
         <span class="rv-src"><i data-lucide="facebook" class="ico" style="width:14px;height:14px"></i>Facebook</span>
       </div>`));
   });
-  // dots / carrusel
   const dotsWrap = $('#reviewsDots');
   if (dotsWrap) {
     dotsWrap.innerHTML = '';
