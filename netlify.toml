@@ -1,0 +1,65 @@
+# ============================================================
+#  Netlify · Corretaje Guzmán (preview)
+#  Sitio estático + funciones serverless. No requiere build.
+# ============================================================
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+# Página de inicio
+[[redirects]]
+  from = "/"
+  to = "/Home - Corretaje Guzman.html"
+  status = 200
+
+# API (las funciones leen Airtable con la API key del entorno)
+[[redirects]]
+  from = "/api/properties"
+  to = "/.netlify/functions/properties"
+  status = 200
+[[redirects]]
+  from = "/api/properties/rent"
+  to = "/.netlify/functions/properties?type=rent"
+  status = 200
+[[redirects]]
+  from = "/api/properties/sale"
+  to = "/.netlify/functions/properties?type=sale"
+  status = 200
+[[redirects]]
+  from = "/api/home-properties"
+  to = "/.netlify/functions/properties?featured=1"
+  status = 200
+[[redirects]]
+  from = "/api/property/:id"
+  to = "/.netlify/functions/properties?id=:id"
+  status = 200
+[[redirects]]
+  from = "/api/reviews"
+  to = "/.netlify/functions/reviews"
+  status = 200
+[[redirects]]
+  from = "/api/config"
+  to = "/.netlify/functions/config"
+  status = 200
+
+# Formulario de arriendo (guarda la solicitud en Airtable)
+[[redirects]]
+  from = "/api/lead-arriendo"
+  to = "/.netlify/functions/lead-arriendo"
+  status = 200
+
+# Captación de propietarios (Quiero arrendar mi propiedad)
+[[redirects]]
+  from = "/api/lead-propietario"
+  to = "/.netlify/functions/lead-propietario"
+  status = 200
+
+# Postulación de corredores (Sé corredor)
+[[redirects]]
+  from = "/api/lead-corredor"
+  to = "/.netlify/functions/lead-corredor"
+  status = 200
+
+# Sincronización diaria con Rentando (empresa aliada)
+[functions."sync-rentando"]
+  schedule = "0 9 * * *"

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administración de Propiedades · Corretaje Guzmán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
+  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
+  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--dark-2:#1d1630;--wa:#1faf54;
+  --green:#2f7d52;--green-tint:#e7f3ec;
+  --radius:16px;--radius-sm:11px;
+  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
+  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
+  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1180px;--navh:76px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.ico{width:20px;height:20px;stroke-width:1.85}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-violet{background:var(--violet);color:#fff;padding:13px 22px;font-size:15px;box-shadow:var(--shadow-violet)}
+.btn-violet:hover{background:var(--violet-d)}
+.btn-light{background:#fff;color:var(--violet-dd);padding:13px 22px;font-size:15px;font-weight:700}
+.btn-light:hover{background:var(--violet-tint)}
+.btn-ghost{border:1px solid rgba(255,255,255,.25);color:#fff;padding:13px 20px;font-size:15px}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--violet)}
+
+/* NAV */
+header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:26px;height:var(--navh);max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.nav-inner .logo{height:32px;width:auto}
+.nav-links{display:flex;gap:24px;margin-left:6px}
+.nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
+.nav-right .tel .ico{color:var(--violet)}
+.nav-burger{display:none;color:#fff;width:42px;height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center}
+
+/* HERO */
+.hero{position:relative;background:#160c2c;color:#fff;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:url('assets/admin-hero.png');background-size:cover;background-position:center bottom;z-index:0}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,rgba(22,12,44,.93) 0%,rgba(34,18,72,.82) 34%,rgba(58,26,120,.45) 64%,rgba(124,58,237,.12) 100%);z-index:1}
+.hero-grid{display:grid;grid-template-columns:1.08fr 0.92fr;gap:46px;align-items:center;max-width:var(--maxw);margin:0 auto;padding:58px 26px 64px;position:relative;z-index:2}
+.hero .he-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:8px 15px;border-radius:50px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#ede6fc}
+.hero .he-eyebrow .ico{width:15px;height:15px}
+.hero h1{font-size:46px;font-weight:700;line-height:1.05;margin-top:18px}
+.hero h1 .u{background:linear-gradient(transparent 62%,rgba(255,255,255,.22) 62%)}
+.hero p.lead{font-size:18px;color:rgba(255,255,255,.88);max-width:52ch;margin-top:16px;line-height:1.55}
+.hero-cta{display:flex;gap:13px;margin-top:28px;flex-wrap:wrap}
+.hero-trust{display:flex;gap:24px;margin-top:30px;flex-wrap:wrap}
+.hero-trust .t{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:rgba(255,255,255,.9)}
+.hero-trust .t .ico{width:18px;height:18px;color:#d8c9fa}
+
+/* PRICE card hero */
+.price-card{background:var(--surface);border-radius:24px;box-shadow:0 30px 70px rgba(20,15,30,.42);padding:34px 32px;color:var(--ink);text-align:center;position:relative}
+.price-card .pc-tag{display:inline-flex;align-items:center;gap:7px;background:var(--violet-tint);color:var(--violet-dd);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:7px 14px;border-radius:50px}
+.price-card .pc-tag .ico{width:14px;height:14px}
+.price-card .pc-num{font-family:'Sora';font-weight:800;font-size:78px;line-height:1;margin:18px 0 2px;background:linear-gradient(120deg,var(--violet),var(--violet-dd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.price-card .pc-sub{font-size:16px;color:var(--ink-2);font-weight:600}
+.price-card .pc-desc{font-size:14px;color:var(--ink-3);margin-top:10px;line-height:1.5}
+.price-card .pc-list{text-align:left;display:flex;flex-direction:column;gap:11px;margin:22px 0 24px;padding-top:22px;border-top:1px solid var(--line)}
+.price-card .pc-list .l{display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:500;color:var(--ink)}
+.price-card .pc-list .l .ic{width:22px;height:22px;border-radius:50%;background:var(--green-tint);color:var(--green);display:grid;place-items:center;flex:none}
+.price-card .pc-list .l .ic .ico{width:13px;height:13px}
+.price-card .btn-violet{width:100%;padding:15px;font-size:15.5px}
+.price-card .pc-note{font-size:12px;color:var(--ink-3);margin-top:11px}
+
+/* price tiers */
+.tiers{display:flex;flex-direction:column;gap:12px;margin:18px 0 22px}
+.tier{border:1px solid var(--line);border-radius:15px;padding:18px 18px;text-align:left}
+.tier.hi{border-color:var(--violet-tint-2);background:var(--violet-tint)}
+.tier-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tier-name{font-family:'Sora';font-weight:700;font-size:15px;color:var(--ink)}
+.tier-pill{font-size:11px;font-weight:700;letter-spacing:.02em;color:var(--violet-dd);background:#fff;border:1px solid var(--violet-tint-2);padding:4px 10px;border-radius:50px}
+.tier.hi .tier-pill{background:#fff}
+.tier-num{font-family:'Sora';font-weight:800;font-size:38px;line-height:1.05;margin-top:8px;background:linear-gradient(120deg,var(--violet),var(--violet-dd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tier-num span{font-family:'Hanken Grotesk';font-weight:600;font-size:14px;color:var(--ink-3);-webkit-text-fill-color:var(--ink-3);margin-left:7px}
+.tier-desc{font-size:13px;color:var(--ink-2);margin-top:7px;line-height:1.5}
+
+/* income card (hero — tranquilidad) */
+.income-card{background:var(--surface);border-radius:24px;box-shadow:0 30px 70px rgba(20,15,30,.42);padding:24px 22px;color:var(--ink)}
+.ic-head{display:flex;justify-content:center;margin-bottom:16px}
+.ic-badge{display:inline-flex;align-items:center;gap:7px;background:var(--green-tint);color:var(--green);font-size:12px;font-weight:700;padding:7px 13px;border-radius:50px}
+.ic-badge .ico{width:14px;height:14px}
+.ic-notif{display:flex;align-items:center;gap:13px;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;border-radius:16px;padding:17px 18px;box-shadow:var(--shadow-violet)}
+.ic-av{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.ic-av .ico{width:22px;height:22px}
+.ic-tx{flex:1;min-width:0}
+.ic-tx b{font-size:15.5px;font-weight:700;display:block}
+.ic-tx span{font-size:12.5px;color:rgba(255,255,255,.8)}
+.ic-amt{font-family:'Sora';font-weight:800;font-size:21px;white-space:nowrap}
+.ic-list{display:flex;flex-direction:column;gap:11px;margin:20px 4px}
+.ic-row span{display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:500;color:var(--ink)}
+.ic-row span .ico{width:20px;height:20px;padding:4px;border-radius:50%;background:var(--green-tint);color:var(--green);flex:none;stroke-width:3}
+.ic-months{border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ic-mlabel{font-size:12.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+.ic-chips{display:flex;gap:7px}
+.mchip{display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--line);color:var(--ink-2);font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:50px}
+.mchip .ico{width:12px;height:12px;color:var(--green);stroke-width:3}
+.mchip.on{background:var(--violet-tint);border-color:var(--violet-tint-2);color:var(--violet-dd)}
+.mchip.on .ico{color:var(--violet)}
+
+/* PRICING (tarifas) */
+.pricing{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:880px;margin:0 auto}
+.pcard{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:30px 28px;display:flex;flex-direction:column}
+.pcard.feat{border-color:var(--violet-tint-2);box-shadow:var(--shadow-md)}
+.pcard .pc-badge{position:absolute;top:-13px;left:28px;background:var(--violet);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:7px 14px;border-radius:50px;box-shadow:var(--shadow-violet)}
+.pcard .pc-name{font-family:'Sora';font-weight:700;font-size:19px}
+.pcard .pc-cond{font-size:13.5px;color:var(--ink-3);font-weight:600;margin-top:4px}
+.pcard .pc-price{font-family:'Sora';font-weight:800;font-size:44px;line-height:1;margin:18px 0 2px;background:linear-gradient(120deg,var(--violet),var(--violet-dd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pcard .pc-price span{font-family:'Hanken Grotesk';font-weight:600;font-size:15px;color:var(--ink-3);-webkit-text-fill-color:var(--ink-3);margin-left:7px}
+.pcard .pc-txt{font-size:14px;color:var(--ink-2);line-height:1.55;margin-top:10px;flex:1}
+.pcard .btn{margin-top:22px;width:100%;padding:14px;font-size:15px}
+.pcard.feat .btn{}
+.pcard:not(.feat) .btn{background:var(--violet-tint);color:var(--violet-dd);box-shadow:none}
+.pcard:not(.feat) .btn:hover{background:var(--violet-tint-2)}
+
+/* SECTION base */
+.section{padding:72px 0}
+.section .head{text-align:center;max-width:740px;margin:0 auto 46px}
+.section .head h2{font-size:33px;font-weight:700;margin-top:10px;line-height:1.1}
+.section .head p{font-size:17px;color:var(--ink-2);margin-top:12px;line-height:1.55}
+
+/* SERVICES grid */
+.svc{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.svc .s{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 24px;transition:transform .15s,box-shadow .15s}
+.svc .s:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.svc .s .ic{width:50px;height:50px;border-radius:14px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin-bottom:17px}
+.svc .s .ic .ico{width:25px;height:25px}
+.svc .s h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.svc .s p{font-size:14.5px;color:var(--ink-2);line-height:1.55}
+
+/* HOW steps (vertical timeline) */
+.how{background:var(--surface)}
+.steps{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+.step{display:flex;gap:20px;align-items:flex-start;padding:18px 0}
+.step .num{width:46px;height:46px;border-radius:50%;background:var(--violet);color:#fff;font-family:'Sora';font-weight:700;font-size:18px;display:grid;place-items:center;flex:none;box-shadow:var(--shadow-violet)}
+.step .tx h3{font-size:18px;font-weight:700;margin-bottom:5px}
+.step .tx p{font-size:15px;color:var(--ink-2);line-height:1.55}
+.step:not(:last-child) .num{position:relative}
+.step:not(:last-child) .num::after{content:"";position:absolute;top:54px;left:50%;transform:translateX(-50%);width:2px;height:40px;background:var(--violet-tint-2)}
+
+/* COMPARISON */
+.cmp-sec{background:linear-gradient(180deg,var(--dark),var(--dark-2));color:#fff}
+.cmp-sec .head h2{color:#fff}.cmp-sec .head p{color:rgba(255,255,255,.72)}.cmp-sec .head .eyebrow{color:#c8b3f7}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px;margin:0 auto}
+.cmp .c{border-radius:20px;padding:30px 30px;border:1px solid rgba(255,255,255,.12)}
+.cmp .c.solo{background:rgba(255,255,255,.035)}
+.cmp .c.guz{background:linear-gradient(160deg,rgba(124,58,237,.28),rgba(124,58,237,.06));border-color:rgba(168,120,255,.4);box-shadow:0 20px 50px rgba(124,58,237,.22)}
+.cmp .c h3{font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.cmp .c h3 .ico{width:22px;height:22px}
+.cmp .c.solo h3{color:rgba(255,255,255,.8)}
+.cmp .c .row{display:flex;align-items:flex-start;gap:11px;font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,.08);line-height:1.45}
+.cmp .c .row:first-of-type{border-top:none}
+.cmp .c .row .ic{width:21px;height:21px;border-radius:50%;flex:none;display:grid;place-items:center;margin-top:1px}
+.cmp .c.solo .row{color:rgba(255,255,255,.66)}
+.cmp .c.solo .row .ic{background:rgba(255,255,255,.1);color:#e0879f}
+.cmp .c.guz .row{color:rgba(255,255,255,.95)}
+.cmp .c.guz .row .ic{background:var(--violet);color:#fff}
+.cmp .c .ic .ico{width:13px;height:13px}
+
+/* TRUST numbers */
+.trust-sec{background:var(--surface)}
+.tg{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;align-items:start}
+.tg .t b{font-family:'Sora';font-weight:700;font-size:40px;color:var(--violet-d);display:flex;align-items:center;justify-content:center;min-height:50px;line-height:1.05}
+.tg .t span{font-size:14.5px;color:var(--ink-2);font-weight:500;margin-top:8px;display:block}
+
+/* FORM */
+.formsec{background:var(--bg)}
+.form-shell{display:grid;grid-template-columns:0.85fr 1.15fr;gap:44px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow-md)}
+.form-aside{background:linear-gradient(160deg,var(--violet-dd),var(--violet));color:#fff;padding:40px 36px;height:100%}
+.form-aside h2{font-size:28px;font-weight:700;line-height:1.1}
+.form-aside p{font-size:15.5px;color:rgba(255,255,255,.86);margin-top:14px;line-height:1.6}
+.form-aside .pts{display:flex;flex-direction:column;gap:16px;margin-top:28px}
+.form-aside .pts .pt{display:flex;align-items:flex-start;gap:13px;font-size:15px;color:rgba(255,255,255,.95)}
+.form-aside .pts .pt .ic{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
+.form-aside .pts .pt .ic .ico{width:18px;height:18px}
+.form-aside .ag{display:flex;align-items:center;gap:13px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.18)}
+.form-aside .ag .av{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-family:'Sora';font-weight:700;font-size:18px;flex:none}
+.form-aside .ag .nm b{font-size:15px;display:block}
+.form-aside .ag .nm span{font-size:13px;color:rgba(255,255,255,.75)}
+.form-main{padding:40px 38px 38px}
+.form-step{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--violet);margin:22px 0 14px}
+.form-step:first-child{margin-top:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1 / -1}
+.field label{font-size:13px;font-weight:600;color:var(--ink-2)}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:11px;padding:13px 14px;font-size:15px;font-family:inherit;background:var(--surface);color:var(--ink);transition:border .15s,box-shadow .15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-tint)}
+.field textarea{resize:vertical;min-height:84px}
+.field.err input,.field.err select{border-color:#e0518a;box-shadow:0 0 0 3px rgba(224,81,138,.12)}
+.field .errmsg{display:none;font-size:12px;color:#cf3d77;font-weight:600}
+.field.err .errmsg{display:block}
+.inp-prefix{position:relative}
+.inp-prefix .px{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:700;color:var(--ink-2);padding-right:9px;border-right:1px solid var(--line)}
+.inp-prefix input{padding-left:60px}
+.inp-prefix.peso input{padding-left:34px}
+.inp-prefix.peso .px{border-right:none;padding-right:0}
+.accept{display:flex;align-items:flex-start;gap:12px;margin-top:20px;padding:15px 16px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;transition:all .15s}
+.accept:hover{border-color:var(--violet)}
+.accept.err{border-color:#e0518a}
+.accept:has(input:checked){border-color:var(--violet);background:var(--violet-tint)}
+.accept input{position:absolute;opacity:0}
+.accept .bx{width:23px;height:23px;border-radius:7px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;color:#fff;margin-top:1px;transition:all .15s}
+.accept .bx .ico{width:14px;height:14px;opacity:0}
+.accept:has(input:checked) .bx{background:var(--violet);border-color:var(--violet)}
+.accept:has(input:checked) .bx .ico{opacity:1}
+.accept span{font-size:14px;color:var(--ink-2)}
+.form-main .btn-violet{width:100%;padding:16px;font-size:16px;margin-top:20px}
+.form-ok{display:none;flex-direction:column;align-items:center;text-align:center;padding:50px 30px;gap:8px}
+.form-ok.show{display:flex}
+.form-ok .ck{width:74px;height:74px;border-radius:50%;background:var(--violet-tint);color:var(--violet);display:grid;place-items:center;margin-bottom:12px}
+.form-ok .ck .ico{width:38px;height:38px}
+.form-ok h3{font-size:24px;font-weight:700}
+.form-ok p{font-size:15.5px;color:var(--ink-2);max-width:48ch;line-height:1.6;margin-top:4px}
+
+/* FAQ */
+.faq{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:box-shadow .15s}
+.qa.open{box-shadow:var(--shadow-sm)}
+.qa .q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:19px 22px;font-size:16px;font-weight:600;color:var(--ink);text-align:left}
+.qa .q .ico{width:20px;height:20px;color:var(--violet-d);flex:none;transition:transform .2s}
+.qa.open .q .ico{transform:rotate(45deg)}
+.qa .a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.qa .a p{padding:0 22px 19px;font-size:14.5px;color:var(--ink-2);line-height:1.6}
+
+/* FOOTER */
+footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px}
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 26px 40px;display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px}
+.foot-grid .logo{height:34px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78)}.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{max-width:var(--maxw);margin:0 auto;padding:24px 26px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+@media(max-width:980px){
+  .nav-links,.nav-right .tel{display:none}.nav-burger{display:grid}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .svc{grid-template-columns:1fr 1fr}
+  .cmp{grid-template-columns:1fr}
+  .tg{grid-template-columns:1fr 1fr}
+  .form-shell{grid-template-columns:1fr}
+  .form-aside{padding:32px 28px}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+}
+@media(max-width:680px){
+  .wrap{padding:0 18px}
+  .hero h1{font-size:32px}.hero-grid{padding:42px 18px 48px}
+  .price-card .pc-num{font-size:64px}
+  .section{padding:54px 0}.section .head h2{font-size:27px}
+  .svc{grid-template-columns:1fr}
+  .pricing{grid-template-columns:1fr;gap:26px}
+  .tg{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .form-main{padding:30px 22px}
+  .nav-inner{padding:0 16px}
+}
+
+/* nav móvil — WhatsApp dentro del menú (igual al Home) */
+.nav-wa-full{display:inline-flex}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:69;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+@media(max-width:980px){.nav-wa-full{display:none}.nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="Home - Corretaje Guzman.html"><img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <nav class="nav-links">
+      <a href="Arriendos - Corretaje Guzman.html">Arrendar</a>
+      <a href="Ventas - Corretaje Guzman.html">Comprar</a>
+      <a href="Parcelas - Corretaje Guzman.html">Parcelas</a>
+      <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm0 21.82c-1.78 0-3.53-.48-5.06-1.38l-.36-.21-3.67.96.98-3.58-.24-.37A9.8 9.8 0 1 1 12 21.82zm5.37-7.35c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menú"><i data-lucide="menu" class="ico"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="Arriendos - Corretaje Guzman.html">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Ventas - Corretaje Guzman.html">Comprar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Parcelas - Corretaje Guzman.html">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a class="mm-wa" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <span class="he-eyebrow"><i data-lucide="shield-check" class="ico"></i>Administración de propiedades</span>
+      <h1>Recibe tu arriendo cada mes, <span class="u">sin preocuparte de nada</span></h1>
+      <p class="lead">Nosotros cobramos, gestionamos los gastos y servicios, coordinamos mantenciones y te transferimos tu renta puntualmente. Tú solo revisas tu cuenta y tu reporte. Así de tranquilo.</p>
+      <div class="hero-cta">
+        <a class="btn btn-light" href="#formulario"><i data-lucide="building" class="ico"></i>Quiero administrar mi propiedad</a>
+        <a class="btn btn-ghost" href="#servicios">Ver qué incluye</a>
+      </div>
+      <div class="hero-trust">
+        <div class="t"><i data-lucide="calendar-check-2" class="ico"></i>Depósito puntual de tu renta</div>
+        <div class="t"><i data-lucide="file-text" class="ico"></i>Reporte mensual claro</div>
+        <div class="t"><i data-lucide="scale" class="ico"></i>Respaldo legal</div>
+      </div>
+    </div>
+    <!-- income card (tranquilidad: tu renta llega) -->
+    <div class="income-card">
+      <div class="ic-head">
+        <span class="ic-badge"><i data-lucide="shield-check" class="ico"></i>Administrado por Corretaje Guzmán</span>
+      </div>
+      <div class="ic-notif">
+        <div class="ic-av"><i data-lucide="arrow-down-left" class="ico"></i></div>
+        <div class="ic-tx"><b>Arriendo depositado</b><span>Transferido a tu cuenta · Junio 2026</span></div>
+        <div class="ic-amt">+$650.000</div>
+      </div>
+      <div class="ic-list">
+        <div class="ic-row"><span><i data-lucide="check" class="ico"></i>Arriendo recaudado a tiempo</span></div>
+        <div class="ic-row"><span><i data-lucide="check" class="ico"></i>Gastos comunes y cuentas al día</span></div>
+        <div class="ic-row"><span><i data-lucide="check" class="ico"></i>Cartola enviada a tu correo</span></div>
+      </div>
+      <div class="ic-months">
+        <span class="ic-mlabel">Depositado puntual</span>
+        <div class="ic-chips">
+          <span class="mchip"><i data-lucide="check" class="ico"></i>Abr</span>
+          <span class="mchip"><i data-lucide="check" class="ico"></i>May</span>
+          <span class="mchip on"><i data-lucide="check" class="ico"></i>Jun</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section" id="servicios">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Qué incluye</span>
+      <h2>Administramos cada detalle por ti</h2>
+      <p>Desde el cobro del arriendo hasta la renovación del contrato, nos encargamos de toda la gestión para que arrendar sea simple y rentable.</p>
+    </div>
+    <div class="svc">
+      <div class="s"><div class="ic"><i data-lucide="wallet" class="ico"></i></div><h3>Cobro del arriendo</h3><p>Gestionamos el cobro mensual y te transferimos tu renta puntualmente, con recordatorios automáticos al arrendatario.</p></div>
+      <div class="s"><div class="ic"><i data-lucide="receipt" class="ico"></i></div><h3>Gastos comunes y servicios</h3><p>Controlamos el pago de gastos comunes, contribuciones y cuentas asociadas a tu propiedad.</p></div>
+      <div class="s"><div class="ic"><i data-lucide="wrench" class="ico"></i></div><h3>Mantenciones y reparaciones</h3><p>Coordinamos a técnicos de confianza ante cualquier desperfecto, con tu autorización previa.</p></div>
+      <div class="s"><div class="ic"><i data-lucide="clipboard-check" class="ico"></i></div><h3>Inspecciones periódicas</h3><p>Visitamos la propiedad para verificar su buen estado y resguardar tu inversión.</p></div>
+      <div class="s"><div class="ic"><i data-lucide="file-text" class="ico"></i></div><h3>Reporte mensual</h3><p>Recibe una cartola clara con ingresos, egresos y el estado de tu propiedad cada mes.</p></div>
+      <div class="s"><div class="ic"><i data-lucide="scale" class="ico"></i></div><h3>Respaldo legal y cobranza</h3><p>Gestión de morosidad, renovación de contratos y asesoría legal cuando la necesites.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="section how">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Cómo funciona</span>
+      <h2>Empezar es muy simple</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="tx"><h3>Conversamos tu caso</h3><p>Nos cuentas sobre tu propiedad y resolvemos todas tus dudas sobre el servicio de administración.</p></div></div>
+      <div class="step"><div class="num">2</div><div class="tx"><h3>Firmamos el mandato</h3><p>Acordamos las condiciones y firmas el mandato de administración. Desde ahí, nos hacemos cargo.</p></div></div>
+      <div class="step"><div class="num">3</div><div class="tx"><h3>Gestionamos el arriendo</h3><p>Cobramos la renta, pagamos lo que corresponde y coordinamos cualquier requerimiento de la propiedad.</p></div></div>
+      <div class="step"><div class="num">4</div><div class="tx"><h3>Recibes tu renta y tu reporte</h3><p>Cada mes recibes tu pago y una cartola con el detalle. Tú tranquilo, nosotros administrando.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section cmp-sec">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">La diferencia</span>
+      <h2>Administrar solo vs. con Corretaje Guzmán</h2>
+      <p>Deja atrás las preocupaciones del día a día y la gestión de cobros.</p>
+    </div>
+    <div class="cmp">
+      <div class="c solo">
+        <h3><i data-lucide="user" class="ico"></i>Administrando por tu cuenta</h3>
+        <div class="row"><span class="ic"><i data-lucide="x" class="ico"></i></span>Persigues el pago del arriendo cada mes</div>
+        <div class="row"><span class="ic"><i data-lucide="x" class="ico"></i></span>Coordinas tú las reparaciones y técnicos</div>
+        <div class="row"><span class="ic"><i data-lucide="x" class="ico"></i></span>Llevas las cuentas y gastos comunes a mano</div>
+        <div class="row"><span class="ic"><i data-lucide="x" class="ico"></i></span>Enfrentas solo la morosidad y temas legales</div>
+        <div class="row"><span class="ic"><i data-lucide="x" class="ico"></i></span>Sin reportes ni respaldo profesional</div>
+      </div>
+      <div class="c guz">
+        <h3><img src="assets/guzman-logo.png" alt="" style="height:22px;width:auto"></h3>
+        <div class="row"><span class="ic"><i data-lucide="check" class="ico"></i></span>Cobramos y te transferimos tu renta a tiempo</div>
+        <div class="row"><span class="ic"><i data-lucide="check" class="ico"></i></span>Coordinamos mantenciones con técnicos de confianza</div>
+        <div class="row"><span class="ic"><i data-lucide="check" class="ico"></i></span>Gestionamos gastos comunes, servicios y cuentas</div>
+        <div class="row"><span class="ic"><i data-lucide="check" class="ico"></i></span>Respaldo legal y cobranza incluidos</div>
+        <div class="row"><span class="ic"><i data-lucide="check" class="ico"></i></span>Reporte mensual claro, con tarifas transparentes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="tarifas">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Tarifas</span>
+      <h2>Un precio claro, sin sorpresas</h2>
+      <p>Eliges el plan según el valor de arriendo de tu propiedad. Siempre transparente, siempre sin costos ocultos.</p>
+    </div>
+    <div class="pricing">
+      <div class="pcard">
+        <div class="pc-name">Plan Anual</div>
+        <div class="pc-cond">Arriendos de hasta $600.000 mensuales</div>
+        <div class="pc-price">$350.000<span>/ año</span></div>
+        <div class="pc-txt">Tarifa anual fija por administrar tu propiedad. Toda la gestión incluida: cobro, gastos, mantenciones, reportes y respaldo legal.</div>
+        <a class="btn btn-violet" href="#formulario"><i data-lucide="arrow-right" class="ico"></i>Quiero este plan</a>
+      </div>
+      <div class="pcard feat">
+        <span class="pc-badge">Mayor valor</span>
+        <div class="pc-name">Plan 7%</div>
+        <div class="pc-cond">Arriendos sobre $600.000 mensuales</div>
+        <div class="pc-price">7%<span>mensual</span></div>
+        <div class="pc-txt">Comisión mensual sobre el arriendo recaudado, para propiedades de mayor valor. Se cobra solo sobre lo efectivamente recaudado.</div>
+        <a class="btn btn-violet" href="#formulario"><i data-lucide="arrow-right" class="ico"></i>Quiero este plan</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="section trust-sec">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Confianza</span>
+      <h2>Propietarios tranquilos en todo Chile</h2>
+    </div>
+    <div class="tg">
+      <div class="t"><b>$350.000</b><span>Plan anual, arriendos hasta $600.000</span></div>
+      <div class="t"><b>7%</b><span>Mensual para propiedades de mayor valor</span></div>
+      <div class="t"><b>+500</b><span>Propiedades gestionadas</span></div>
+      <div class="t"><b>5.0★</b><span>Valoración de nuestros clientes</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="section formsec" id="formulario">
+  <div class="wrap">
+    <div class="form-shell">
+      <div class="form-aside">
+        <h2>Solicita la administración de tu propiedad</h2>
+        <p>Déjanos tus datos y un ejecutivo te contactará para explicarte el servicio y coordinar los siguientes pasos.</p>
+        <div class="pts">
+          <div class="pt"><span class="ic"><i data-lucide="percent" class="ico"></i></span>Desde $350.000 anual · o 7% mensual</div>
+          <div class="pt"><span class="ic"><i data-lucide="phone-call" class="ico"></i></span>Te contactamos el mismo día</div>
+          <div class="pt"><span class="ic"><i data-lucide="shield-check" class="ico"></i></span>Datos tratados con confidencialidad</div>
+        </div>
+        <div class="ag">
+          <div class="av">CG</div>
+          <div class="nm"><b>Equipo Corretaje Guzmán</b><span>Administración de propiedades</span></div>
+        </div>
+      </div>
+      <div class="form-main">
+        <form id="adminForm" novalidate>
+          <div class="form-step">Tus datos</div>
+          <div class="grid2">
+            <div class="field full"><label>Nombre y apellido</label><input type="text" name="nombre" placeholder="Ej: Patricia Soto" required><div class="errmsg">Ingresa tu nombre.</div></div>
+            <div class="field"><label>WhatsApp</label><div class="inp-prefix"><span class="px">+56</span><input type="tel" name="whatsapp" placeholder="9 1234 5678" required></div><div class="errmsg">Número inválido.</div></div>
+            <div class="field"><label>Correo electrónico</label><input type="email" name="email" placeholder="tucorreo@ejemplo.cl" required><div class="errmsg">Correo inválido.</div></div>
+          </div>
+
+          <div class="form-step">Tu propiedad</div>
+          <div class="grid2">
+            <div class="field"><label>Tipo de propiedad</label>
+              <select name="tipo" required>
+                <option value="" disabled selected>Selecciona…</option>
+                <option>Departamento</option><option>Casa</option><option>Estudio</option><option>Oficina</option><option>Local comercial</option><option>Parcela</option><option>Otro</option>
+              </select><div class="errmsg">Selecciona el tipo.</div>
+            </div>
+            <div class="field"><label>Comuna</label><input type="text" name="comuna" list="comunasRM" placeholder="Ej: Providencia" required><div class="errmsg">Indica la comuna.</div></div>
+            <div class="field"><label>¿Está arrendada hoy?</label>
+              <select name="estado_arriendo"><option value="" disabled selected>Selecciona…</option><option>Sí, está arrendada</option><option>No, está disponible</option><option>Se arrienda próximamente</option></select>
+            </div>
+            <div class="field"><label>Valor de arriendo <span style="color:var(--ink-3);font-weight:500">(opcional)</span></label><div class="inp-prefix peso"><span class="px">$</span><input type="text" inputmode="numeric" name="valor" id="valor" placeholder="650.000"></div></div>
+            <div class="field full"><label>¿Algo que debamos saber? <span style="color:var(--ink-3);font-weight:500">(opcional)</span></label><textarea name="mensaje" placeholder="Cuéntanos sobre tu propiedad o tus dudas…"></textarea></div>
+          </div>
+
+          <label class="accept" id="adminAccept">
+            <input type="checkbox" name="acepta" required>
+            <span class="bx"><i data-lucide="check" class="ico"></i></span>
+            <span>Autorizo a Corretaje Guzmán a contactarme para presentarme el servicio de administración de propiedades.</span>
+          </label>
+
+          <button type="submit" class="btn btn-violet"><i data-lucide="send" class="ico"></i>Solicitar administración</button>
+        </form>
+        <div class="form-ok" id="adminOk">
+          <div class="ck"><i data-lucide="check" class="ico"></i></div>
+          <h3>¡Solicitud recibida!</h3>
+          <p>Gracias por confiar en Corretaje Guzmán. Un ejecutivo te contactará hoy mismo para presentarte el servicio de administración y resolver tus dudas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2>Resolvemos tus dudas</h2>
+    </div>
+    <div class="faq" id="faq">
+      <div class="qa"><button class="q" type="button">¿Cuánto cuesta administrar mi propiedad?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Tenemos dos planes según el valor de tu arriendo. Para propiedades con arriendo de <strong>hasta $600.000 mensuales</strong>, una tarifa <strong>anual fija de $350.000</strong>. Para arriendos de <strong>mayor valor</strong>, una comisión del <strong>7% mensual</strong> sobre el arriendo recaudado. En ambos casos, sin costos ocultos.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Qué incluye el servicio de administración?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Incluye el cobro del arriendo, la gestión de gastos comunes y servicios, coordinación de mantenciones, inspecciones periódicas, reporte mensual y respaldo legal y de cobranza.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Puedo administrar una propiedad que ya está arrendada?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Sí. Podemos asumir la administración de propiedades ya arrendadas o disponibles. Coordinamos el traspaso de la gestión de forma simple.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Quién paga las reparaciones?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Las reparaciones que corresponden al propietario se realizan siempre con tu autorización previa. Nosotros coordinamos a los técnicos y supervisamos el trabajo.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Qué pasa si el arrendatario no paga?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Gestionamos la cobranza desde el primer día de atraso y te mantenemos informado. Si es necesario, te brindamos respaldo legal para resguardar tus intereses.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<datalist id="comunasRM"></datalist>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán">
+      <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+    </div>
+    <div>
+      <h4>Acceso rápido</h4>
+      <div class="foot-links"><a href="Arriendos - Corretaje Guzman.html">Arrendar</a><a href="Ventas - Corretaje Guzman.html">Comprar</a><a href="Parcelas - Corretaje Guzman.html">Parcelas</a><a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a><a href="Administracion de Propiedades - Corretaje Guzman.html">Administración de propiedades</a><a href="Se Corredor - Corretaje Guzman.html">Sé corredor</a><a href="Formulario de Arriendo - Corretaje Guzman.html">Formulario de arriendo</a></div>
+    </div>
+    <div>
+      <h4>Contacto y sucursales</h4>
+      <div class="foot-contact">
+        <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+        <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+        <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/corretaje_guzman/" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+        <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+        <a href="https://www.tiktok.com/@corretaje_guzman?_r=1&_t=ZS-97FUNwb0CKz" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="administracion.js"></script>
+<script>
+(function(){
+  var b=document.getElementById('navBurger'), mn=document.getElementById('mobileMenu');
+  if(b&&mn){
+    b.addEventListener('click',function(e){e.stopPropagation();mn.classList.toggle('open');});
+    document.addEventListener('click',function(e){if(!mn.contains(e.target)&&!b.contains(e.target))mn.classList.remove('open');});
+    mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mn.classList.remove('open');});});
+  }
+})();
+</script>
+</body>
+</html>

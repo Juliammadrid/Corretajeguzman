@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sé corredor de propiedades · Corretaje Guzmán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
+  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
+  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--dark-2:#1d1630;--wa:#1faf54;
+  --green:#2f9e5b;--green-tint:#e7f5ed;--red:#d9577f;
+  --radius:16px;--radius-sm:11px;
+  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
+  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
+  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1180px;--navh:76px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.ico{width:20px;height:20px;stroke-width:1.85}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-violet{background:var(--violet);color:#fff;padding:13px 22px;font-size:15px;box-shadow:var(--shadow-violet)}
+.btn-violet:hover{background:var(--violet-d)}
+.btn-light{background:#fff;color:var(--violet-dd);padding:13px 22px;font-size:15px;font-weight:700}
+.btn-light:hover{background:var(--violet-tint)}
+.btn-ghost{border:1px solid rgba(255,255,255,.25);color:#fff;padding:13px 20px;font-size:15px}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--violet)}
+
+/* NAV */
+header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:24px;height:var(--navh);max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.nav-inner .logo{height:32px;width:auto}
+.nav-links{display:flex;gap:23px;margin-left:6px}
+.nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
+.nav-right .tel .ico{color:var(--violet)}
+.nav-burger{display:none;color:#fff;width:42px;height:42px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center}
+
+/* HERO */
+.hero{position:relative;background:linear-gradient(118deg,#160c28 0%,#34187010 0%,#3a1a78 56%,#5b2bb0 100%);color:#fff;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-160px;right:-120px;width:620px;height:620px;border-radius:50%;background:radial-gradient(circle,rgba(176,132,255,.34),transparent 62%);z-index:0}
+.hero::after{content:"";position:absolute;left:-120px;bottom:-200px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 64%);z-index:0}
+.hero-grid{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:0 26px;display:grid;grid-template-columns:1.04fr .96fr;gap:24px;align-items:stretch}
+.hero-copy{align-self:center;padding:72px 0 78px;max-width:600px}
+.hero-photo{position:relative;align-self:end;display:flex;justify-content:center;align-items:flex-end;min-height:430px}
+.hero-photo .disc{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:118%;max-width:560px;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle at 50% 42%,rgba(201,176,245,.34),rgba(124,58,237,.12) 55%,transparent 72%)}
+.hero-photo .ph{position:relative;z-index:2;height:540px;width:auto;max-width:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 30px 46px rgba(20,12,40,.34))}
+.hero-photo .floatcard{position:absolute;z-index:3;background:rgba(255,255,255,.97);color:var(--ink);border-radius:14px;padding:12px 15px;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:11px}
+.hero-photo .floatcard .fi{width:38px;height:38px;border-radius:11px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;flex:none}
+.hero-photo .floatcard .fi .ico{width:20px;height:20px}
+.hero-photo .floatcard b{font-family:'Sora';font-size:16px;display:block;line-height:1.1}
+.hero-photo .floatcard span{font-size:11.5px;color:var(--ink-3);font-weight:600;white-space:nowrap}
+.hero-photo .fc-1{left:-14px;top:210px}
+.hero-photo .fc-2{right:-14px;bottom:96px}
+.hero .he-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:8px 15px;border-radius:50px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#ede6fc}
+.hero .he-eyebrow .ico{width:15px;height:15px}
+.hero h1{font-size:48px;font-weight:800;line-height:1.04;margin-top:18px}
+.hero h1 .u{color:#c9b8f5}
+.hero p.lead{font-size:18px;color:rgba(255,255,255,.88);max-width:50ch;margin-top:16px;line-height:1.55}
+.hero-cta{display:flex;gap:13px;margin-top:28px;flex-wrap:wrap}
+.hero-trust{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap}
+.hero-trust .t{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:rgba(255,255,255,.9)}
+.hero-trust .t .ico{width:18px;height:18px;color:#cbb6f7}
+
+/* SECTION base */
+.section{padding:72px 0}
+.section .head{text-align:center;max-width:720px;margin:0 auto 46px}
+.section .head h2{font-size:33px;font-weight:700;margin-top:10px;line-height:1.1}
+.section .head p{font-size:17px;color:var(--ink-2);margin-top:12px;line-height:1.55}
+
+/* VALUE props */
+.vprops{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.vprop{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px 22px;transition:transform .15s,box-shadow .15s}
+.vprop:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.vprop .ic{width:50px;height:50px;border-radius:14px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin-bottom:16px}
+.vprop .ic .ico{width:25px;height:25px}
+.vprop h3{font-size:17px;font-weight:700;margin-bottom:7px}
+.vprop p{font-size:14px;color:var(--ink-2);line-height:1.55}
+
+/* PLANS comparison */
+.plans-sec{background:linear-gradient(180deg,var(--dark),var(--dark-2));color:#fff}
+.plans-sec .head h2{color:#fff}.plans-sec .head p{color:rgba(255,255,255,.72)}.plans-sec .head .eyebrow{color:#c8b3f7}
+.cmp-table{max-width:940px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:22px;overflow:hidden}
+.cmp-row{display:grid;grid-template-columns:1.5fr 1fr 1.2fr;align-items:center}
+.cmp-row+.cmp-row{border-top:1px solid rgba(255,255,255,.09)}
+.cmp-row .cell{padding:17px 22px;font-size:15px}
+.cmp-row .feat{color:rgba(255,255,255,.88);font-weight:500}
+.cmp-row .val{text-align:center;display:flex;justify-content:center}
+.cmp-head{background:rgba(124,58,237,.12)}
+.cmp-head .cell{padding:24px 22px}
+.cmp-head .feat{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.plan-h{text-align:center}
+.plan-h .pn{font-family:'Sora';font-weight:800;font-size:26px;background:linear-gradient(120deg,#c9b8f5,#fff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.plan-h.prem{position:relative}
+.plan-h .pn.premn{background:linear-gradient(120deg,#b78bff,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent}
+.plan-h .pp{font-size:13px;color:rgba(255,255,255,.66);font-weight:600;margin-top:4px}
+.plan-h .pbadge{display:inline-block;background:var(--violet);color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:50px;margin-bottom:7px}
+.col-prem{background:rgba(124,58,237,.10);position:relative}
+.yes,.no{width:30px;height:30px;border-radius:9px;display:grid;place-items:center}
+.yes{background:var(--green-tint);color:var(--green)}
+.no{background:rgba(255,255,255,.07);color:var(--red)}
+.yes .ico,.no .ico{width:18px;height:18px;stroke-width:2.6}
+.cmp-foot{display:grid;grid-template-columns:1.5fr 1fr 1.2fr;border-top:1px solid rgba(255,255,255,.12)}
+.cmp-foot .cell{padding:22px}
+.cmp-foot .btn{width:100%}
+.cmp-foot .col-prem .btn{}
+.cmp-foot .btn-soft{background:rgba(255,255,255,.1);color:#fff}
+.cmp-foot .btn-soft:hover{background:rgba(255,255,255,.16)}
+.plans-note{text-align:center;color:rgba(255,255,255,.6);font-size:13.5px;margin-top:22px}
+
+/* STEPS */
+.how{background:var(--surface)}
+.steps{max-width:760px;margin:0 auto;display:flex;flex-direction:column}
+.step{display:flex;gap:20px;align-items:flex-start;padding:18px 0}
+.step .num{width:46px;height:46px;border-radius:50%;background:var(--violet);color:#fff;font-family:'Sora';font-weight:700;font-size:18px;display:grid;place-items:center;flex:none;box-shadow:var(--shadow-violet)}
+.step .tx h3{font-size:18px;font-weight:700;margin-bottom:5px}
+.step .tx p{font-size:15px;color:var(--ink-2);line-height:1.55}
+.step:not(:last-child) .num{position:relative}
+.step:not(:last-child) .num::after{content:"";position:absolute;top:54px;left:50%;transform:translateX(-50%);width:2px;height:38px;background:var(--violet-tint-2)}
+
+/* CTA / FORM */
+.formsec{background:var(--bg)}
+.form-shell{display:grid;grid-template-columns:0.85fr 1.15fr;gap:44px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow-md)}
+.form-aside{background:linear-gradient(160deg,var(--violet-dd),var(--violet));color:#fff;padding:40px 36px;height:100%}
+.form-aside h2{font-size:27px;font-weight:700;line-height:1.12}
+.form-aside p{font-size:15.5px;color:rgba(255,255,255,.86);margin-top:14px;line-height:1.6}
+.form-aside .pts{display:flex;flex-direction:column;gap:16px;margin-top:28px}
+.form-aside .pts .pt{display:flex;align-items:flex-start;gap:13px;font-size:15px;color:rgba(255,255,255,.95)}
+.form-aside .pts .pt .ic{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
+.form-aside .pts .pt .ic .ico{width:18px;height:18px}
+.form-main{padding:40px 38px 38px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1 / -1}
+.field label{font-size:13px;font-weight:600;color:var(--ink-2)}
+.field input,.field select{border:1px solid var(--line);border-radius:11px;padding:13px 14px;font-size:15px;font-family:inherit;background:var(--surface);color:var(--ink);transition:border .15s,box-shadow .15s;width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-tint)}
+.field.err input,.field.err select{border-color:#e0518a;box-shadow:0 0 0 3px rgba(224,81,138,.12)}
+.field .errmsg{display:none;font-size:12px;color:#cf3d77;font-weight:600}
+.field.err .errmsg{display:block}
+.inp-prefix{position:relative}
+.inp-prefix .px{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;font-weight:700;color:var(--ink-2);padding-right:9px;border-right:1px solid var(--line)}
+.inp-prefix input{padding-left:60px}
+.optset{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{position:relative;border:1px solid var(--line);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:11px;font-weight:600;font-size:14.5px;color:var(--ink-2)}
+.opt:hover{border-color:var(--violet)}
+.opt input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.opt .rb{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;transition:all .15s}
+.opt .rb::after{content:"";width:9px;height:9px;border-radius:50%;background:#fff;transform:scale(0);transition:transform .15s}
+.opt:has(input:checked){border-color:var(--violet);background:var(--violet-tint);color:var(--ink)}
+.opt:has(input:checked) .rb{border-color:var(--violet);background:var(--violet)}
+.opt:has(input:checked) .rb::after{transform:scale(1)}
+.opt .ico{width:18px;height:18px;color:var(--violet-d)}
+.accept{display:flex;align-items:flex-start;gap:12px;margin-top:20px;padding:15px 16px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;transition:all .15s}
+.accept:hover{border-color:var(--violet)}
+.accept.err{border-color:#e0518a}
+.accept:has(input:checked){border-color:var(--violet);background:var(--violet-tint)}
+.accept input{position:absolute;opacity:0}
+.accept .bx{width:23px;height:23px;border-radius:7px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;color:#fff;margin-top:1px;transition:all .15s}
+.accept .bx .ico{width:14px;height:14px;opacity:0}
+.accept:has(input:checked) .bx{background:var(--violet);border-color:var(--violet)}
+.accept:has(input:checked) .bx .ico{opacity:1}
+.accept span{font-size:14px;color:var(--ink-2)}
+.form-main .btn-violet{width:100%;padding:16px;font-size:16px;margin-top:20px}
+.form-ok{display:none;flex-direction:column;align-items:center;text-align:center;padding:50px 30px;gap:8px}
+.form-ok.show{display:flex}
+.form-ok .ck{width:74px;height:74px;border-radius:50%;background:var(--violet-tint);color:var(--violet);display:grid;place-items:center;margin-bottom:12px}
+.form-ok .ck .ico{width:38px;height:38px}
+.form-ok h3{font-size:24px;font-weight:700}
+.form-ok p{font-size:15.5px;color:var(--ink-2);max-width:48ch;line-height:1.6;margin-top:4px}
+
+/* FAQ */
+.faq{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.qa{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.qa .q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:19px 22px;font-size:16px;font-weight:600;color:var(--ink);text-align:left}
+.qa .q .ico{width:20px;height:20px;color:var(--violet-d);flex:none;transition:transform .2s}
+.qa.open .q .ico{transform:rotate(45deg)}
+.qa .a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.qa .a p{padding:0 22px 19px;font-size:14.5px;color:var(--ink-2);line-height:1.6}
+
+/* FOOTER */
+footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px}
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 26px 40px;display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px}
+.foot-grid .logo{height:34px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78)}.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{max-width:var(--maxw);margin:0 auto;padding:24px 26px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+@media(max-width:980px){
+  .nav-links,.nav-right .tel{display:none}.nav-burger{display:grid}
+  .hero-grid{grid-template-columns:1fr;gap:0}
+  .hero-copy{padding:64px 0 0;max-width:none;text-align:center;margin:0 auto}
+  .hero-copy .hero-cta,.hero-copy .hero-trust{justify-content:center}
+  .hero-photo{min-height:0;margin-top:24px}
+  .hero-photo .ph{height:440px}
+  .hero-photo .fc-1{left:0}
+  .hero-photo .fc-2{right:0}
+  .vprops{grid-template-columns:1fr 1fr}
+  .form-shell{grid-template-columns:1fr}
+  .form-aside{padding:32px 28px}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+}
+@media(max-width:680px){
+  .wrap{padding:0 18px}
+  .hero h1{font-size:33px}.hero-copy{padding:46px 0 0}
+  .hero-photo .ph{height:360px}
+  .hero-photo .floatcard{padding:9px 12px}
+  .hero-photo .floatcard b{font-size:14px}
+  .section{padding:54px 0}.section .head h2{font-size:27px}
+  .vprops{grid-template-columns:1fr}
+  .cmp-row,.cmp-foot{grid-template-columns:1.3fr .85fr .85fr}
+  .cmp-row .cell{padding:14px 12px;font-size:13.5px}
+  .plan-h .pn{font-size:19px}.plan-h .pp{font-size:11px}
+  .cmp-foot .cell{padding:14px 10px}
+  .grid2,.optset{grid-template-columns:1fr}
+  .form-main{padding:30px 22px}
+  .nav-inner{padding:0 16px}
+}
+
+/* nav móvil — WhatsApp dentro del menú (igual al Home) */
+.nav-wa-full{display:inline-flex}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:69;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+@media(max-width:980px){.nav-wa-full{display:none}.nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="Home - Corretaje Guzman.html"><img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <nav class="nav-links">
+      <a href="Arriendos - Corretaje Guzman.html">Arrendar</a>
+      <a href="Ventas - Corretaje Guzman.html">Comprar</a>
+      <a href="Parcelas - Corretaje Guzman.html">Parcelas</a>
+      <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm0 21.82c-1.78 0-3.53-.48-5.06-1.38l-.36-.21-3.67.96.98-3.58-.24-.37A9.8 9.8 0 1 1 12 21.82zm5.37-7.35c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menú"><i data-lucide="menu" class="ico"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="Arriendos - Corretaje Guzman.html">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Ventas - Corretaje Guzman.html">Comprar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Parcelas - Corretaje Guzman.html">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a class="mm-wa" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <span class="he-eyebrow"><i data-lucide="trending-up" class="ico"></i>Únete a nuestro equipo</span>
+      <h1>Conviértete en <span class="u">corredor de propiedades</span></h1>
+      <p class="lead">Genera ingresos mostrando y cerrando propiedades de nuestro catálogo. Tú pones las ganas, nosotros la cartera, el respaldo y las herramientas. Trabaja a tu ritmo y haz crecer tus ingresos.</p>
+      <div class="hero-cta">
+        <a class="btn btn-light" href="#planes"><i data-lucide="layers" class="ico"></i>Ver planes de membresía</a>
+        <a class="btn btn-ghost" href="#unirme">Quiero unirme</a>
+      </div>
+      <div class="hero-trust">
+        <div class="t"><i data-lucide="clock" class="ico"></i>Trabaja a tu ritmo</div>
+        <div class="t"><i data-lucide="wallet" class="ico"></i>Ingresos por visitas y cierres</div>
+        <div class="t"><i data-lucide="graduation-cap" class="ico"></i>Acompañamiento y respaldo</div>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <div class="disc"></div>
+      <div class="floatcard fc-1"><span class="fi"><i data-lucide="home" class="ico"></i></span><div><b>+500</b><span>Propiedades en cartera</span></div></div>
+      <div class="floatcard fc-2"><span class="fi"><i data-lucide="trending-up" class="ico"></i></span><div><b>Tus ingresos</b><span>Crecen contigo</span></div></div>
+      <img class="ph" src="assets/corredores.png" alt="Corredores de Corretaje Guzmán">
+    </div>
+  </div>
+</div>
+
+<!-- VALUE -->
+<section class="section">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Por qué con nosotros</span>
+      <h2>Una marca que trabaja contigo</h2>
+      <p>Te damos todo lo que necesitas para generar ingresos en el mundo inmobiliario, sin partir de cero.</p>
+    </div>
+    <div class="vprops">
+      <div class="vprop"><div class="ic"><i data-lucide="folder-open" class="ico"></i></div><h3>Cartera de propiedades</h3><p>Accede a propiedades reales en arriendo y venta para mostrar y cerrar desde el primer día.</p></div>
+      <div class="vprop"><div class="ic"><i data-lucide="banknote" class="ico"></i></div><h3>Ingresos por resultados</h3><p>Gana por las visitas que realizas y por cada arriendo o venta que ayudes a concretar.</p></div>
+      <div class="vprop"><div class="ic"><i data-lucide="megaphone" class="ico"></i></div><h3>Marca y marketing</h3><p>Te respaldamos con una marca consolidada, difusión y material profesional.</p></div>
+      <div class="vprop"><div class="ic"><i data-lucide="users" class="ico"></i></div><h3>Acompañamiento</h3><p>Te guiamos en el proceso: contratos, visitas y cierres con el respaldo de nuestro equipo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="section plans-sec" id="planes">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Planes de membresía</span>
+      <h2>Elige tu modalidad de trabajo</h2>
+      <p>Empieza gratis mostrando propiedades, o pásate a Premium para acceder a todo el catálogo y maximizar tus ingresos.</p>
+    </div>
+    <div class="cmp-table">
+      <div class="cmp-row cmp-head">
+        <div class="cell feat">Características</div>
+        <div class="cell plan-h"><div class="pn">Gratis</div><div class="pp">Sin costo</div></div>
+        <div class="cell plan-h prem col-prem"><span class="pbadge">Recomendado</span><div class="pn premn">Premium</div><div class="pp">$199.000 anual · o $35.000 mensual</div></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Mostrar propiedades</div>
+        <div class="cell val"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Acceso a catálogo completo</div>
+        <div class="cell val"><span class="no"><i data-lucide="x" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Ganancias por visitas</div>
+        <div class="cell val"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Ganancias por cierre de arriendo</div>
+        <div class="cell val"><span class="no"><i data-lucide="x" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Ganancias por ventas</div>
+        <div class="cell val"><span class="no"><i data-lucide="x" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-row">
+        <div class="cell feat">Ingresos potenciales altos</div>
+        <div class="cell val"><span class="no"><i data-lucide="x" class="ico"></i></span></div>
+        <div class="cell val col-prem"><span class="yes"><i data-lucide="check" class="ico"></i></span></div>
+      </div>
+      <div class="cmp-foot">
+        <div class="cell"></div>
+        <div class="cell"><a class="btn btn-soft" href="#unirme" data-plan="Gratis">Empezar gratis</a></div>
+        <div class="cell col-prem"><a class="btn btn-violet" href="#unirme" data-plan="Premium">Quiero Premium</a></div>
+      </div>
+    </div>
+    <p class="plans-note">Puedes empezar con el plan Gratis y pasarte a Premium cuando quieras escalar tus ingresos.</p>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="section how">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Cómo empezar</span>
+      <h2>De interesado a corredor en 4 pasos</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="tx"><h3>Postula</h3><p>Completa el formulario con tus datos y elige el plan con el que quieres comenzar.</p></div></div>
+      <div class="step"><div class="num">2</div><div class="tx"><h3>Te activamos</h3><p>Te damos acceso a las propiedades, el material y las herramientas para empezar a mostrar.</p></div></div>
+      <div class="step"><div class="num">3</div><div class="tx"><h3>Muestra y agenda visitas</h3><p>Coordina y realiza visitas. Con Premium, accedes a todo el catálogo para tener más opciones.</p></div></div>
+      <div class="step"><div class="num">4</div><div class="tx"><h3>Genera ingresos</h3><p>Gana por tus visitas y por cada arriendo o venta que ayudes a cerrar, con nuestro respaldo.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="section formsec" id="unirme">
+  <div class="wrap">
+    <div class="form-shell">
+      <div class="form-aside">
+        <h2>Únete como corredor</h2>
+        <p>Déjanos tus datos y un ejecutivo te contactará para activarte y explicarte cómo empezar a generar ingresos.</p>
+        <div class="pts">
+          <div class="pt"><span class="ic"><i data-lucide="folder-open" class="ico"></i></span>Acceso a nuestra cartera de propiedades</div>
+          <div class="pt"><span class="ic"><i data-lucide="trending-up" class="ico"></i></span>Ingresos por visitas, arriendos y ventas</div>
+          <div class="pt"><span class="ic"><i data-lucide="shield-check" class="ico"></i></span>Respaldo de una marca consolidada</div>
+        </div>
+      </div>
+      <div class="form-main">
+        <form id="corredorForm" novalidate>
+          <div class="grid2">
+            <div class="field full"><label>Nombre y apellido</label><input type="text" name="nombre" placeholder="Ej: Camila Rojas" required><div class="errmsg">Ingresa tu nombre.</div></div>
+            <div class="field"><label>WhatsApp</label><div class="inp-prefix"><span class="px">+56</span><input type="tel" name="whatsapp" placeholder="9 1234 5678" required></div><div class="errmsg">Número inválido.</div></div>
+            <div class="field"><label>Correo electrónico</label><input type="email" name="email" placeholder="tucorreo@ejemplo.cl" required><div class="errmsg">Correo inválido.</div></div>
+            <div class="field"><label>Comuna donde trabajas</label><input type="text" name="comuna" list="comunasRM" placeholder="Ej: Las Condes" required><div class="errmsg">Indica la comuna.</div></div>
+            <div class="field"><label>¿Tienes experiencia en corretaje?</label>
+              <select name="experiencia"><option value="" disabled selected>Selecciona…</option><option>Sí, tengo experiencia</option><option>Algo de experiencia</option><option>Sin experiencia, quiero aprender</option></select>
+            </div>
+          </div>
+          <div style="font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--violet);margin:22px 0 12px">Plan de interés</div>
+          <div class="optset">
+            <label class="opt"><input type="radio" name="plan" value="Gratis" required><span class="rb"></span><i data-lucide="circle" class="ico"></i>Plan Gratis</label>
+            <label class="opt"><input type="radio" name="plan" value="Premium"><span class="rb"></span><i data-lucide="crown" class="ico"></i>Plan Premium</label>
+          </div>
+          <label class="accept" id="corredorAccept">
+            <input type="checkbox" name="acepta" required>
+            <span class="bx"><i data-lucide="check" class="ico"></i></span>
+            <span>Autorizo a Corretaje Guzmán a contactarme para sumarme como corredor de propiedades.</span>
+          </label>
+          <button type="submit" class="btn btn-violet"><i data-lucide="user-plus" class="ico"></i>Quiero ser corredor</button>
+        </form>
+        <div class="form-ok" id="corredorOk">
+          <div class="ck"><i data-lucide="check" class="ico"></i></div>
+          <h3>¡Bienvenido al equipo!</h3>
+          <p>Gracias por tu interés en ser corredor de Corretaje Guzmán. Un ejecutivo te contactará pronto para activarte y explicarte los siguientes pasos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2>Resolvemos tus dudas</h2>
+    </div>
+    <div class="faq" id="faq">
+      <div class="qa"><button class="q" type="button">¿Necesito experiencia previa?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>No es indispensable. Puedes comenzar con el plan Gratis mostrando propiedades y aprender en el camino con nuestro acompañamiento. Si ya tienes experiencia, mejor aún.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Cuál es la diferencia entre Gratis y Premium?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Con el plan <strong>Gratis</strong> puedes mostrar propiedades y ganar por visitas. Con <strong>Premium</strong> ($199.000 anual o $35.000 mensual) accedes al catálogo completo y a las ganancias por cierre de arriendos y ventas, con un potencial de ingresos mucho mayor.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Cómo y cuándo gano dinero?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Generas ingresos por las visitas que realizas y por cada arriendo o venta que ayudes a concretar. El plan Premium habilita las ganancias por cierres de arriendo y ventas.</p></div></div>
+      <div class="qa"><button class="q" type="button">¿Puedo cambiar de plan después?<i data-lucide="plus" class="ico"></i></button><div class="a"><p>Sí. Puedes empezar con el plan Gratis y pasarte a Premium cuando quieras escalar tus ingresos y acceder a todo el catálogo.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<datalist id="comunasRM"></datalist>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán">
+      <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+    </div>
+    <div>
+      <h4>Acceso rápido</h4>
+      <div class="foot-links"><a href="Arriendos - Corretaje Guzman.html">Arrendar</a><a href="Ventas - Corretaje Guzman.html">Comprar</a><a href="Parcelas - Corretaje Guzman.html">Parcelas</a><a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a><a href="Administracion de Propiedades - Corretaje Guzman.html">Administración de propiedades</a><a href="Se Corredor - Corretaje Guzman.html">Sé corredor</a><a href="Formulario de Arriendo - Corretaje Guzman.html">Formulario de arriendo</a></div>
+    </div>
+    <div>
+      <h4>Contacto y sucursales</h4>
+      <div class="foot-contact">
+        <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+        <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+        <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/corretaje_guzman/" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+        <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+        <a href="https://www.tiktok.com/@corretaje_guzman?_r=1&_t=ZS-97FUNwb0CKz" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="corredor.js"></script>
+<script>
+(function(){
+  var b=document.getElementById('navBurger'), mn=document.getElementById('mobileMenu');
+  if(b&&mn){
+    b.addEventListener('click',function(e){e.stopPropagation();mn.classList.toggle('open');});
+    document.addEventListener('click',function(e){if(!mn.contains(e.target)&&!b.contains(e.target))mn.classList.remove('open');});
+    mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mn.classList.remove('open');});});
+  }
+})();
+</script>
+</body>
+</html>
