@@ -22,7 +22,7 @@ const SALE_TABLE = process.env.AIRTABLE_SALE_TABLE_ID || "tblB67Zm9zxDlFwY7";
 /* Nombres de columna esperados (con alternativas por si cambian) */
 const F = {
   title:        ["Nombre de la propiedad", "Nombre", "Título", "Titulo", "Propiedad"],
-  address:      ["Dirección", "Direccion", "Address"],
+  address:      ["Direccion publica", "Dirección pública", "Direccion Publica", "Dirección Publica", "Dirección", "Direccion", "Address"],
   commune:      ["Comuna", "Ciudad", "Sector"],
   bedrooms:     ["Dormitorios", "Habitaciones"],
   bathrooms:    ["Baños", "Banos", "Baño"],
@@ -32,12 +32,12 @@ const F = {
   commonExpenses: ["Valor gasto común", "Gastos comunes", "Gasto común", "GGCC"],
   parking:      ["Estacionamiento", "Estacionamientos", "Garaje"],
   storage:      ["Bodega"],
-  propertyType: ["Tipo de inmueble", "Tipo", "Tipo de propiedad"],
+  propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "Categoría", "Categoria"],
   operation:    ["Operación", "Operacion"],
-  description:  ["Descripción", "Descripcion", "Detalle"],
-  usableArea:   ["Metros útiles", "Metros utiles", "Superficie útil", "m2 útiles"],
+  description:  ["Descripción pública", "Descripcion publica", "Descripción", "Descripcion", "Detalle"],
+  usableArea:   ["Superficie útil m2", "Superficie útil", "Superficie util m2", "Metros útiles", "Metros utiles", "m2 útiles"],
   totalArea:    ["Metros totales", "Superficie total", "Metros"],
-  terraceArea:  ["Terraza", "Metros terraza"],
+  terraceArea:  ["Superficie terraza m2", "Terraza", "Metros terraza"],
   latitude:     ["Latitud", "Latitude", "Lat"],
   longitude:    ["Longitud", "Longitude", "Lng", "Lon"],
   features:     ["Extras / características", "Extras", "Características", "Caracteristicas", "Comodidades"],
@@ -56,6 +56,19 @@ const pick = (v) => (v && v.name) ? v.name : v;
 const num = (v) => { if (v == null) return null; const n = Number(String(v).replace(/[^\d.,-]/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(",", ".")); return isNaN(n) ? null : n; };
 const list = (v) => { if (v == null) return []; if (Array.isArray(v)) return v.map(x => (x && x.name) ? x.name : x).filter(Boolean); return String(v).split(/[\n,;•·]+/).map(s => s.trim()).filter(Boolean); };
 const photos = (v) => { if (Array.isArray(v)) return v.map(a => a && a.url ? a.url : a).filter(x => typeof x === "string"); if (typeof v === "string") return v.split(/[\s,]+/).filter(u => /^https?:\/\//.test(u)); return []; };
+const norm = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+function inferPropertyType(raw, title) {
+  const text = norm(`${pick(raw) || ""} ${title || ""}`);
+  if (/\b(parcela|terreno|lote|sitio)\b/.test(text)) return "Parcela";
+  if (/\b(casa|townhouse)\b/.test(text)) return "Casa";
+  if (/\b(oficina)\b/.test(text)) return "Oficina";
+  if (/\b(local|comercial|local comercial)\b/.test(text)) return "Oficina";
+  if (/\b(estudio|studio)\b/.test(text)) return "Estudio";
+  if (/\b(depto|departamento|dpto|apto|apartamento)\b/.test(text)) return "Departamento";
+  const selected = pick(raw);
+  return selected ? String(selected).trim() : "Departamento";
+}
 
 function normalize(rec, operation) {
   const f = rec.fields || {};
@@ -66,13 +79,17 @@ function normalize(rec, operation) {
   if (currency !== "UF" && currency !== "CLP") currency = (priceValue > 0 && priceValue < 100000) ? "UF" : "CLP";
   let op = (pick(g("operation")) || operation || "").toString().toLowerCase();
   op = op.includes("vent") ? "venta" : "arriendo";
+  const title = g("title") || "Propiedad";
+  const address = g("address") || "";
+  const commune = g("commune") || "";
   return {
     id: rec.id,
     source: "airtable-corretaje",
     operation: op,
-    title: g("title") || "Propiedad",
-    address: g("address") || "",
-    commune: g("commune") || "",
+    title,
+    address,
+    commune,
+    fullAddress: [address, commune, "Chile"].filter(Boolean).join(", "),
     priceValue,
     currency,
     commonExpenses: num(g("commonExpenses")) || 0,
@@ -80,7 +97,7 @@ function normalize(rec, operation) {
     bathrooms: g("bathrooms") != null ? num(g("bathrooms")) : null,
     parking: g("parking") != null ? (num(g("parking")) ?? (g("parking") ? 1 : 0)) : null,
     storage: !!g("storage"),
-    propertyType: pick(g("propertyType")) || "",
+    propertyType: inferPropertyType(g("propertyType"), title),
     description: g("description") ? String(g("description")) : "",
     usableArea: g("usableArea") != null ? num(g("usableArea")) : null,
     totalArea: g("totalArea") != null ? num(g("totalArea")) : null,
