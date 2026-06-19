@@ -61,9 +61,9 @@ const norm = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g,
 function inferPropertyType(raw, title) {
   const text = norm(`${pick(raw) || ""} ${title || ""}`);
   if (/\b(parcela|terreno|lote|sitio)\b/.test(text)) return "Parcela";
+  if (/\b(local comercial|local|comercial)\b/.test(text)) return "Local";
   if (/\b(casa|townhouse)\b/.test(text)) return "Casa";
   if (/\b(oficina)\b/.test(text)) return "Oficina";
-  if (/\b(local|comercial|local comercial)\b/.test(text)) return "Oficina";
   if (/\b(estudio|studio)\b/.test(text)) return "Estudio";
   if (/\b(depto|departamento|dpto|apto|apartamento)\b/.test(text)) return "Departamento";
   const selected = pick(raw);
