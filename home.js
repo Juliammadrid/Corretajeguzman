@@ -4,6 +4,7 @@
 const FICHA_URL = "Ficha Propiedad - Corretaje Guzman v2.html";
 const $ = (s) => document.querySelector(s);
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const HOME_FEATURED_LIMIT = 12;
 
 let ALL = [], filterOp = 'todos', view = 'lista', gmap = null, markers = [];
 
@@ -122,6 +123,7 @@ function compactCard(p) {
 
 function render() {
   const list = ALL.filter(matches);
+  const visible = list.slice(0, HOME_FEATURED_LIMIT);
   $('#listView').style.display = view === 'lista' ? '' : 'none';
   $('#mapView').style.display = view === 'mapa' ? '' : 'none';
   document.querySelectorAll('.vtab').forEach(b => b.classList.toggle('on', b.dataset.v === view));
@@ -129,12 +131,11 @@ function render() {
   if (view === 'lista') {
     const grid = $('#grid'); grid.innerHTML = '';
     if (!list.length) grid.appendChild(el('div', 'empty', 'No encontramos propiedades con esos filtros. Prueba con otra búsqueda.'));
-    else list.forEach(p => grid.appendChild(card(p)));
+    else visible.forEach(p => grid.appendChild(card(p)));
   } else {
     const ml = $('#mapList'); ml.innerHTML = '';
-    const side = list.slice(0, 12);
-    side.forEach(p => ml.appendChild(compactCard(p)));
-    if (list.length > side.length) ml.appendChild(el('div', 'empty', `Mostrando ${side.length} de ${list.length}. Usa filtros para acotar la búsqueda.`));
+    visible.forEach(p => ml.appendChild(compactCard(p)));
+    if (list.length > visible.length) ml.appendChild(el('div', 'empty', `Mostrando ${visible.length} de ${list.length}. Usa filtros para acotar la búsqueda.`));
     $('#mapCount').textContent = `${list.length} propiedad${list.length === 1 ? '' : 'es'}`;
     drawMap(list);
   }
