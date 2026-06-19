@@ -6,7 +6,8 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 
-let ALL = [], OP = 'arriendo', gmap = null, markers = [];
+let ALL = [], OP = 'arriendo', gmap = null, markers = [], geocoder = null, mapRenderRun = 0;
+const GEO_CACHE = new Map();
 const STATE = { q: '', tipo: '', condicion: '', prMin: null, prMax: null, prMoneda: 'CLP', dorm: 0, banos: 0, areaMin: null, areaMax: null, eq: [], sort: 'rel' };
 
 async function init() {
@@ -162,35 +163,62 @@ function loadGMaps(cb) {
   s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GZ.CFG.mapsKey)}&v=quarterly`;
   s.async = true; s.onload = cb; s.onerror = cb; document.head.appendChild(s);
 }
+function normText(v) { return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+function publicAddressFor(p) { return String(p.fullAddress || [p.address, p.commune, 'Chile'].filter(Boolean).join(', ')).replace(/,\s*,/g, ',').trim(); }
+async function geocodeProperty(p) {
+  if (p.latitude != null && p.longitude != null) return { lat: +p.latitude, lng: +p.longitude };
+  const address = publicAddressFor(p);
+  if (!address || !(window.google && google.maps)) return null;
+  const key = normText(address);
+  if (GEO_CACHE.has(key)) return GEO_CACHE.get(key);
+  try {
+    geocoder = geocoder || new google.maps.Geocoder();
+    const pos = await new Promise(resolve => {
+      geocoder.geocode({ address, componentRestrictions: { country: 'CL' } }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const loc = results[0].geometry.location;
+          resolve({ lat: loc.lat(), lng: loc.lng() });
+        } else {
+          resolve(null);
+        }
+      });
+    });
+    GEO_CACHE.set(key, pos);
+    return pos;
+  } catch (e) {
+    GEO_CACHE.set(key, null);
+    return null;
+  }
+}
 let infow = null;
 function renderMap(list) {
   const panel = $('#map');
-  loadGMaps(() => {
+  const run = ++mapRenderRun;
+  loadGMaps(async () => {
     if (!(window.google && window.google.maps) || !GZ.CFG.mapsKey) { placeholderMap(panel, list); return; }
     if (!gmap) { gmap = new google.maps.Map(panel, { center: { lat: -33.45, lng: -70.66 }, zoom: 11, mapTypeControl: false, streetViewControl: false, fullscreenControl: false, styles: MAP_STYLE }); infow = new google.maps.InfoWindow(); }
     markers.forEach(m => m.setMap(null)); markers = [];
     const bounds = new google.maps.LatLngBounds(); let n = 0;
-    list.forEach(p => {
-      if (p.latitude == null || p.longitude == null) return;
-      const pos = { lat: +p.latitude, lng: +p.longitude };
-      const label = GZ.CFG && p.priceValue ? { text: shortPrice(p), color: '#fff', fontSize: '10px', fontWeight: '700' } : undefined;
+    for (const p of list) {
+      if (run !== mapRenderRun) return;
+      const pos = await geocodeProperty(p);
+      if (!pos) continue;
       const m = new google.maps.Marker({ position: pos, map: gmap, title: p.title, icon: PIN });
-      m.addListener('click', () => { infow.setContent(`<div style="font-family:sans-serif;max-width:210px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}" style="color:#7c3aed;font-weight:600">Ver ficha →</a></div>`); infow.open(gmap, m); highlightCard(p.id); });
+      m.addListener('click', () => { infow.setContent(`<div style="font-family:sans-serif;max-width:210px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><small style="color:#6b6280">Ubicación calculada desde dirección pública</small><br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}" style="color:#7c3aed;font-weight:600">Ver ficha →</a></div>`); infow.open(gmap, m); highlightCard(p.id); });
       m._pid = p.id; markers.push(m); bounds.extend(pos); n++;
-    });
+    }
     if (n) gmap.fitBounds(bounds, 50);
   });
 }
 function shortPrice(p) { const uf = GZ.CFG.ufValueClp || 39200; const clp = p.currency === 'UF' ? p.priceValue * uf : p.priceValue; return '$' + Math.round(clp / 1000) + 'k'; }
 function placeholderMap(panel, list) {
-  const withGeo = list.filter(p => p.latitude != null);
-  let html = `<div class="map-ph"><div class="map-ph-grid"></div><div class="map-hint"><i data-lucide="map-pin" class="ico" style="width:14px;height:14px;display:inline;vertical-align:-2px"></i> ${withGeo.length} de ${list.length} con ubicación exacta</div>`;
-  withGeo.slice(0, 14).forEach((p, i) => {
+  let html = `<div class="map-ph"><div class="map-ph-grid"></div><div class="map-hint"><i data-lucide="map-pin" class="ico" style="width:14px;height:14px;display:inline;vertical-align:-2px"></i> ${list.length} propiedades listas para geocodificar por dirección</div>`;
+  list.slice(0, 14).forEach((p, i) => {
     const left = 18 + ((i * 53) % 64) + (i % 3) * 6;
     const top = 22 + ((i * 37) % 56);
     html += `<div class="mk" data-id="${p.id}" style="left:${left}%;top:${top}%"><b>${shortPrice(p)}</b></div>`;
   });
-  html += `<div class="map-ph-card"><i data-lucide="map" class="ico" style="width:30px;height:30px"></i><b>Vista de mapa</b><span>Activa tu <b>Google Maps API key</b> (restringida por dominio) en Netlify para ver el mapa real con todos los pines.</span></div></div>`;
+  html += `<div class="map-ph-card"><i data-lucide="map" class="ico" style="width:30px;height:30px"></i><b>Vista de mapa</b><span>Activa tu <b>Google Maps API key</b> restringida por dominio para calcular pines desde Dirección pública.</span></div></div>`;
   panel.innerHTML = html;
   $$('.mk', panel).forEach(mk => {
     mk.addEventListener('mouseenter', () => highlightCard(mk.dataset.id));
