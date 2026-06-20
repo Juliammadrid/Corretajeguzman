@@ -6,13 +6,160 @@
   publish = "."
   functions = "netlify/functions"
 
-# Página de inicio
+# ============================================================
+# Rutas publicas limpias
+# ============================================================
 [[redirects]]
   from = "/"
   to = "/Home - Corretaje Guzman.html"
   status = 200
 
+[[redirects]]
+  from = "/inicio"
+  to = "/Home - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/arriendos"
+  to = "/Arriendos - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/comprar"
+  to = "/Ventas - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/ventas"
+  to = "/Ventas - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/parcelas"
+  to = "/Parcelas - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/administracion"
+  to = "/Administracion de Propiedades - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/propietarios"
+  to = "/Quiero Arrendar mi Propiedad - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/solicitud"
+  to = "/Formulario de Arriendo - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/corredores"
+  to = "/Se Corredor - Corretaje Guzman.html"
+  status = 200
+
+[[redirects]]
+  from = "/ficha"
+  to = "/Ficha Propiedad - Corretaje Guzman v2.html"
+  status = 200
+
+# ============================================================
+# Redirecciones desde URLs antiguas con nombres largos
+# ============================================================
+[[redirects]]
+  from = "/Home - Corretaje Guzman.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/home - corretaje guzman"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/Arriendos - Corretaje Guzman.html"
+  to = "/arriendos"
+  status = 301
+
+[[redirects]]
+  from = "/arriendos - corretaje guzman"
+  to = "/arriendos"
+  status = 301
+
+[[redirects]]
+  from = "/Ventas - Corretaje Guzman.html"
+  to = "/comprar"
+  status = 301
+
+[[redirects]]
+  from = "/ventas - corretaje guzman"
+  to = "/comprar"
+  status = 301
+
+[[redirects]]
+  from = "/Parcelas - Corretaje Guzman.html"
+  to = "/parcelas"
+  status = 301
+
+[[redirects]]
+  from = "/parcelas - corretaje guzman"
+  to = "/parcelas"
+  status = 301
+
+[[redirects]]
+  from = "/Administracion de Propiedades - Corretaje Guzman.html"
+  to = "/administracion"
+  status = 301
+
+[[redirects]]
+  from = "/administracion de propiedades - corretaje guzman"
+  to = "/administracion"
+  status = 301
+
+[[redirects]]
+  from = "/Quiero Arrendar mi Propiedad - Corretaje Guzman.html"
+  to = "/propietarios"
+  status = 301
+
+[[redirects]]
+  from = "/quiero arrendar mi propiedad - corretaje guzman"
+  to = "/propietarios"
+  status = 301
+
+[[redirects]]
+  from = "/Formulario de Arriendo - Corretaje Guzman.html"
+  to = "/solicitud"
+  status = 301
+
+[[redirects]]
+  from = "/formulario de arriendo - corretaje guzman"
+  to = "/solicitud"
+  status = 301
+
+[[redirects]]
+  from = "/Se Corredor - Corretaje Guzman.html"
+  to = "/corredores"
+  status = 301
+
+[[redirects]]
+  from = "/se corredor - corretaje guzman"
+  to = "/corredores"
+  status = 301
+
+[[redirects]]
+  from = "/Ficha Propiedad - Corretaje Guzman v2.html"
+  to = "/ficha"
+  status = 301
+
+[[redirects]]
+  from = "/ficha propiedad - corretaje guzman v2"
+  to = "/ficha"
+  status = 301
+
+# ============================================================
 # API (las funciones leen Airtable con la API key del entorno)
+# ============================================================
 [[redirects]]
   from = "/api/properties"
   to = "/.netlify/functions/properties"
