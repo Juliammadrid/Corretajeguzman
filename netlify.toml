@@ -291,6 +291,12 @@
   to = "/.netlify/functions/lead-propietario"
   status = 200
 
+# Solicitud desde ficha de propiedad
+[[redirects]]
+  from = "/api/lead-propiedad"
+  to = "/.netlify/functions/lead-propiedad"
+  status = 200
+
 # Administración de propiedades
 [[redirects]]
   from = "/api/lead-administracion"
