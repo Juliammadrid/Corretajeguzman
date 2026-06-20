@@ -69,6 +69,42 @@
   to = "/Ficha Propiedad - Corretaje Guzman v2.html"
   status = 200
 
+# Archivos estáticos usados por la ficha cuando se abre desde /propiedad/...
+[[redirects]]
+  from = "/propiedad/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/uploads/*"
+  to = "/uploads/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/data-propiedades.js"
+  to = "/data-propiedades.js"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/data-rentando.js"
+  to = "/data-rentando.js"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/guzman-shared.js"
+  to = "/guzman-shared.js"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/app.js"
+  to = "/app.js"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/google-maps-config.js"
+  to = "/google-maps-config.js"
+  status = 200
+
 # ============================================================
 # Redirecciones desde URLs antiguas con nombres largos
 # ============================================================
