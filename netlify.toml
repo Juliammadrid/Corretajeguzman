@@ -78,12 +78,32 @@
   status = 301
 
 [[redirects]]
+  from = "/home%20-%20corretaje%20guzman"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/home%20-%20corretaje%20guzman.html"
+  to = "/"
+  status = 301
+
+[[redirects]]
   from = "/Arriendos - Corretaje Guzman.html"
   to = "/arriendos"
   status = 301
 
 [[redirects]]
   from = "/arriendos - corretaje guzman"
+  to = "/arriendos"
+  status = 301
+
+[[redirects]]
+  from = "/arriendos%20-%20corretaje%20guzman"
+  to = "/arriendos"
+  status = 301
+
+[[redirects]]
+  from = "/arriendos%20-%20corretaje%20guzman.html"
   to = "/arriendos"
   status = 301
 
@@ -98,12 +118,32 @@
   status = 301
 
 [[redirects]]
+  from = "/ventas%20-%20corretaje%20guzman"
+  to = "/comprar"
+  status = 301
+
+[[redirects]]
+  from = "/ventas%20-%20corretaje%20guzman.html"
+  to = "/comprar"
+  status = 301
+
+[[redirects]]
   from = "/Parcelas - Corretaje Guzman.html"
   to = "/parcelas"
   status = 301
 
 [[redirects]]
   from = "/parcelas - corretaje guzman"
+  to = "/parcelas"
+  status = 301
+
+[[redirects]]
+  from = "/parcelas%20-%20corretaje%20guzman"
+  to = "/parcelas"
+  status = 301
+
+[[redirects]]
+  from = "/parcelas%20-%20corretaje%20guzman.html"
   to = "/parcelas"
   status = 301
 
@@ -118,12 +158,32 @@
   status = 301
 
 [[redirects]]
+  from = "/administracion%20de%20propiedades%20-%20corretaje%20guzman"
+  to = "/administracion"
+  status = 301
+
+[[redirects]]
+  from = "/administracion%20de%20propiedades%20-%20corretaje%20guzman.html"
+  to = "/administracion"
+  status = 301
+
+[[redirects]]
   from = "/Quiero Arrendar mi Propiedad - Corretaje Guzman.html"
   to = "/propietarios"
   status = 301
 
 [[redirects]]
   from = "/quiero arrendar mi propiedad - corretaje guzman"
+  to = "/propietarios"
+  status = 301
+
+[[redirects]]
+  from = "/quiero%20arrendar%20mi%20propiedad%20-%20corretaje%20guzman"
+  to = "/propietarios"
+  status = 301
+
+[[redirects]]
+  from = "/quiero%20arrendar%20mi%20propiedad%20-%20corretaje%20guzman.html"
   to = "/propietarios"
   status = 301
 
@@ -138,6 +198,16 @@
   status = 301
 
 [[redirects]]
+  from = "/formulario%20de%20arriendo%20-%20corretaje%20guzman"
+  to = "/solicitud"
+  status = 301
+
+[[redirects]]
+  from = "/formulario%20de%20arriendo%20-%20corretaje%20guzman.html"
+  to = "/solicitud"
+  status = 301
+
+[[redirects]]
   from = "/Se Corredor - Corretaje Guzman.html"
   to = "/corredores"
   status = 301
@@ -148,12 +218,32 @@
   status = 301
 
 [[redirects]]
+  from = "/se%20corredor%20-%20corretaje%20guzman"
+  to = "/corredores"
+  status = 301
+
+[[redirects]]
+  from = "/se%20corredor%20-%20corretaje%20guzman.html"
+  to = "/corredores"
+  status = 301
+
+[[redirects]]
   from = "/Ficha Propiedad - Corretaje Guzman v2.html"
   to = "/ficha"
   status = 301
 
 [[redirects]]
   from = "/ficha propiedad - corretaje guzman v2"
+  to = "/ficha"
+  status = 301
+
+[[redirects]]
+  from = "/ficha%20propiedad%20-%20corretaje%20guzman%20v2"
+  to = "/ficha"
+  status = 301
+
+[[redirects]]
+  from = "/ficha%20propiedad%20-%20corretaje%20guzman%20v2.html"
   to = "/ficha"
   status = 301
 
