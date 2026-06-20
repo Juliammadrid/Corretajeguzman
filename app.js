@@ -10,8 +10,9 @@ async function init() {
   await GZ.loadConfig();
   const { data, live } = await GZ.loadProperties();
   GZ.banner(live, data.length);
-  const id = new URLSearchParams(location.search).get('id');
-  let p = id && data.find(x => String(x.id) === id);
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id') || (GZ.propertyIdFromPath && GZ.propertyIdFromPath(location.pathname));
+  let p = id && data.find(x => String(x.id) === String(id));
   if (!p) p = data[0];
   CURRENT = p;
   renderFicha(p);
@@ -20,8 +21,33 @@ async function init() {
   if (window.lucide) lucide.createIcons();
 }
 
+function setMeta(name, content, property) {
+  if (!content) return;
+  const attr = property ? 'property' : 'name';
+  let node = document.head.querySelector(`meta[${attr}="${name}"]`);
+  if (!node) { node = document.createElement('meta'); node.setAttribute(attr, name); document.head.appendChild(node); }
+  node.setAttribute('content', content);
+}
+
+function updateSeo(p) {
+  const canonical = GZ.propertyCanonicalUrl ? GZ.propertyCanonicalUrl(p) : location.href;
+  let link = document.head.querySelector('link[rel="canonical"]');
+  if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
+  link.href = canonical;
+  const locationText = [p.address, p.commune].filter(Boolean).join(', ');
+  const desc = `${GZ.opLabel(p)}: ${p.title}${locationText ? ' en ' + locationText : ''}${p.priceValue ? ' por ' + GZ.priceText(p) : ''}. Revisa fotos, precio, ubicación y detalles con Corretaje Guzmán.`;
+  setMeta('description', desc);
+  setMeta('og:title', `${p.title} · Corretaje Guzmán`, true);
+  setMeta('og:description', desc, true);
+  setMeta('og:url', canonical, true);
+  setMeta('og:type', 'product', true);
+  if (p.coverPhoto) setMeta('og:image', p.coverPhoto, true);
+  setMeta('twitter:card', 'summary_large_image');
+}
+
 function renderFicha(p) {
   document.title = `${p.title} · Corretaje Guzmán`;
+  updateSeo(p);
   $('#crumbOp').textContent = p.operation === 'venta' ? 'En Venta' : 'Arriendos';
   $('#crumbCom').textContent = p.commune || 'Propiedades';
   $('#crumbTitle').textContent = p.title;
@@ -32,7 +58,6 @@ function renderFicha(p) {
   badges.appendChild(el('span', 'badge badge-op', GZ.opLabel(p)));
   if (p.propertyType) badges.appendChild(el('span', 'badge badge-tipo', p.propertyType));
 
-  // stats
   const stats = $('#stats'); stats.innerHTML = '';
   [
     p.bedrooms != null && { ic: 'bed-double', b: p.bedrooms, s: p.bedrooms === 1 ? 'Dormitorio' : 'Dormitorios' },
@@ -44,7 +69,6 @@ function renderFicha(p) {
 
   gallery(p);
 
-  // detalles
   const dg = $('#detgrid'); dg.innerHTML = '';
   [
     p.propertyType && ['Tipo', p.propertyType],
@@ -60,13 +84,11 @@ function renderFicha(p) {
     p.updatedAt && ['Actualizado', p.updatedAt]
   ].filter(Boolean).forEach(([k, v]) => dg.appendChild(el('div', 'd', `<span class="k">${k}</span><span class="v">${v}</span>`)));
 
-  // descripción
   const desc = $('#desc'); desc.innerHTML = '';
   const paras = (p.description || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
   paras.forEach((t, i) => desc.appendChild(el('p', i === 0 ? 'lead' : '', t)));
   $('#readmore').style.display = paras.length > 1 ? '' : 'none';
 
-  // características
   const amen = $('#amen'); amen.innerHTML = '';
   (p.features || []).forEach(t => amen.appendChild(el('div', 'a', `<span class="ic"><i data-lucide="${GZ.iconFor(t)}" class="ico"></i></span>${t}`)));
   $('#caractBlock').style.display = (p.features && p.features.length) ? '' : 'none';
@@ -74,7 +96,6 @@ function renderFicha(p) {
   drawMap(p);
   $('#nearAddr').textContent = [p.address, p.commune].filter(Boolean).join(', ');
 
-  // precio
   $('#opPillTxt').textContent = GZ.opLabel(p);
   const uf = GZ.ufApprox(p);
   $('#price').innerHTML = GZ.priceText(p) + (uf ? ` <span class="uf-approx">${uf}</span>` : '');
@@ -88,7 +109,6 @@ function renderFicha(p) {
     } else $('#totalRow').style.display = 'none';
   } else { $('#gcRow').style.display = 'none'; $('#totalRow').style.display = 'none'; }
 
-  // corredores + whatsapp
   const sel = $('#broker'); sel.innerHTML = '';
   sel.appendChild(el('option', null, 'Vi la empresa en internet')); sel.firstChild.value = '';
   (window.GUZMAN_BROKERS || []).filter(b => b !== 'Vi la empresa en internet').forEach(b => { const o = el('option', null, b); o.value = b; sel.appendChild(o); });
@@ -103,7 +123,6 @@ function renderFicha(p) {
   $('#mGc').textContent = p.commonExpenses ? `+ $${GZ.nf.format(p.commonExpenses)} gastos comunes` : (p.commune || '');
 }
 
-/* ---------- galería ---------- */
 function gallery(p) {
   PHOTOS = (p.photos && p.photos.length) ? p.photos : (p.coverPhoto ? [p.coverPhoto] : []);
   const g = $('#gallery');
@@ -118,12 +137,10 @@ function gallery(p) {
     g.appendChild(cell);
   }
   const pc = $('#photoCount'); pc.querySelector('span').textContent = `1 / ${PHOTOS.length}`;
-  // strip
   const strip = $('#lbStrip'); strip.innerHTML = '';
   PHOTOS.forEach((src, i) => { const im = el('img'); im.src = src; im.onclick = () => show(i); strip.appendChild(im); });
 }
 
-/* ---------- mapa ---------- */
 const PIN = { path: "M12 0C6.5 0 2 4.5 2 10c0 7 10 16 10 16s10-9 10-16C22 4.5 17.5 0 12 0z", fillColor: "#7c3aed", fillOpacity: 1, strokeColor: "#fff", strokeWeight: 2, scale: 1.3, anchor: { x: 12, y: 26 } };
 function loadGMaps(cb) {
   if (window.google && window.google.maps) return cb();
@@ -151,7 +168,6 @@ function drawMap(p) {
   } else { box.innerHTML = stylizedCanvas() + meta; }
 }
 
-/* ---------- similares ---------- */
 function renderSimilares(list, p) {
   const grid = $('#simGrid'); grid.innerHTML = '';
   const sorted = list.slice().sort((a, b) => (a.commune === p.commune ? -1 : 0) - (b.commune === p.commune ? -1 : 0)).slice(0, 3);
@@ -163,7 +179,7 @@ function renderSimilares(list, p) {
       q.usableArea != null && `<span class="f"><i data-lucide="ruler" class="ico"></i>${q.usableArea} m²</span>`,
       q.parking ? `<span class="f"><i data-lucide="car" class="ico"></i>${q.parking}</span>` : ''
     ].filter(Boolean).join('');
-    const a = el('a', 'pcardm'); a.href = FICHA_URL + '?id=' + encodeURIComponent(q.id);
+    const a = el('a', 'pcardm'); a.href = GZ.propertyPath ? GZ.propertyPath(q) : FICHA_URL + '?id=' + encodeURIComponent(q.id);
     a.innerHTML = `<div class="ph"><img src="${q.coverPhoto || (q.photos || [])[0] || ''}" alt="${q.title}" loading="lazy"><span class="tag">${GZ.opLabel(q)}</span></div>
       <div class="bd"><div class="pr">${GZ.priceHTML(q)}</div><div class="ti">${q.title}</div>
       <div class="ad"><i data-lucide="map-pin" class="ico"></i>${q.address || q.commune || ''}</div><div class="ft">${ft}</div></div>`;
@@ -200,7 +216,6 @@ async function sendPropertyLead(data) {
   return json;
 }
 
-/* ---------- interacciones ---------- */
 function interactions(p) {
   $('#readmore').addEventListener('click', function () { const d = $('#desc'); d.classList.toggle('clamped'); this.firstChild.textContent = d.classList.contains('clamped') ? 'Leer descripción completa ' : 'Ver menos '; });
   $('#cform').addEventListener('submit', async function (e) {
