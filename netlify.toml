@@ -64,12 +64,8 @@
   to = "/Ficha Propiedad - Corretaje Guzman v2.html"
   status = 200
 
-[[redirects]]
-  from = "/propiedad/*"
-  to = "/Ficha Propiedad - Corretaje Guzman v2.html"
-  status = 200
-
 # Archivos estáticos usados por la ficha cuando se abre desde /propiedad/...
+# Estas reglas deben ir antes de /propiedad/* para que no las tape la ficha.
 [[redirects]]
   from = "/propiedad/assets/*"
   to = "/assets/:splat"
@@ -103,6 +99,11 @@
 [[redirects]]
   from = "/propiedad/google-maps-config.js"
   to = "/google-maps-config.js"
+  status = 200
+
+[[redirects]]
+  from = "/propiedad/*"
+  to = "/Ficha Propiedad - Corretaje Guzman v2.html"
   status = 200
 
 # ============================================================
