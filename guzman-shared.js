@@ -1,15 +1,34 @@
 /* ============================================================
    Corretaje Guzmán — helpers compartidos (precio, WhatsApp,
-   carga de datos). Lo usan el home y la ficha.
+   carga de datos, SEO, PWA y rutas limpias).
    ============================================================ */
 (function () {
   const CFG = window.GUZMAN_CONFIG || {};
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
+  const SITE_ORIGIN = 'https://corretajeguzman.com';
 
   const style = document.createElement('style');
   style.textContent = '.dbanner{display:none!important}';
   document.head.appendChild(style);
+
+  function ensureHeadTag(tag, attrs) {
+    const selector = attrs.rel ? `${tag}[rel="${attrs.rel}"]` : (attrs.name ? `${tag}[name="${attrs.name}"]` : `${tag}[property="${attrs.property}"]`);
+    let node = document.head.querySelector(selector);
+    if (!node) { node = document.createElement(tag); document.head.appendChild(node); }
+    Object.keys(attrs).forEach(k => node.setAttribute(k, attrs[k]));
+    return node;
+  }
+
+  function installPwaMeta() {
+    ensureHeadTag('link', { rel: 'manifest', href: '/site.webmanifest' });
+    ensureHeadTag('link', { rel: 'icon', href: '/guzman-app-icon.svg', type: 'image/svg+xml' });
+    ensureHeadTag('link', { rel: 'apple-touch-icon', href: '/guzman-app-icon.svg' });
+    ensureHeadTag('meta', { name: 'theme-color', content: '#241b31' });
+    ensureHeadTag('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
+    ensureHeadTag('meta', { name: 'apple-mobile-web-app-title', content: 'Guzmán' });
+    ensureHeadTag('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
+  }
 
   function priceText(p) {
     if (p.currency === 'UF') return 'UF ' + nf.format(p.priceValue);
@@ -20,7 +39,6 @@
     return '≈ $' + nf.format(Math.round(p.priceValue * CFG.ufValueClp));
   }
   function priceHTML(p, perClass) {
-    // Promo Rentando: 50% dcto primer mes → ese precio como valor principal
     if (p.operation === 'arriendo' && p.promo && /50\s*%/.test(p.promo)) {
       const half = '$' + nf.format(Math.round(p.priceValue / 2));
       const full = '$' + nf.format(p.priceValue);
@@ -51,11 +69,44 @@
   }
 
   function validPhotoUrl(url) {
-    return typeof url === 'string' && /^https?:\/\//.test(url) || typeof url === 'string' && /^assets\//.test(url);
+    return (typeof url === 'string' && /^https?:\/\//.test(url)) || (typeof url === 'string' && /^assets\//.test(url));
   }
 
   function cleanText(v) {
     return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  }
+
+  function slugify(v) {
+    return cleanText(v)
+      .replace(/&/g, ' y ')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 90) || 'propiedad';
+  }
+
+  function propertySlugBase(p) {
+    return [p.operation === 'venta' ? 'venta' : 'arriendo', p.propertyType || 'propiedad', p.title || '', p.commune || '']
+      .filter(Boolean).join(' ');
+  }
+
+  function propertyPath(p) {
+    if (!p) return '/ficha';
+    const id = encodeURIComponent(String(p.id || p.codigo || ''));
+    const slug = slugify(propertySlugBase(p));
+    return id ? `/propiedad/${slug}-${id}` : `/propiedad/${slug}`;
+  }
+
+  function propertyCanonicalUrl(p) {
+    return SITE_ORIGIN + propertyPath(p);
+  }
+
+  function propertyIdFromPath(pathname) {
+    const path = decodeURIComponent(pathname || location.pathname || '');
+    const match = path.match(/\/propiedad\/[^/?#]*-([^/?#]+)$/i);
+    if (match && match[1]) return match[1];
+    const rec = path.match(/(rec[a-z0-9]+)/i);
+    if (rec && rec[1]) return rec[1];
+    return '';
   }
 
   function normalizeOperation(p) {
@@ -118,6 +169,7 @@
     if (!data || !data.length) data = window.GUZMAN_FALLBACK || [];
     const rentando = activeRentandoProperties();
     data = mergeProperties(data, rentando).map(normalizeLoadedProperty);
+    window.GUZMAN_PROPERTIES_INDEX = data;
     return { data, live };
   }
   async function loadReviews() {
@@ -175,13 +227,19 @@
         const u = new URL(raw, location.origin);
         if (u.origin !== location.origin) return;
         const key = decodeURIComponent(u.pathname).replace(/^\/+/, '').toLowerCase();
+        const id = u.searchParams.get('id');
         const clean = CLEAN_ROUTES[key];
+        if ((clean === '/ficha' || u.pathname === '/ficha') && id && Array.isArray(window.GUZMAN_PROPERTIES_INDEX)) {
+          const found = window.GUZMAN_PROPERTIES_INDEX.find(p => String(p.id) === String(id));
+          if (found) { a.setAttribute('href', propertyPath(found) + u.hash); return; }
+        }
         if (clean) a.setAttribute('href', clean + u.search + u.hash);
       } catch (e) {}
     });
   }
 
   function startLinkCleaner() {
+    installPwaMeta();
     cleanInternalLinks();
     if (!document.body || !window.MutationObserver) return;
     const observer = new MutationObserver(records => {
@@ -199,5 +257,5 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startLinkCleaner);
   else startLinkCleaner();
 
-  window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, loadConfig, loadProperties, loadReviews, banner, cleanInternalLinks };
+  window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, slugify, propertyPath, propertyCanonicalUrl, propertyIdFromPath, loadConfig, loadProperties, loadReviews, banner, cleanInternalLinks };
 })();
