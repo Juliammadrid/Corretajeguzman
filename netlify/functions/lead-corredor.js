@@ -7,6 +7,7 @@
  *    AIRTABLE_API_KEY               = patXXXX...  (data.records:write)
  *    AIRTABLE_BASE_ID              = appkG5ldIIHTVkXf6
  *    AIRTABLE_BROKERS_TABLE_ID     = tblEwecJVUAqvIKXd
+ *    Verificado en Netlify: 2026-06-19
  * ============================================================ */
 
 const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
