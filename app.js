@@ -3,7 +3,7 @@
    ============================================================ */
 const $ = (s) => document.querySelector(s);
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
-const FICHA_URL = "Ficha Propiedad - Corretaje Guzman v2.html";
+const FICHA_URL = "/ficha";
 let PHOTOS = [], cur = 0, CURRENT = null;
 
 async function init() {
@@ -171,10 +171,59 @@ function renderSimilares(list, p) {
   });
 }
 
+function contactPayload(form, p) {
+  const fields = form.querySelectorAll('input, textarea');
+  return {
+    nombre: (fields[0] && fields[0].value || '').trim(),
+    telefono: (fields[1] && fields[1].value || '').trim(),
+    mensaje: ($('#cmsg') && $('#cmsg').value || '').trim(),
+    propiedad: p.title,
+    codigo: p.id,
+    operacion: GZ.opLabel(p),
+    comuna: p.commune || '',
+    precio: GZ.priceText(p) + (GZ.perLabel(p) ? ' ' + GZ.perLabel(p) : ''),
+    url: location.href,
+    fecha_envio: new Date().toISOString()
+  };
+}
+
+async function sendPropertyLead(data) {
+  const r = await fetch('/api/lead-propiedad', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  const text = await r.text();
+  let json = {};
+  try { json = JSON.parse(text); } catch (e) {}
+  if (!r.ok || json.ok === false) throw new Error(json.error || text || 'No se pudo enviar la solicitud');
+  return json;
+}
+
 /* ---------- interacciones ---------- */
 function interactions(p) {
   $('#readmore').addEventListener('click', function () { const d = $('#desc'); d.classList.toggle('clamped'); this.firstChild.textContent = d.classList.contains('clamped') ? 'Leer descripción completa ' : 'Ver menos '; });
-  $('#cform').addEventListener('submit', function (e) { e.preventDefault(); $('#formOk').style.display = 'flex'; this.style.display = 'none'; if (window.lucide) lucide.createIcons(); });
+  $('#cform').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const payload = contactPayload(this, p);
+    if (!payload.nombre || !payload.telefono) return;
+    const btn = this.querySelector('button[type="submit"]');
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i data-lucide="loader" class="ico"></i>Enviando...';
+    if (window.lucide) lucide.createIcons();
+    try {
+      await sendPropertyLead(payload);
+      $('#formOk').style.display = 'flex';
+      this.style.display = 'none';
+      if (window.lucide) lucide.createIcons();
+    } catch (err) {
+      alert('No se pudo enviar la solicitud. Por favor intenta nuevamente o escríbenos por WhatsApp.');
+      btn.disabled = false;
+      btn.innerHTML = original;
+      if (window.lucide) lucide.createIcons();
+    }
+  });
   const seeAll = $('#seeAll'); if (seeAll) seeAll.addEventListener('click', e => { e.stopPropagation(); openLb(0); });
   $('#lbClose').onclick = closeLb; $('#lbPrev').onclick = () => show(cur - 1); $('#lbNext').onclick = () => show(cur + 1);
   $('#lb').addEventListener('click', e => { if (e.target.id === 'lb') closeLb(); });
