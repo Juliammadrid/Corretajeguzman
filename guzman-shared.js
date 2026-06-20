@@ -145,5 +145,44 @@
     if (b) b.style.display = 'none';
   }
 
-  window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, loadConfig, loadProperties, loadReviews, banner };
+  const CLEAN_ROUTES = {
+    'home - corretaje guzman.html': '/',
+    'home - corretaje guzman': '/',
+    'arriendos - corretaje guzman.html': '/arriendos',
+    'arriendos - corretaje guzman': '/arriendos',
+    'ventas - corretaje guzman.html': '/comprar',
+    'ventas - corretaje guzman': '/comprar',
+    'parcelas - corretaje guzman.html': '/parcelas',
+    'parcelas - corretaje guzman': '/parcelas',
+    'administracion de propiedades - corretaje guzman.html': '/administracion',
+    'administracion de propiedades - corretaje guzman': '/administracion',
+    'quiero arrendar mi propiedad - corretaje guzman.html': '/propietarios',
+    'quiero arrendar mi propiedad - corretaje guzman': '/propietarios',
+    'formulario de arriendo - corretaje guzman.html': '/solicitud',
+    'formulario de arriendo - corretaje guzman': '/solicitud',
+    'se corredor - corretaje guzman.html': '/corredores',
+    'se corredor - corretaje guzman': '/corredores',
+    'ficha propiedad - corretaje guzman v2.html': '/ficha',
+    'ficha propiedad - corretaje guzman v2': '/ficha'
+  };
+
+  function cleanInternalLinks(root) {
+    const scope = root || document;
+    scope.querySelectorAll('a[href]').forEach(a => {
+      const raw = a.getAttribute('href');
+      if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('https://wa.me/')) return;
+      try {
+        const u = new URL(raw, location.origin);
+        if (u.origin !== location.origin) return;
+        const key = decodeURIComponent(u.pathname).replace(/^\/+/, '').toLowerCase();
+        const clean = CLEAN_ROUTES[key];
+        if (clean) a.setAttribute('href', clean + u.search + u.hash);
+      } catch (e) {}
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => cleanInternalLinks());
+  else cleanInternalLinks();
+
+  window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, loadConfig, loadProperties, loadReviews, banner, cleanInternalLinks };
 })();
