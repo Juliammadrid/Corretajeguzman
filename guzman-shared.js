@@ -181,8 +181,23 @@
     });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => cleanInternalLinks());
-  else cleanInternalLinks();
+  function startLinkCleaner() {
+    cleanInternalLinks();
+    if (!document.body || !window.MutationObserver) return;
+    const observer = new MutationObserver(records => {
+      records.forEach(record => {
+        record.addedNodes.forEach(node => {
+          if (!node || node.nodeType !== 1) return;
+          if (node.matches && node.matches('a[href]')) cleanInternalLinks(node.parentNode || document);
+          else if (node.querySelectorAll) cleanInternalLinks(node);
+        });
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startLinkCleaner);
+  else startLinkCleaner();
 
   window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, loadConfig, loadProperties, loadReviews, banner, cleanInternalLinks };
 })();
