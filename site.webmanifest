@@ -1,0 +1,19 @@
+{
+  "name": "Corretaje Guzmán",
+  "short_name": "Guzmán",
+  "description": "Corretaje de inmuebles en Chile: arriendos, ventas, parcelas y administración de propiedades.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#241b31",
+  "theme_color": "#241b31",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/guzman-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
