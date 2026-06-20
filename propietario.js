@@ -5,6 +5,44 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const POST_ENDPOINT = "/api/lead-propietario"; // guarda en Airtable (tabla de propietarios)
 
+const CLEAN_ROUTES = {
+  'home - corretaje guzman.html': '/',
+  'home - corretaje guzman': '/',
+  'arriendos - corretaje guzman.html': '/arriendos',
+  'arriendos - corretaje guzman': '/arriendos',
+  'ventas - corretaje guzman.html': '/comprar',
+  'ventas - corretaje guzman': '/comprar',
+  'parcelas - corretaje guzman.html': '/parcelas',
+  'parcelas - corretaje guzman': '/parcelas',
+  'administracion de propiedades - corretaje guzman.html': '/administracion',
+  'administracion de propiedades - corretaje guzman': '/administracion',
+  'quiero arrendar mi propiedad - corretaje guzman.html': '/propietarios',
+  'quiero arrendar mi propiedad - corretaje guzman': '/propietarios',
+  'formulario de arriendo - corretaje guzman.html': '/solicitud',
+  'formulario de arriendo - corretaje guzman': '/solicitud',
+  'se corredor - corretaje guzman.html': '/corredores',
+  'se corredor - corretaje guzman': '/corredores',
+  'ficha propiedad - corretaje guzman v2.html': '/ficha',
+  'ficha propiedad - corretaje guzman v2': '/ficha'
+};
+
+function cleanInternalLinks(root = document) {
+  root.querySelectorAll('a[href]').forEach(a => {
+    const raw = a.getAttribute('href');
+    if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('https://wa.me/')) return;
+    try {
+      const u = new URL(raw, location.origin);
+      if (u.origin !== location.origin) return;
+      const key = decodeURIComponent(u.pathname).replace(/^\/+/, '').toLowerCase();
+      const clean = CLEAN_ROUTES[key];
+      if (clean) a.setAttribute('href', clean + u.search + u.hash);
+    } catch (e) {}
+  });
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => cleanInternalLinks());
+else cleanInternalLinks();
+
 /* ---- comunas R.M. para autocompletar ---- */
 const RM = ["Santiago (Centro)","Cerrillos","Cerro Navia","Conchalí","El Bosque","Estación Central","Huechuraba","Independencia","La Cisterna","La Florida","La Granja","La Pintana","La Reina","Las Condes","Lo Barnechea","Lo Espejo","Lo Prado","Macul","Maipú","Ñuñoa","Pedro Aguirre Cerda","Peñalolén","Providencia","Pudahuel","Quilicura","Quinta Normal","Recoleta","Renca","San Joaquín","San Miguel","San Ramón","Vitacura","Puente Alto","Pirque","San José de Maipo","San Bernardo","Buin","Calera de Tango","Paine","Colina","Lampa","Tiltil","Talagante","El Monte","Isla de Maipo","Padre Hurtado","Peñaflor","Melipilla","Curacaví","Villarrica","Pucón"];
 (function(){ const dl = $('#comunasRM'); if (dl) RM.forEach(c => { const o = document.createElement('option'); o.value = c; dl.appendChild(o); }); })();
