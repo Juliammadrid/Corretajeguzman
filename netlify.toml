@@ -64,6 +64,11 @@
   to = "/Ficha Propiedad - Corretaje Guzman v2.html"
   status = 200
 
+[[redirects]]
+  from = "/propiedad/*"
+  to = "/Ficha Propiedad - Corretaje Guzman v2.html"
+  status = 200
+
 # ============================================================
 # Redirecciones desde URLs antiguas con nombres largos
 # ============================================================
@@ -277,6 +282,12 @@
 [[redirects]]
   from = "/api/config"
   to = "/.netlify/functions/config"
+  status = 200
+
+# Sitemap dinámico de propiedades disponibles
+[[redirects]]
+  from = "/sitemap-propiedades.xml"
+  to = "/.netlify/functions/sitemap-propiedades"
   status = 200
 
 # Formulario de arriendo (guarda la solicitud en Airtable)
