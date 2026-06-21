@@ -10,13 +10,19 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/assets/guzman-logo.png?v=20260621",
+      "src": "/assets/guzman-logo.png?v=20260621-3",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/guzman-logo.png?v=20260621-3",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/assets/guzman-logo.png?v=20260621",
+      "src": "/assets/guzman-logo.png?v=20260621-3",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
