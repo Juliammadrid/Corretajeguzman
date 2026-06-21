@@ -5,15 +5,21 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#241b31",
+  "background_color": "#050505",
   "theme_color": "#241b31",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/guzman-app-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/assets/guzman-logo.png?v=20260621",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/guzman-logo.png?v=20260621",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
