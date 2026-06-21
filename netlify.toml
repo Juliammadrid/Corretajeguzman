@@ -103,7 +103,7 @@
 
 [[redirects]]
   from = "/propiedad/*"
-  to = "/Ficha Propiedad - Corretaje Guzman v2.html"
+  to = "/.netlify/functions/property-share"
   status = 200
 
 # ============================================================
