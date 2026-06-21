@@ -7,6 +7,8 @@
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
   const SITE_ORIGIN = 'https://corretajeguzman.com';
+  const BRAND_ICON = '/assets/guzman-logo.png?v=20260621';
+  const BRAND_ICON_SVG = '/guzman-app-icon.svg?v=20260621';
 
   const style = document.createElement('style');
   style.textContent = '.dbanner{display:none!important}';
@@ -21,13 +23,18 @@
   }
 
   function installPwaMeta() {
-    ensureHeadTag('link', { rel: 'manifest', href: '/site.webmanifest' });
-    ensureHeadTag('link', { rel: 'icon', href: '/guzman-app-icon.svg', type: 'image/svg+xml' });
-    ensureHeadTag('link', { rel: 'apple-touch-icon', href: '/guzman-app-icon.svg' });
+    ensureHeadTag('link', { rel: 'manifest', href: '/site.webmanifest?v=20260621' });
+    ensureHeadTag('link', { rel: 'icon', href: BRAND_ICON, type: 'image/png' });
+    ensureHeadTag('link', { rel: 'shortcut icon', href: BRAND_ICON, type: 'image/png' });
+    ensureHeadTag('link', { rel: 'alternate icon', href: BRAND_ICON_SVG, type: 'image/svg+xml' });
+    ensureHeadTag('link', { rel: 'apple-touch-icon', href: BRAND_ICON });
+    ensureHeadTag('link', { rel: 'apple-touch-icon-precomposed', href: BRAND_ICON });
     ensureHeadTag('meta', { name: 'theme-color', content: '#241b31' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-title', content: 'Guzmán' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
+    ensureHeadTag('meta', { name: 'msapplication-TileImage', content: BRAND_ICON });
+    ensureHeadTag('meta', { name: 'msapplication-TileColor', content: '#050505' });
   }
 
   function priceText(p) {
