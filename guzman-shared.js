@@ -7,8 +7,7 @@
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
   const SITE_ORIGIN = 'https://corretajeguzman.com';
-  const BRAND_ICON = '/assets/guzman-logo.png?v=20260621';
-  const BRAND_ICON_SVG = '/guzman-app-icon.svg?v=20260621';
+  const BRAND_ICON = '/assets/guzman-logo.png?v=20260621-3';
 
   const style = document.createElement('style');
   style.textContent = '.dbanner{display:none!important}';
@@ -23,12 +22,11 @@
   }
 
   function installPwaMeta() {
-    ensureHeadTag('link', { rel: 'manifest', href: '/site.webmanifest?v=20260621' });
+    ensureHeadTag('link', { rel: 'manifest', href: '/site.webmanifest?v=20260621-3' });
     ensureHeadTag('link', { rel: 'icon', href: BRAND_ICON, type: 'image/png' });
-    ensureHeadTag('link', { rel: 'shortcut icon', href: BRAND_ICON, type: 'image/png' });
-    ensureHeadTag('link', { rel: 'alternate icon', href: BRAND_ICON_SVG, type: 'image/svg+xml' });
-    ensureHeadTag('link', { rel: 'apple-touch-icon', href: BRAND_ICON });
-    ensureHeadTag('link', { rel: 'apple-touch-icon-precomposed', href: BRAND_ICON });
+    ensureHeadTag('link', { rel: 'shortcut icon', href: '/favicon.ico?v=20260621-3' });
+    ensureHeadTag('link', { rel: 'apple-touch-icon', href: '/apple-touch-icon.png?v=20260621-3' });
+    ensureHeadTag('link', { rel: 'apple-touch-icon-precomposed', href: '/apple-touch-icon-precomposed.png?v=20260621-3' });
     ensureHeadTag('meta', { name: 'theme-color', content: '#241b31' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-title', content: 'Guzmán' });
@@ -207,22 +205,40 @@
   const CLEAN_ROUTES = {
     'home - corretaje guzman.html': '/',
     'home - corretaje guzman': '/',
+    'home%20-%20corretaje%20guzman.html': '/',
+    'home%20-%20corretaje%20guzman': '/',
     'arriendos - corretaje guzman.html': '/arriendos',
     'arriendos - corretaje guzman': '/arriendos',
+    'arriendos%20-%20corretaje%20guzman.html': '/arriendos',
+    'arriendos%20-%20corretaje%20guzman': '/arriendos',
     'ventas - corretaje guzman.html': '/comprar',
     'ventas - corretaje guzman': '/comprar',
+    'ventas%20-%20corretaje%20guzman.html': '/comprar',
+    'ventas%20-%20corretaje%20guzman': '/comprar',
     'parcelas - corretaje guzman.html': '/parcelas',
     'parcelas - corretaje guzman': '/parcelas',
+    'parcelas%20-%20corretaje%20guzman.html': '/parcelas',
+    'parcelas%20-%20corretaje%20guzman': '/parcelas',
     'administracion de propiedades - corretaje guzman.html': '/administracion',
     'administracion de propiedades - corretaje guzman': '/administracion',
+    'administracion%20de%20propiedades%20-%20corretaje%20guzman.html': '/administracion',
+    'administracion%20de%20propiedades%20-%20corretaje%20guzman': '/administracion',
     'quiero arrendar mi propiedad - corretaje guzman.html': '/propietarios',
     'quiero arrendar mi propiedad - corretaje guzman': '/propietarios',
+    'quiero%20arrendar%20mi%20propiedad%20-%20corretaje%20guzman.html': '/propietarios',
+    'quiero%20arrendar%20mi%20propiedad%20-%20corretaje%20guzman': '/propietarios',
     'formulario de arriendo - corretaje guzman.html': '/solicitud',
     'formulario de arriendo - corretaje guzman': '/solicitud',
+    'formulario%20de%20arriendo%20-%20corretaje%20guzman.html': '/solicitud',
+    'formulario%20de%20arriendo%20-%20corretaje%20guzman': '/solicitud',
     'se corredor - corretaje guzman.html': '/corredores',
     'se corredor - corretaje guzman': '/corredores',
+    'se%20corredor%20-%20corretaje%20guzman.html': '/corredores',
+    'se%20corredor%20-%20corretaje%20guzman': '/corredores',
     'ficha propiedad - corretaje guzman v2.html': '/ficha',
-    'ficha propiedad - corretaje guzman v2': '/ficha'
+    'ficha propiedad - corretaje guzman v2': '/ficha',
+    'ficha%20propiedad%20-%20corretaje%20guzman%20v2.html': '/ficha',
+    'ficha%20propiedad%20-%20corretaje%20guzman%20v2': '/ficha'
   };
 
   function cleanInternalLinks(root) {
@@ -234,8 +250,9 @@
         const u = new URL(raw, location.origin);
         if (u.origin !== location.origin) return;
         const key = decodeURIComponent(u.pathname).replace(/^\/+/, '').toLowerCase();
+        const rawKey = u.pathname.replace(/^\/+/, '').toLowerCase();
         const id = u.searchParams.get('id');
-        const clean = CLEAN_ROUTES[key];
+        const clean = CLEAN_ROUTES[key] || CLEAN_ROUTES[rawKey];
         if ((clean === '/ficha' || u.pathname === '/ficha') && id && Array.isArray(window.GUZMAN_PROPERTIES_INDEX)) {
           const found = window.GUZMAN_PROPERTIES_INDEX.find(p => String(p.id) === String(id));
           if (found) { a.setAttribute('href', propertyPath(found) + u.hash); return; }
