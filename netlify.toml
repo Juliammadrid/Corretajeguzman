@@ -7,6 +7,29 @@
   functions = "netlify/functions"
 
 # ============================================================
+# Iconos oficiales para navegador, iPhone y PWA
+# ============================================================
+[[redirects]]
+  from = "/apple-touch-icon.png"
+  to = "/assets/guzman-logo.png"
+  status = 200
+
+[[redirects]]
+  from = "/apple-touch-icon-precomposed.png"
+  to = "/assets/guzman-logo.png"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.png"
+  to = "/assets/guzman-logo.png"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/assets/guzman-logo.png"
+  status = 200
+
+# ============================================================
 # Rutas publicas limpias
 # ============================================================
 [[redirects]]
