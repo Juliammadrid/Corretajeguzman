@@ -1,0 +1,16 @@
+# Corretaje Guzman - redirects rapidos de compatibilidad
+# Imagen antigua usada en la pagina de corredores movil
+/assets/corredor-hero.png  /assets/corredores.png  200!
+
+# Home antiguo con URL larga o codificada
+/Home%20-%20Corretaje%20Guzman.html  /  301!
+/home%20-%20corretaje%20guzman  /  301!
+/home%20-%20corretaje%20guzman.html  /  301!
+/Home%20-%20Corretaje%20Guzman  /  301!
+/home%20-%20corretaje%20guzman/  /  301!
+
+# Iconos oficiales: siempre usar el logo real desde assets
+/favicon.ico  /assets/guzman-logo.png  200!
+/favicon.png  /assets/guzman-logo.png  200!
+/apple-touch-icon.png  /assets/guzman-logo.png  200!
+/apple-touch-icon-precomposed.png  /assets/guzman-logo.png  200!
