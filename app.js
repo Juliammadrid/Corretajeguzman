@@ -6,14 +6,45 @@ const el = (t, c, h) => { const e = document.createElement(t); if (c) e.classNam
 const FICHA_URL = "/ficha";
 let PHOTOS = [], cur = 0, CURRENT = null;
 
+function normalizeBrokerName(v) {
+  return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function brokerAllowed(name) {
+  const n = normalizeBrokerName(name);
+  return n && n !== 'vi la empresa en internet' && n !== 'adriana rubio';
+}
+
+function showFichaError(id) {
+  const main = document.querySelector('main') || document.body;
+  main.innerHTML = `
+    <section style="min-height:55vh;display:grid;place-items:center;padding:80px 20px;text-align:center">
+      <div style="max-width:560px;background:#fff;border:1px solid #eadff8;border-radius:24px;padding:36px;box-shadow:0 24px 70px rgba(45,20,80,.10)">
+        <div style="font-size:13px;font-weight:800;color:#7c3aed;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px">Propiedad no encontrada</div>
+        <h1 style="font-size:34px;line-height:1.05;margin:0 0 14px;color:#171223">No pudimos cargar esta ficha</h1>
+        <p style="margin:0 0 24px;color:#625875">El enlace de esta propiedad está incompleto o ya no está disponible. Puedes volver al catálogo y elegir una propiedad publicada.</p>
+        <a href="/arriendos" style="display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:14px;background:#7c3aed;color:#fff;text-decoration:none;font-weight:800">Ver propiedades</a>
+      </div>
+    </section>`;
+  console.warn('Ficha sin propiedad válida', id || '(sin id)');
+}
+
 async function init() {
   await GZ.loadConfig();
   const { data, live } = await GZ.loadProperties();
   GZ.banner(live, data.length);
   const params = new URLSearchParams(location.search);
   const id = params.get('id') || (GZ.propertyIdFromPath && GZ.propertyIdFromPath(location.pathname));
-  let p = id && data.find(x => String(x.id) === String(id));
-  if (!p) p = data[0];
+  const p = id && data.find(x => String(x.id) === String(id));
+  if (!p) {
+    showFichaError(id);
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+  if (GZ.propertyPath) {
+    const cleanPath = GZ.propertyPath(p);
+    if (cleanPath && location.pathname !== cleanPath) history.replaceState(null, '', cleanPath);
+  }
   CURRENT = p;
   renderFicha(p);
   renderSimilares(data.filter(x => x.id !== p.id), p);
@@ -111,7 +142,7 @@ function renderFicha(p) {
 
   const sel = $('#broker'); sel.innerHTML = '';
   sel.appendChild(el('option', null, 'Vi la empresa en internet')); sel.firstChild.value = '';
-  (window.GUZMAN_BROKERS || []).filter(b => b !== 'Vi la empresa en internet').forEach(b => { const o = el('option', null, b); o.value = b; sel.appendChild(o); });
+  (window.GUZMAN_BROKERS || []).filter(brokerAllowed).forEach(b => { const o = el('option', null, b); o.value = b; sel.appendChild(o); });
   const updateWa = () => { const link = GZ.waLink(p, sel.value); $('#waBtn').href = link; $('#mWa').href = link; };
   sel.addEventListener('change', updateWa); updateWa();
 
@@ -189,6 +220,7 @@ function renderSimilares(list, p) {
 
 function contactPayload(form, p) {
   const fields = form.querySelectorAll('input, textarea');
+  const canonical = GZ.propertyCanonicalUrl ? GZ.propertyCanonicalUrl(p) : location.href;
   return {
     nombre: (fields[0] && fields[0].value || '').trim(),
     telefono: (fields[1] && fields[1].value || '').trim(),
@@ -198,7 +230,7 @@ function contactPayload(form, p) {
     operacion: GZ.opLabel(p),
     comuna: p.commune || '',
     precio: GZ.priceText(p) + (GZ.perLabel(p) ? ' ' + GZ.perLabel(p) : ''),
-    url: location.href,
+    url: canonical,
     fecha_envio: new Date().toISOString()
   };
 }
