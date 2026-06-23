@@ -36,6 +36,14 @@ function formatClp(value) {
   return `$${new Intl.NumberFormat("es-CL").format(Math.round(number))}`;
 }
 
+function proxiedImage(src) {
+  const value = String(src || "").trim();
+  if (!value) return DEFAULT_IMAGE;
+  if (value.startsWith(`${SITE_ORIGIN}/api/social-image`)) return value;
+  if (value.startsWith(`${SITE_ORIGIN}/assets/`)) return value;
+  return `${SITE_ORIGIN}/api/social-image?src=${encodeURIComponent(value)}`;
+}
+
 function applyCommercialOverrides(p) {
   if (!p) return p;
   const id = String(p.id || "").trim();
@@ -173,6 +181,7 @@ function redirectHtml(id, path) {
   const title = "Propiedad · Corretaje Guzmán";
   const canonical = `${SITE_ORIGIN}${path || target}`;
   const desc = "Revisa esta propiedad disponible y agenda tu visita con Corretaje Guzmán.";
+  const image = proxiedImage(DEFAULT_IMAGE);
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -186,8 +195,12 @@ function redirectHtml(id, path) {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(desc)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
-  <meta property="og:image" content="${escapeHtml(DEFAULT_IMAGE)}">
+  <meta property="og:image" content="${escapeHtml(image)}">
+  <meta property="og:image:secure_url" content="${escapeHtml(image)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="${escapeHtml(image)}">
   <meta http-equiv="refresh" content="0;url=${escapeHtml(target)}">
   <script>window.location.replace(${JSON.stringify(target)});</script>
 </head>
@@ -203,7 +216,7 @@ function propertyHtml(data, path) {
   const desc = buildDescription(data);
   const canonical = `${SITE_ORIGIN}${path}`;
   const fichaUrl = `/ficha?id=${encodeURIComponent(data.id || "")}`;
-  const image = data.image || DEFAULT_IMAGE;
+  const image = proxiedImage(data.image || DEFAULT_IMAGE);
 
   return `<!doctype html>
 <html lang="es">
@@ -220,6 +233,8 @@ function propertyHtml(data, path) {
   <meta property="og:url" content="${escapeHtml(canonical)}">
   <meta property="og:image" content="${escapeHtml(image)}">
   <meta property="og:image:secure_url" content="${escapeHtml(image)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(desc)}">
