@@ -71,6 +71,18 @@ function sortList(list) {
   return list;
 }
 
+function fichaHref(p) {
+  if (!p) return '#';
+  const clean = window.GZ && GZ.propertyPath ? GZ.propertyPath(p) : '';
+  if (clean && clean !== '/ficha') return clean;
+  const id = String(p.id || p.codigo || '').trim();
+  return id ? `${FICHA_URL}?id=${encodeURIComponent(id)}` : '#';
+}
+
+function propertyById(id) {
+  return ALL.find(p => String(p.id || p.codigo || '') === String(id || ''));
+}
+
 function apply() {
   const list = sortList(ALL.filter(matches));
   renderList(list);
@@ -128,7 +140,9 @@ function card(p) {
     p.usableArea != null && `<span class="f"><i data-lucide="ruler" class="ico"></i>${p.usableArea} m²</span>`,
     p.parking ? `<span class="f"><i data-lucide="car" class="ico"></i>${p.parking}</span>` : ''
   ].filter(Boolean).join('');
-  const a = el('a', 'pcardm'); a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id); a.dataset.id = p.id;
+  const a = el('a', 'pcardm');
+  a.href = fichaHref(p);
+  a.dataset.id = String(p.id || p.codigo || '');
   a.innerHTML = `
     <div class="ph">
       <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}" loading="lazy">
@@ -150,7 +164,7 @@ function renderList(list) {
     wrap.appendChild(el('div', 'empty', `<i data-lucide="search-x" class="ico"></i><div>No encontramos propiedades con estos filtros.<br>Prueba ampliando el precio o la ubicación.</div>`));
     return;
   }
-  list.forEach(p => wrap.appendChild(card(p)));
+  list.filter(p => p && (p.id || p.codigo)).forEach(p => wrap.appendChild(card(p)));
 }
 
 /* ---------- mapa ---------- */
@@ -204,7 +218,7 @@ function renderMap(list) {
       const pos = await geocodeProperty(p);
       if (!pos) continue;
       const m = new google.maps.Marker({ position: pos, map: gmap, title: p.title, icon: PIN });
-      m.addListener('click', () => { infow.setContent(`<div style="font-family:sans-serif;max-width:210px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><small style="color:#6b6280">Ubicación calculada desde dirección pública</small><br><a href="${FICHA_URL}?id=${encodeURIComponent(p.id)}" style="color:#7c3aed;font-weight:600">Ver ficha →</a></div>`); infow.open(gmap, m); highlightCard(p.id); });
+      m.addListener('click', () => { infow.setContent(`<div style="font-family:sans-serif;max-width:210px"><b>${p.title}</b><br>${GZ.priceText(p)}<br><small style="color:#6b6280">Ubicación calculada desde dirección pública</small><br><a href="${fichaHref(p)}" style="color:#7c3aed;font-weight:600">Ver ficha →</a></div>`); infow.open(gmap, m); highlightCard(p.id); });
       m._pid = p.id; markers.push(m); bounds.extend(pos); n++;
     }
     if (n) gmap.fitBounds(bounds, 50);
@@ -214,15 +228,20 @@ function shortPrice(p) { const uf = GZ.CFG.ufValueClp || 39200; const clp = p.cu
 function placeholderMap(panel, list) {
   let html = `<div class="map-ph"><div class="map-ph-grid"></div><div class="map-hint"><i data-lucide="map-pin" class="ico" style="width:14px;height:14px;display:inline;vertical-align:-2px"></i> ${list.length} propiedades listas para geocodificar por dirección</div>`;
   list.slice(0, 14).forEach((p, i) => {
+    const id = String(p.id || p.codigo || '');
+    if (!id) return;
     const left = 18 + ((i * 53) % 64) + (i % 3) * 6;
     const top = 22 + ((i * 37) % 56);
-    html += `<div class="mk" data-id="${p.id}" style="left:${left}%;top:${top}%"><b>${shortPrice(p)}</b></div>`;
+    html += `<div class="mk" data-id="${id}" style="left:${left}%;top:${top}%"><b>${shortPrice(p)}</b></div>`;
   });
   html += `<div class="map-ph-card"><i data-lucide="map" class="ico" style="width:30px;height:30px"></i><b>Vista de mapa</b><span>Activa tu <b>Google Maps API key</b> restringida por dominio para calcular pines desde Dirección pública.</span></div></div>`;
   panel.innerHTML = html;
   $$('.mk', panel).forEach(mk => {
     mk.addEventListener('mouseenter', () => highlightCard(mk.dataset.id));
-    mk.addEventListener('click', () => { location.href = FICHA_URL + '?id=' + encodeURIComponent(mk.dataset.id); });
+    mk.addEventListener('click', () => {
+      const p = propertyById(mk.dataset.id);
+      if (p) location.href = fichaHref(p);
+    });
   });
   if (window.lucide) lucide.createIcons();
 }
