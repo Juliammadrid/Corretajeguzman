@@ -344,6 +344,12 @@
   to = "/.netlify/functions/config"
   status = 200
 
+# Imagen social proxy para WhatsApp/Facebook
+[[redirects]]
+  from = "/api/social-image"
+  to = "/.netlify/functions/social-image"
+  status = 200
+
 # Sitemap dinámico de propiedades disponibles
 [[redirects]]
   from = "/sitemap-propiedades.xml"
