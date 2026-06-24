@@ -1,0 +1,30 @@
+# Cache de recursos estáticos
+/assets/*
+  Cache-Control: public, max-age=604800, immutable
+
+/uploads/*
+  Cache-Control: public, max-age=604800, immutable
+
+/*.js
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
+
+/*.css
+  Cache-Control: public, max-age=300, stale-while-revalidate=86400
+
+/data-rentando.js
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+
+/data-propiedades.js
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+
+/api/properties
+  Cache-Control: public, max-age=60, stale-while-revalidate=300
+
+/api/reviews
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+
+/api/config
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
