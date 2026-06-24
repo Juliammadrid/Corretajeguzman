@@ -4,12 +4,12 @@ export default async function handler(request, context) {
 
   const patch = `
 
-/* Performance patch — carga rápida de catálogo local + timeouts cortos */
+/* Performance patch — catálogo rápido + actualización Airtable en segundo plano */
 (function () {
   if (!window.GZ) return;
   var CFG = window.GZ.CFG || window.GUZMAN_CONFIG || {};
-  var nf = window.GZ.nf || new Intl.NumberFormat('es-CL');
   var FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
+  var backgroundStarted = false;
 
   function validPhotoUrl(url) {
     return (typeof url === 'string' && /^https?:\\/\\//.test(url)) || (typeof url === 'string' && /^assets\\//.test(url));
@@ -90,7 +90,7 @@ export default async function handler(request, context) {
   async function fetchJSONFast(url, ms) {
     if (!url) return null;
     var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    var timer = controller ? setTimeout(function () { controller.abort(); }, ms || 650) : null;
+    var timer = controller ? setTimeout(function () { controller.abort(); }, ms || 1200) : null;
     try {
       var r = await fetch(url, { headers: { accept: 'application/json' }, signal: controller && controller.signal });
       if (timer) clearTimeout(timer);
@@ -101,11 +101,32 @@ export default async function handler(request, context) {
       return null;
     }
   }
+  function normalizeApiPayload(j) {
+    return j && (Array.isArray(j) ? j : (j.propiedades || j.properties || j.records || null));
+  }
+  async function fetchAirtableCatalog(ms) {
+    var j = CFG.endpoint ? await fetchJSONFast(CFG.endpoint, ms || 3500) : null;
+    var api = normalizeApiPayload(j);
+    if (!api || !api.length) return null;
+    return mergeProperties(api, activeRentandoProperties()).map(normalizeLoadedProperty);
+  }
+  function publishCatalog(data, live) {
+    if (!data || !data.length) return;
+    window.GUZMAN_PROPERTIES_INDEX = data;
+    window.dispatchEvent(new CustomEvent('guzman:properties-updated', { detail: { data: data, live: !!live } }));
+  }
+  function startBackgroundCatalog() {
+    if (backgroundStarted || !CFG.endpoint) return;
+    backgroundStarted = true;
+    fetchAirtableCatalog(4500).then(function (data) {
+      if (data && data.length) publishCatalog(data, true);
+    });
+  }
 
   window.GZ.localProperties = localProperties;
 
   window.GZ.loadConfig = async function () {
-    var j = CFG.configEndpoint ? await fetchJSONFast(CFG.configEndpoint, 350) : null;
+    var j = CFG.configEndpoint ? await fetchJSONFast(CFG.configEndpoint, 900) : null;
     if (j) {
       if (j.mapsKey) CFG.mapsKey = j.mapsKey;
       if (j.whatsapp) CFG.whatsapp = j.whatsapp;
@@ -114,22 +135,23 @@ export default async function handler(request, context) {
   };
 
   window.GZ.loadReviews = async function () {
-    var j = CFG.reviewsEndpoint ? await fetchJSONFast(CFG.reviewsEndpoint, 450) : null;
+    var j = CFG.reviewsEndpoint ? await fetchJSONFast(CFG.reviewsEndpoint, 1200) : null;
     var arr = j && (Array.isArray(j) ? j : (j.reviews || j.reseñas));
     return (arr && arr.length) ? arr : (window.GUZMAN_REVIEWS || []);
   };
 
   window.GZ.loadProperties = async function () {
     var local = localProperties();
-    var live = false;
     var data = local;
+    var live = false;
     if (CFG.endpoint) {
-      var j = await fetchJSONFast(CFG.endpoint, 650);
-      var api = j && (Array.isArray(j) ? j : (j.propiedades || j.properties || j.records || null));
-      if (api && api.length) {
+      var apiData = await fetchAirtableCatalog(1800);
+      if (apiData && apiData.length) {
+        data = apiData;
         live = true;
-        data = mergeProperties(api, activeRentandoProperties()).map(normalizeLoadedProperty);
         window.GUZMAN_PROPERTIES_INDEX = data;
+      } else {
+        startBackgroundCatalog();
       }
     }
     return { data: data, live: live };
