@@ -44,8 +44,21 @@ async function init() {
   cleanHeroStats();
   stats();
   renderReviews(await GZ.loadReviews());
+  bindLiveCatalog();
   render(); bind();
   if (window.lucide) lucide.createIcons();
+}
+
+function bindLiveCatalog() {
+  window.addEventListener('guzman:properties-updated', function (event) {
+    const data = event && event.detail && Array.isArray(event.detail.data) ? event.detail.data : null;
+    if (!data || !data.length) return;
+    if (data.length <= ALL.length && ALL.some(p => p.operation === 'venta')) return;
+    ALL = data;
+    stats();
+    render();
+    if (window.lucide) lucide.createIcons();
+  });
 }
 
 function cleanHeroStats() {
