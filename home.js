@@ -116,6 +116,35 @@ function matches(p) {
   return true;
 }
 
+function isVillarrica(p) {
+  return normText(`${p.commune || ''} ${p.address || ''} ${p.fullAddress || ''} ${p.title || ''}`).includes('villarrica') ||
+         normText(`${p.commune || ''} ${p.address || ''} ${p.fullAddress || ''} ${p.title || ''}`).includes('villarica');
+}
+
+function featuredScore(p) {
+  const text = normText(`${p.commune || ''} ${p.address || ''} ${p.fullAddress || ''} ${p.title || ''} ${p.propertyType || ''}`);
+  let score = 0;
+
+  if (isVillarrica(p)) score += 1000;
+  if (p.operation === 'arriendo') score -= 20;
+
+  // Prioridad comercial solicitada: casa La Florida $580.000 o alternativas de Santiago/RM.
+  if (text.includes('la florida') && Number(p.priceValue) === 580000) score -= 220;
+  if (text.includes('casa') && text.includes('la florida')) score -= 170;
+  if (text.includes('santiago')) score -= 140;
+  if (text.includes('la florida')) score -= 120;
+  if (text.includes('nunoa') || text.includes('ñuñoa')) score -= 100;
+  if (text.includes('san miguel') || text.includes('providencia') || text.includes('macul') || text.includes('estacion central') || text.includes('estación central') || text.includes('quinta normal') || text.includes('puente alto')) score -= 70;
+
+  return score;
+}
+
+function orderFeatured(list) {
+  return list.map((p, i) => ({ p, i, score: featuredScore(p) }))
+    .sort((a, b) => (a.score - b.score) || (a.i - b.i))
+    .map(x => x.p);
+}
+
 function featRow(p) {
   return [
     p.bedrooms != null && `<span class="f"><i data-lucide="bed-double" class="ico"></i>${p.bedrooms}</span>`,
@@ -154,7 +183,8 @@ function compactCard(p) {
 
 function render() {
   const list = ALL.filter(matches);
-  const visible = list.slice(0, HOME_FEATURED_LIMIT);
+  const ordered = orderFeatured(list);
+  const visible = ordered.slice(0, HOME_FEATURED_LIMIT);
   $('#listView').style.display = view === 'lista' ? '' : 'none';
   $('#mapView').style.display = view === 'mapa' ? '' : 'none';
   document.querySelectorAll('.vtab').forEach(b => b.classList.toggle('on', b.dataset.v === view));
@@ -168,7 +198,7 @@ function render() {
     visible.forEach(p => ml.appendChild(compactCard(p)));
     if (list.length > visible.length) ml.appendChild(el('div', 'empty', `Mostrando ${visible.length} de ${list.length}. Usa filtros para acotar la búsqueda.`));
     $('#mapCount').textContent = `${list.length} propiedad${list.length === 1 ? '' : 'es'}`;
-    drawMap(list);
+    drawMap(ordered);
   }
   if (window.lucide) lucide.createIcons();
 }
