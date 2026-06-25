@@ -137,6 +137,10 @@ function idFromPath(path) {
   return "";
 }
 
+function idFromUrl(url) {
+  return url.searchParams.get("id") || idFromPath(url.pathname);
+}
+
 async function findAirtableProperty(id) {
   const baseId = env("AIRTABLE_BASE_ID");
   const token = env("AIRTABLE_API_KEY") || env("AIRTABLE_PAT");
@@ -149,8 +153,8 @@ async function findAirtableProperty(id) {
 
   for (const table of tables) {
     try {
-      const url = `${AIRTABLE_BASE_URL}/${encodeURIComponent(baseId)}/${encodeURIComponent(table.id)}/${encodeURIComponent(id)}`;
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+      const apiUrl = `${AIRTABLE_BASE_URL}/${encodeURIComponent(baseId)}/${encodeURIComponent(table.id)}/${encodeURIComponent(id)}`;
+      const res = await fetch(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) continue;
       const record = await res.json();
       if (record && record.id) return normalizeAirtableProperty(record, table.kind);
@@ -188,10 +192,10 @@ async function findProperty(id) {
   return (await findAirtableProperty(id)) || (await findRentandoProperty(id));
 }
 
-function redirectHtml(id, path) {
+function redirectHtml(id, canonicalPath) {
   const target = id ? `/ficha?id=${encodeURIComponent(id)}` : "/arriendos";
   const title = "Propiedad · Corretaje Guzmán";
-  const canonical = `${SITE_ORIGIN}${path || target}`;
+  const canonical = `${SITE_ORIGIN}${canonicalPath || target}`;
   const desc = "Revisa esta propiedad disponible y agenda tu visita con Corretaje Guzmán.";
   const image = proxiedImage(DEFAULT_IMAGE);
   return `<!doctype html>
@@ -223,10 +227,10 @@ function redirectHtml(id, path) {
 </html>`;
 }
 
-function propertyHtml(data, path) {
+function propertyHtml(data, canonicalPath) {
   const title = `${data.title} · Corretaje Guzmán`;
   const desc = buildDescription(data);
-  const canonical = `${SITE_ORIGIN}${path}`;
+  const canonical = `${SITE_ORIGIN}${canonicalPath}`;
   const fichaUrl = `/ficha?id=${encodeURIComponent(data.id || "")}`;
   const image = proxiedImage(data.image || DEFAULT_IMAGE);
 
@@ -265,11 +269,11 @@ function propertyHtml(data, path) {
 
 export default async function handler(request) {
   const url = new URL(request.url);
-  const path = url.pathname;
-  const id = idFromPath(path);
+  const canonicalPath = `${url.pathname}${url.search}`;
+  const id = idFromUrl(url);
   const property = await findProperty(id);
 
-  return new Response(property ? propertyHtml(property, path) : redirectHtml(id, path), {
+  return new Response(property ? propertyHtml(property, canonicalPath) : redirectHtml(id, canonicalPath), {
     headers: {
       "content-type": "text/html; charset=utf-8",
       "cache-control": "no-cache, must-revalidate"
@@ -278,5 +282,5 @@ export default async function handler(request) {
 }
 
 export const config = {
-  path: "/propiedad/*"
+  path: ["/propiedad", "/propiedad/*"]
 };
