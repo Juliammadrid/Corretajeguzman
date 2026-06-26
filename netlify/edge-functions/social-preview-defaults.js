@@ -66,30 +66,6 @@ function hasTag(html, pattern) {
   return pattern.test(html);
 }
 
-function fichaDescriptionFix(url) {
-  const pathname = url.pathname.replace(/\/$/, '') || '/';
-  if (pathname !== '/ficha') return '';
-  return `<style id="cg-ficha-desc-fix">
-.desc.clamped{max-height:none!important;overflow:visible!important;-webkit-mask-image:none!important;mask-image:none!important}
-#readmore{display:none!important}
-</style>`;
-}
-
-function globalLayoutFix() {
-  return `<style id="cg-layout-stability-fix">
-html,body{max-width:100%;overflow-x:hidden!important}
-@media(max-width:620px){
-  .hero{overflow:hidden!important}
-  .hero-inner{padding-left:0!important;padding-right:0!important;max-width:100%!important}
-  .search{width:calc(100% - 32px)!important;margin-left:auto!important;margin-right:auto!important;max-width:430px!important}
-  .hero-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;width:100%!important;max-width:100%!important;margin:0!important;padding:18px 18px 12px!important;box-sizing:border-box!important;left:auto!important;right:auto!important;transform:none!important;overflow:hidden!important}
-  .hero-stats .hstat{min-width:0!important;width:auto!important;text-align:center!important;overflow:hidden!important}
-  .hero-stats .hstat b{font-size:26px!important;line-height:1.1!important;height:auto!important;margin:0 0 6px!important;letter-spacing:-.02em!important;white-space:nowrap!important}
-  .hero-stats .hstat span{display:block!important;font-size:12px!important;line-height:1.25!important;white-space:normal!important;max-width:100%!important}
-}
-</style>`;
-}
-
 function upsertSocialMeta(html, url) {
   const pathname = url.pathname.replace(/\/$/, '') || '/';
   const meta = routeMeta(pathname);
@@ -97,12 +73,6 @@ function upsertSocialMeta(html, url) {
   const image = pathname === '/ficha' ? FALLBACK_IMAGE : DEFAULT_IMAGE;
 
   const tags = [];
-
-  const cssFix = fichaDescriptionFix(url);
-  if (cssFix && !html.includes('id="cg-ficha-desc-fix"')) tags.push(cssFix);
-
-  const layoutFix = globalLayoutFix();
-  if (!html.includes('id="cg-layout-stability-fix"')) tags.push(layoutFix);
 
   if (!hasTag(html, /<meta\s+property=["']og:title["']/i)) {
     tags.push(`<meta property="og:title" content="${esc(meta.title)}">`);
