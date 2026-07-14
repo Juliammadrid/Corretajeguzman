@@ -66,6 +66,14 @@ function hasTag(html, pattern) {
   return pattern.test(html);
 }
 
+function fichaDescriptionFix(pathname) {
+  if (pathname !== '/ficha') return '';
+  return `<style id="cg-ficha-desc-fix">
+.desc.clamped{max-height:none!important;height:auto!important;overflow:visible!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;-webkit-mask-image:none!important;mask-image:none!important;white-space:pre-line!important}
+#readmore{display:none!important}
+</style>`;
+}
+
 function upsertSocialMeta(html, url) {
   const pathname = url.pathname.replace(/\/$/, '') || '/';
   const meta = routeMeta(pathname);
@@ -73,6 +81,9 @@ function upsertSocialMeta(html, url) {
   const image = pathname === '/ficha' ? FALLBACK_IMAGE : DEFAULT_IMAGE;
 
   const tags = [];
+
+  const descriptionFix = fichaDescriptionFix(pathname);
+  if (descriptionFix && !html.includes('id="cg-ficha-desc-fix"')) tags.push(descriptionFix);
 
   if (!hasTag(html, /<meta\s+property=["']og:title["']/i)) {
     tags.push(`<meta property="og:title" content="${esc(meta.title)}">`);
