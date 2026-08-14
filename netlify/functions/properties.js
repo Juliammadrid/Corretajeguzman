@@ -1,12 +1,12 @@
 /* ============================================================
- *  Netlify Function · propiedades (Corretaje Guzmán)
+ *  Netlify Function Â· propiedades (Corretaje GuzmÃ¡n)
  *  Devuelve las propiedades NORMALIZADAS desde Airtable.
  *  Rutas (ver netlify.toml):
- *    /api/properties            → todas (arriendo + venta)
- *    /api/properties/rent       → sólo arriendo
- *    /api/properties/sale       → sólo venta
- *    /api/home-properties       → destacadas / todas
- *    /api/property/:id          → una por record id
+ *    /api/properties            â†’ todas (arriendo + venta)
+ *    /api/properties/rent       â†’ sÃ³lo arriendo
+ *    /api/properties/sale       â†’ sÃ³lo venta
+ *    /api/home-properties       â†’ destacadas / todas
+ *    /api/property/:id          â†’ una por record id
  *
  *  Variables de entorno (Netlify):
  *    AIRTABLE_API_KEY           (obligatoria, secreta)
@@ -21,29 +21,29 @@ const SALE_TABLE = process.env.AIRTABLE_SALE_TABLE_ID || "tblB67Zm9zxDlFwY7";
 
 /* Nombres de columna esperados (con alternativas por si cambian) */
 const F = {
-  title:        ["Nombre de la propiedad", "Nombre", "Título", "Titulo", "Propiedad"],
-  address:      ["Direccion publica", "Dirección pública", "Direccion Publica", "Dirección Publica", "Dirección", "Direccion", "Address"],
+  title:        ["Nombre de la propiedad", "Nombre", "TÃ­tulo", "Titulo", "Propiedad"],
+  address:      ["Direccion publica", "DirecciÃ³n pÃºblica", "Direccion Publica", "DirecciÃ³n Publica", "DirecciÃ³n", "Direccion", "Address"],
   commune:      ["Comuna", "Ciudad", "Sector"],
   bedrooms:     ["Dormitorios", "Habitaciones"],
-  bathrooms:    ["Baños", "Banos", "Baño"],
-  photos:       ["Fotos", "Foto", "Imágenes", "Imagenes", "Photos"],
+  bathrooms:    ["BaÃ±os", "Banos", "BaÃ±o"],
+  photos:       ["Fotos", "Foto", "ImÃ¡genes", "Imagenes", "Photos"],
   priceValue:   ["Precio valor", "Precio", "Valor"],
   currency:     ["Moneda", "Currency"],
-  commonExpenses: ["Valor gasto común", "Gastos comunes", "Gasto común", "GGCC"],
+  commonExpenses: ["Valor gasto comÃºn", "Gastos comunes", "Gasto comÃºn", "GGCC"],
   parking:      ["Estacionamiento", "Estacionamientos", "Garaje"],
   storage:      ["Bodega"],
-  propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "Categoría", "Categoria"],
-  operation:    ["Operación", "Operacion"],
-  description:  ["Descripción pública", "Descripcion publica", "Descripción", "Descripcion", "Detalle"],
-  usableArea:   ["Superficie útil m2", "Superficie útil", "Superficie util m2", "Metros útiles", "Metros utiles", "m2 útiles"],
+  propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "CategorÃ­a", "Categoria"],
+  operation:    ["OperaciÃ³n", "Operacion"],
+  description:  ["DescripciÃ³n pÃºblica", "Descripcion publica", "DescripciÃ³n", "Descripcion", "Detalle"],
+  usableArea:   ["Superficie Ãºtil m2", "Superficie Ãºtil", "Superficie util m2", "Metros Ãºtiles", "Metros utiles", "m2 Ãºtiles"],
   totalArea:    ["Metros totales", "Superficie total", "Metros"],
   terraceArea:  ["Superficie terraza m2", "Terraza", "Metros terraza"],
   latitude:     ["Latitud", "Latitude", "Lat"],
   longitude:    ["Longitud", "Longitude", "Lng", "Lon"],
-  features:     ["Extras / características", "Extras", "Características", "Caracteristicas", "Comodidades"],
+  features:     ["Extras / caracterÃ­sticas", "Extras", "CaracterÃ­sticas", "Caracteristicas", "Comodidades"],
   status:       ["Estado", "Status"],
-  condition:    ["Estado de la propiedad", "Condición", "Condicion", "Nuevo/Usado", "Nuevo o usado", "Nuevo / Usado"],
-  updatedAt:    ["Fecha de actualización", "Última actualización", "Updated"]
+  condition:    ["Estado de la propiedad", "CondiciÃ³n", "Condicion", "Nuevo/Usado", "Nuevo o usado", "Nuevo / Usado"],
+  updatedAt:    ["Fecha de actualizaciÃ³n", "Ãšltima actualizaciÃ³n", "Updated"]
 };
 
 const get = (fields, keys) => {
@@ -54,7 +54,7 @@ const get = (fields, keys) => {
 };
 const pick = (v) => (v && v.name) ? v.name : v;
 const num = (v) => { if (v == null) return null; const n = Number(String(v).replace(/[^\d.,-]/g, "").replace(/\.(?=\d{3}\b)/g, "").replace(",", ".")); return isNaN(n) ? null : n; };
-const list = (v) => { if (v == null) return []; if (Array.isArray(v)) return v.map(x => (x && x.name) ? x.name : x).filter(Boolean); return String(v).split(/[\n,;•·]+/).map(s => s.trim()).filter(Boolean); };
+const list = (v) => { if (v == null) return []; if (Array.isArray(v)) return v.map(x => (x && x.name) ? x.name : x).filter(Boolean); return String(v).split(/[\n,;â€¢Â·]+/).map(s => s.trim()).filter(Boolean); };
 const photos = (v) => { if (Array.isArray(v)) return v.map(a => a && a.url ? a.url : a).filter(x => typeof x === "string"); if (typeof v === "string") return v.split(/[\s,]+/).filter(u => /^https?:\/\//.test(u)); return []; };
 const norm = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
@@ -146,10 +146,15 @@ exports.handler = async function (event) {
     if (q.id) props = props.filter(p => p.id === q.id);
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=120" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=60, stale-while-revalidate=300",
+        "Netlify-CDN-Cache-Control": "public, durable, max-age=300, stale-while-revalidate=86400"
+      },
       body: JSON.stringify({ properties: props })
     };
   } catch (e) {
     return { statusCode: 502, body: JSON.stringify({ error: String(e.message || e) }) };
   }
 };
+
