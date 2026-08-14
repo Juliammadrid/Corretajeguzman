@@ -4,13 +4,13 @@ const SALE_TABLE = process.env.AIRTABLE_SALE_TABLE_ID || "tblB67Zm9zxDlFwY7";
 const SITE = "https://corretajeguzman.com";
 
 const F = {
-  title: ["Nombre de la propiedad", "Nombre", "Título", "Titulo", "Propiedad"],
-  address: ["Direccion publica", "Dirección pública", "Direccion Publica", "Dirección Publica", "Dirección", "Direccion", "Address"],
+  title: ["Nombre de la propiedad", "Nombre", "TÃ­tulo", "Titulo", "Propiedad"],
+  address: ["Direccion publica", "DirecciÃ³n pÃºblica", "Direccion Publica", "DirecciÃ³n Publica", "DirecciÃ³n", "Direccion", "Address"],
   commune: ["Comuna", "Ciudad", "Sector"],
-  propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "Categoría", "Categoria"],
-  operation: ["Operación", "Operacion"],
+  propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "CategorÃ­a", "Categoria"],
+  operation: ["OperaciÃ³n", "Operacion"],
   status: ["Estado", "Status"],
-  updatedAt: ["Fecha de actualización", "Última actualización", "Updated"]
+  updatedAt: ["Fecha de actualizaciÃ³n", "Ãšltima actualizaciÃ³n", "Updated"]
 };
 
 function get(fields, keys) {
@@ -90,10 +90,15 @@ exports.handler = async function () {
     }).join("\n");
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/xml; charset=utf-8", "Cache-Control": "public, max-age=900" },
+      headers: {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Netlify-CDN-Cache-Control": "public, durable, max-age=900, stale-while-revalidate=86400"
+      },
       body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
     };
   } catch (e) {
     return { statusCode: 502, headers: { "Content-Type": "application/xml; charset=utf-8" }, body: `<error>${xml(e.message || e)}</error>` };
   }
 };
+
