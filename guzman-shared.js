@@ -97,7 +97,8 @@
   function propertyPath(p) {
     if (!p) return '/propiedad';
     const id = encodeURIComponent(String(p.id || p.codigo || ''));
-    return id ? `/propiedad?id=${id}` : '/propiedad';
+    const slug = slugify(propertySlugBase(p));
+    return id ? `/propiedad/${slug}-${id}` : '/propiedad';
   }
 
   function propertyCanonicalUrl(p) { return SITE_ORIGIN + propertyPath(p); }
