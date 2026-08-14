@@ -77,13 +77,13 @@ function applyCommercialOverrides(p) {
 function normalizeAirtableProperty(record, tableKind) {
   const fields = record.fields || {};
   const operation = tableKind === "sale" ? "venta" : "arriendo";
-  const title = firstValue(fields, ["Nombre de la propiedad", "Nombre", "Titulo", "TÃ­tulo", "Propiedad"]) || "Propiedad Corretaje GuzmÃ¡n";
+  const title = firstValue(fields, ["Nombre de la propiedad", "Nombre", "Titulo", "Título", "Propiedad"]) || "Propiedad Corretaje Guzmán";
   const comuna = firstValue(fields, ["Comuna", "Comuna propiedad", "Sector"]);
-  const direccion = firstValue(fields, ["Direccion publica", "DirecciÃ³n pÃºblica", "DirecciÃ³n", "Direccion"]);
+  const direccion = firstValue(fields, ["Direccion publica", "Dirección pública", "Dirección", "Direccion"]);
   const tipo = firstValue(fields, ["Tipo propiedad", "Tipo de propiedad", "Tipo"]);
   const price = firstValue(fields, ["Precio valor", "Valor esperado", "Valor arriendo", "Valor arriendo mensual", "Precio"]);
   const moneda = firstValue(fields, ["Moneda"]);
-  const fotos = firstValue(fields, ["Fotos", "Foto", "Imagenes", "ImÃ¡genes"]);
+  const fotos = firstValue(fields, ["Fotos", "Foto", "Imagenes", "Imágenes"]);
   const image = firstAttachmentUrl(fotos) || DEFAULT_IMAGE;
   return {
     id: record.id,
@@ -104,7 +104,7 @@ function normalizeRentandoProperty(p) {
   const price = fixed.price || formatClp(fixed.priceValue);
   return {
     id: String(fixed.id || fixed.codigo || ""),
-    title: String(fixed.title || "Propiedad Corretaje GuzmÃ¡n"),
+    title: String(fixed.title || "Propiedad Corretaje Guzmán"),
     operation: fixed.operation === "venta" ? "venta" : "arriendo",
     comuna: String(fixed.commune || fixed.comuna || ""),
     direccion: String(fixed.address || fixed.direccion || ""),
@@ -124,8 +124,8 @@ function buildDescription(p) {
   if (p.comuna) parts.push(p.comuna);
   if (p.price) parts.push(`${p.moneda && p.moneda !== "CLP" ? p.moneda + " " : ""}${p.price}`);
   return parts.length
-    ? `${parts.join(" Â· ")} en Corretaje GuzmÃ¡n. Revisa fotos, detalles y agenda tu visita.`
-    : "Propiedades disponibles en arriendo y venta con Corretaje GuzmÃ¡n.";
+    ? `${parts.join(" · ")} en Corretaje Guzmán. Revisa fotos, detalles y agenda tu visita.`
+    : "Propiedades disponibles en arriendo y venta con Corretaje Guzmán.";
 }
 
 function idFromPath(path) {
@@ -142,14 +142,7 @@ function idFromUrl(url) {
 }
 
 function slugify(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/&/g, " y ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 90) || "propiedad";
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " y ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90) || "propiedad";
 }
 
 function propertyPath(data) {
@@ -210,9 +203,9 @@ async function findProperty(id) {
 
 function redirectHtml(id, canonicalPath) {
   const target = id ? `/ficha?id=${encodeURIComponent(id)}` : "/arriendos";
-  const title = "Propiedad Â· Corretaje GuzmÃ¡n";
+  const title = "Propiedad · Corretaje Guzmán";
   const canonical = `${SITE_ORIGIN}${canonicalPath || target}`;
-  const desc = "Revisa esta propiedad disponible y agenda tu visita con Corretaje GuzmÃ¡n.";
+  const desc = "Revisa esta propiedad disponible y agenda tu visita con Corretaje Guzmán.";
   const image = proxiedImage(DEFAULT_IMAGE);
   return `<!doctype html>
 <html lang="es">
@@ -223,7 +216,7 @@ function redirectHtml(id, canonicalPath) {
   <meta name="description" content="${escapeHtml(desc)}">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="Corretaje GuzmÃ¡n">
+  <meta property="og:site_name" content="Corretaje Guzmán">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(desc)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
@@ -244,7 +237,7 @@ function redirectHtml(id, canonicalPath) {
 }
 
 function propertyHtml(data, canonicalPath) {
-  const title = `${data.title} Â· Corretaje GuzmÃ¡n`;
+  const title = `${data.title} · Corretaje Guzmán`;
   const desc = buildDescription(data);
   const canonical = `${SITE_ORIGIN}${canonicalPath}`;
   const fichaUrl = `/ficha?id=${encodeURIComponent(data.id || "")}`;
@@ -259,7 +252,7 @@ function propertyHtml(data, canonicalPath) {
   <meta name="description" content="${escapeHtml(desc)}">
   <link rel="canonical" href="${escapeHtml(canonical)}">
   <meta property="og:type" content="article">
-  <meta property="og:site_name" content="Corretaje GuzmÃ¡n">
+  <meta property="og:site_name" content="Corretaje Guzmán">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(desc)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
@@ -301,4 +294,3 @@ export default async function handler(request) {
 export const config = {
   path: ["/propiedad", "/propiedad/*"]
 };
-
