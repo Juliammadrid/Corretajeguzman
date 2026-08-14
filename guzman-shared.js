@@ -1,5 +1,5 @@
 /* ============================================================
-   Corretaje GuzmÃ¡n â€” helpers compartidos (precio, WhatsApp,
+   Corretaje Guzmán — helpers compartidos (precio, WhatsApp,
    carga de datos, SEO, PWA y rutas limpias).
    ============================================================ */
 (function () {
@@ -29,7 +29,7 @@
     ensureHeadTag('link', { rel: 'apple-touch-icon-precomposed', href: '/apple-touch-icon-precomposed.png?v=20260621-3' });
     ensureHeadTag('meta', { name: 'theme-color', content: '#241b31' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
-    ensureHeadTag('meta', { name: 'apple-mobile-web-app-title', content: 'GuzmÃ¡n' });
+    ensureHeadTag('meta', { name: 'apple-mobile-web-app-title', content: 'Guzmán' });
     ensureHeadTag('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' });
     ensureHeadTag('meta', { name: 'msapplication-TileImage', content: BRAND_ICON });
     ensureHeadTag('meta', { name: 'msapplication-TileColor', content: '#050505' });
@@ -43,7 +43,7 @@
 
   function ufApprox(p) {
     if (!p || p.currency !== 'UF' || !CFG.ufValueClp) return '';
-    return 'â‰ˆ $' + nf.format(Math.round(p.priceValue * CFG.ufValueClp));
+    return '≈ $' + nf.format(Math.round(p.priceValue * CFG.ufValueClp));
   }
 
   function priceHTML(p, perClass) {
@@ -66,7 +66,7 @@
   function waLink(p, broker) {
     const via = (broker && broker !== 'Vi la empresa en internet') ? `por ${broker}` : 'por la empresa en internet';
     const title = p && p.title ? p.title : 'una propiedad';
-    const msg = `Hola, quiero mÃ¡s informaciÃ³n sobre esta propiedad: ${title}. La vi ${via}.`;
+    const msg = `Hola, quiero más información sobre esta propiedad: ${title}. La vi ${via}.`;
     return `https://wa.me/${waNumber()}?text=${encodeURIComponent(msg)}`;
   }
 
@@ -153,7 +153,7 @@
     const photos = Array.isArray(p.photos) ? p.photos.filter(validPhotoUrl) : [];
     if (validPhotoUrl(p.coverPhoto) && !photos.includes(p.coverPhoto)) photos.unshift(p.coverPhoto);
     if (!photos.length) photos.push(FALLBACK_PHOTO);
-    const address = p.address || p.direccionPublica || p['Direccion publica'] || p['DirecciÃ³n pÃºblica'] || '';
+    const address = p.address || p.direccionPublica || p['Direccion publica'] || p['Dirección pública'] || '';
     const commune = p.commune || p.comuna || '';
     return {
       ...p,
@@ -199,7 +199,7 @@
   async function loadReviews() {
     if (CFG.reviewsEndpoint) {
       const j = await fetchJSON(CFG.reviewsEndpoint);
-      const arr = j && (Array.isArray(j) ? j : (j.reviews || j.reseÃ±as));
+      const arr = j && (Array.isArray(j) ? j : (j.reviews || j.reseñas));
       if (arr && arr.length) return arr;
     }
     return window.GUZMAN_REVIEWS || [];
@@ -273,4 +273,3 @@
 
   window.GZ = { CFG, nf, priceText, ufApprox, priceHTML, perLabel, opLabel, waNumber, waLink, iconFor, slugify, propertyPath, propertyCanonicalUrl, propertyIdFromPath, loadConfig, loadProperties, loadReviews, banner, cleanInternalLinks };
 })();
-
