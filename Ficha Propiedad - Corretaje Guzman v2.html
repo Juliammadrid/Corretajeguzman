@@ -424,7 +424,8 @@ footer{background:var(--dark);color:#cfc9da;padding:64px 0 34px}
   }
   var sh=document.getElementById('shareBtn');
   if(sh){sh.addEventListener('click',async function(){
-    var url=location.href, title=document.title;
+    var canonical=document.querySelector('link[rel="canonical"]');
+    var url=(canonical&&canonical.href)||location.href, title=document.title;
     if(navigator.share){ try{ await navigator.share({title:title,text:title,url:url}); return; }catch(e){ if(e&&e.name==='AbortError') return; } }
     var ok=false;
     try{ await navigator.clipboard.writeText(url); ok=true; }catch(e){
