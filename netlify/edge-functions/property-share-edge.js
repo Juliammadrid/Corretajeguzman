@@ -141,6 +141,15 @@ function idFromUrl(url) {
   return url.searchParams.get("id") || idFromPath(url.pathname);
 }
 
+function slugify(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/&/g, " y ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90) || "propiedad";
+}
+
+function propertyPath(data) {
+  const slug = slugify([data.operation, data.tipo, data.title, data.comuna].filter(Boolean).join(" "));
+  return `/propiedad/${slug}-${encodeURIComponent(data.id)}`;
+}
+
 async function findAirtableProperty(id) {
   const baseId = env("AIRTABLE_BASE_ID");
   const token = env("AIRTABLE_API_KEY") || env("AIRTABLE_PAT");
@@ -269,9 +278,9 @@ function propertyHtml(data, canonicalPath) {
 
 export default async function handler(request) {
   const url = new URL(request.url);
-  const canonicalPath = `${url.pathname}${url.search}`;
   const id = idFromUrl(url);
   const property = await findProperty(id);
+  const canonicalPath = property ? propertyPath(property) : `${url.pathname}${url.search}`;
 
   return new Response(property ? propertyHtml(property, canonicalPath) : redirectHtml(id, canonicalPath), {
     headers: {
