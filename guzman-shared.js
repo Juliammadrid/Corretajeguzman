@@ -7,7 +7,7 @@
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
   const SITE_ORIGIN = 'https://corretajeguzman.com';
-  const BRAND_ICON = '/assets/guzman-logo.png?v=20260621-3';
+  const BRAND_ICON = '/assets/guzman-favicon.jpg?v=20260813-1';
 
   const style = document.createElement('style');
   style.textContent = '.dbanner{display:none!important}';
