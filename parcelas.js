@@ -7,13 +7,29 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const nf = new Intl.NumberFormat('es-CL');
 
+const STATIC_PROJECTS = [{
+  id: 'campo-alto-roble',
+  title: 'Campo Alto Roble',
+  project: 'Proyecto de parcelas',
+  commune: 'Villarrica',
+  address: 'Camino Villarrica–Pucón, 2ª faja',
+  operation: 'parcela',
+  currency: 'UF',
+  priceValue: 2400,
+  surfaceTotal: 5000,
+  coverPhoto: 'assets/parc/car-hero.jpg',
+  photos: ['assets/parc/car-hero.jpg'],
+  features: ['5.000 m²', 'Urbanizado', 'Agua', 'Electricidad', 'Fibra óptica'],
+  detailUrl: '/parcelas/campo-alto-roble'
+}];
+
 let ALL = [];
 const STATE = { q: '', supMin: 0, supMax: null, prMin: null, prMax: null, prMoneda: 'UF', sector: '', carac: [], sort: 'rel' };
 
 async function init() {
   await GZ.loadConfig();
   const { data, live } = await GZ.loadProperties();
-  ALL = data.filter(p => p.operation === 'parcela');
+  ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
   GZ.banner(live, ALL.length);
   buildSectorPills();
   buildEvents();
@@ -40,6 +56,9 @@ function surfText(p) {
   const m = p.surfaceTotal || 0;
   if (m >= 10000) return (m / 10000).toLocaleString('es-CL', { maximumFractionDigits: 1 }) + ' ha';
   return nf.format(m) + ' m²';
+}
+function detailHref(p) {
+  return p.detailUrl || (FICHA_URL + '?id=' + encodeURIComponent(p.id));
 }
 
 /* ---------- filtros ---------- */
@@ -97,7 +116,7 @@ function render(list) {
 
 function featCard(p) {
   const a = el('a', 'feat');
-  a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id);
+  a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 4).map(f => `<span class="fc">${f}</span>`).join('');
   a.innerHTML = `
     <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}">
@@ -116,7 +135,7 @@ function featCard(p) {
 
 function card(p) {
   const a = el('a', 'pcard');
-  a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id);
+  a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 3).map(f => `<span class="c">${f}</span>`).join('');
   a.innerHTML = `
     <div class="img">
