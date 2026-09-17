@@ -4,8 +4,8 @@
  */
 const asNumber = (value) => {
   if (typeof value === 'number') return value;
-  const normalized = String(value ?? '').trim().replace(/\./g, '').replace(',', '.');
-  return Number(normalized);
+  const raw = String(value ?? '').trim();
+  return Number(raw.includes(',') ? raw.replace(/./g, '').replace(',', '.') : raw);
 };
 
 export default async (request) => {
