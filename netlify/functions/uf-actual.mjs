@@ -5,7 +5,7 @@
 const asNumber = (value) => {
   if (typeof value === 'number') return value;
   const raw = String(value ?? '').trim();
-  return Number(raw.includes(',') ? raw.replace(/./g, '').replace(',', '.') : raw);
+  return Number(raw.includes(',') ? raw.replace(/\./g, '').replace(',', '.') : raw);
 };
 
 export default async (request) => {
