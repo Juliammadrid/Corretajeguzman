@@ -28,16 +28,27 @@ const STATE = { q: '', supMin: 0, supMax: null, prMin: null, prMax: null, prMone
 
 async function init() {
   await GZ.loadConfig();
-  const { data, live } = await GZ.loadProperties();
+
+  // El proyecto propio se muestra sin esperar la respuesta de Airtable.
+  const propertiesPromise = GZ.loadProperties();
+  ALL = [...STATIC_PROJECTS];
+  buildSectorPills();
+  buildEvents();
+  updateSummary();
+  apply();
+
+  const { data, live } = await propertiesPromise;
   ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
   GZ.banner(live, ALL.length);
   buildSectorPills();
-  buildEvents();
-  // hero stats
-  $('#hsTotal').textContent = ALL.length;
-  $('#hsSectores').textContent = new Set(ALL.map(p => p.commune).filter(Boolean)).size || '—';
+  updateSummary();
   apply();
   if (window.lucide) lucide.createIcons();
+}
+
+function updateSummary() {
+  $('#hsTotal').textContent = ALL.length;
+  $('#hsSectores').textContent = new Set(ALL.map(p => p.commune).filter(Boolean)).size || '—';
 }
 
 /* ---------- precio helpers ---------- */
