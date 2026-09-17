@@ -16,6 +16,8 @@ const STATIC_PROJECTS = [{
   operation: 'parcela',
   currency: 'UF',
   priceValue: 2400,
+  priceTo: 3100,
+  availableParcels: 36,
   surfaceTotal: 5000,
   coverPhoto: 'assets/parc/car-hero.jpg',
   photos: ['assets/parc/car-hero.jpg'],
@@ -137,6 +139,9 @@ function featCard(p) {
   const a = el('a', 'feat' + (p.featuredProject ? ' feat-project' : ''));
   a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 4).map(f => `<span class="fc">${f}</span>`).join('');
+  const priceLabel = p.featuredProject
+    ? `Desde UF ${nf.format(p.priceValue)}<span>Hasta UF ${nf.format(p.priceTo || p.priceValue)} · ${p.availableParcels || 36} parcelas disponibles</span>`
+    : `${priceText(p)}<span>${surfText(p)} · ${approxText(p)}</span>`;
   a.innerHTML = `
     <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}">
     <div class="feat-body">
@@ -146,8 +151,8 @@ function featCard(p) {
       ${p.projectLead ? `<p class="feat-copy">${p.projectLead}</p>` : ''}
       <div class="fchars">${chars}</div>
       <div class="frow">
-        <div class="fprice">${priceText(p)}<span>${surfText(p)} · ${approxText(p)}</span></div>
-        <span class="btn btn-light"><i data-lucide="arrow-right" class="ico" style="width:16px;height:16px"></i>Ver parcela</span>
+        <div class="fprice">${priceLabel}</div>
+        <span class="btn btn-light"><i data-lucide="arrow-right" class="ico" style="width:16px;height:16px"></i>${p.featuredProject ? 'Ver parcelas' : 'Ver parcela'}</span>
       </div>
     </div>`;
   return a;
