@@ -7,21 +7,51 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const nf = new Intl.NumberFormat('es-CL');
 
+const STATIC_PROJECTS = [{
+  id: 'campo-alto-roble',
+  title: 'Campo Alto Roble',
+  project: 'Proyecto de parcelas',
+  commune: 'Villarrica',
+  address: 'Camino Villarrica–Pucón, 2ª faja',
+  operation: 'parcela',
+  currency: 'UF',
+  priceValue: 2400,
+  surfaceTotal: 5000,
+  coverPhoto: 'assets/parc/car-hero.jpg',
+  photos: ['assets/parc/car-hero.jpg'],
+  features: ['5.000 m²', 'Urbanizado', 'Agua', 'Electricidad', 'Fibra óptica'],
+  detailUrl: '/parcelas/campo-alto-roble',
+  featuredProject: true,
+  projectLead: 'Parcelas urbanizadas de 5.000 m² con agua, electricidad y fibra óptica, a minutos de Villarrica.',
+  coverPhoto: '/.netlify/images?url=/assets/parc/car-hero.jpg&w=1600&h=900&fit=cover&q=82'
+}];
+
 let ALL = [];
 const STATE = { q: '', supMin: 0, supMax: null, prMin: null, prMax: null, prMoneda: 'UF', sector: '', carac: [], sort: 'rel' };
 
 async function init() {
   await GZ.loadConfig();
-  const { data, live } = await GZ.loadProperties();
-  ALL = data.filter(p => p.operation === 'parcela');
-  GZ.banner(live, ALL.length);
+
+  // El proyecto propio se muestra sin esperar la respuesta de Airtable.
+  const propertiesPromise = GZ.loadProperties();
+  ALL = [...STATIC_PROJECTS];
   buildSectorPills();
   buildEvents();
-  // hero stats
-  $('#hsTotal').textContent = ALL.length;
-  $('#hsSectores').textContent = new Set(ALL.map(p => p.commune).filter(Boolean)).size || '—';
+  updateSummary();
+  apply();
+
+  const { data, live } = await propertiesPromise;
+  ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
+  GZ.banner(live, ALL.length);
+  buildSectorPills();
+  updateSummary();
   apply();
   if (window.lucide) lucide.createIcons();
+}
+
+function updateSummary() {
+  $('#hsTotal').textContent = ALL.length;
+  $('#hsSectores').textContent = new Set(ALL.map(p => p.commune).filter(Boolean)).size || '—';
 }
 
 /* ---------- precio helpers ---------- */
@@ -40,6 +70,9 @@ function surfText(p) {
   const m = p.surfaceTotal || 0;
   if (m >= 10000) return (m / 10000).toLocaleString('es-CL', { maximumFractionDigits: 1 }) + ' ha';
   return nf.format(m) + ' m²';
+}
+function detailHref(p) {
+  return p.detailUrl || (FICHA_URL + '?id=' + encodeURIComponent(p.id));
 }
 
 /* ---------- filtros ---------- */
@@ -84,27 +117,30 @@ function render(list) {
     grid.appendChild(el('div', 'empty', `<i data-lucide="search-x" class="ico"></i><div>No encontramos parcelas con estos filtros.<br>Prueba ampliando la superficie o el precio.</div>`));
     return;
   }
-  // destacada = la de mayor superficie cuando no hay filtros fuertes y hay >=4
-  let rest = list;
-  const showFeat = list.length >= 4 && !STATE.q && !STATE.carac.length && !STATE.sector;
+  // El proyecto se presenta primero y a mayor escala; las demás parcelas conservan su grilla.
+  const project = list.find(p => p.featuredProject);
+  let rest = project ? list.filter(p => p.id !== project.id) : list;
+  if (project) featWrap.appendChild(featCard(project));
+  const showFeat = rest.length >= 4 && !STATE.q && !STATE.carac.length && !STATE.sector;
   if (showFeat) {
-    const feat = [...list].sort((a, b) => (b.surfaceTotal || 0) - (a.surfaceTotal || 0))[0];
+    const feat = [...rest].sort((a, b) => (b.surfaceTotal || 0) - (a.surfaceTotal || 0))[0];
     featWrap.appendChild(featCard(feat));
-    rest = list.filter(p => p.id !== feat.id);
+    rest = rest.filter(p => p.id !== feat.id);
   }
   rest.forEach(p => grid.appendChild(card(p)));
 }
 
 function featCard(p) {
-  const a = el('a', 'feat');
-  a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id);
+  const a = el('a', 'feat' + (p.featuredProject ? ' feat-project' : ''));
+  a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 4).map(f => `<span class="fc">${f}</span>`).join('');
   a.innerHTML = `
     <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}">
     <div class="feat-body">
-      <span class="ftag"><i data-lucide="star" class="ico"></i>Parcela destacada</span>
+      <span class="ftag"><i data-lucide="${p.featuredProject ? 'land-plot' : 'star'}" class="ico"></i>${p.featuredProject ? 'Proyecto destacado' : 'Parcela destacada'}</span>
       <h2>${p.title}</h2>
       <div class="fmeta"><i data-lucide="map-pin" class="ico"></i>${p.address || p.commune || ''}</div>
+      ${p.projectLead ? `<p class="feat-copy">${p.projectLead}</p>` : ''}
       <div class="fchars">${chars}</div>
       <div class="frow">
         <div class="fprice">${priceText(p)}<span>${surfText(p)} · ${approxText(p)}</span></div>
@@ -116,7 +152,7 @@ function featCard(p) {
 
 function card(p) {
   const a = el('a', 'pcard');
-  a.href = FICHA_URL + '?id=' + encodeURIComponent(p.id);
+  a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 3).map(f => `<span class="c">${f}</span>`).join('');
   a.innerHTML = `
     <div class="img">
