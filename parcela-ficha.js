@@ -94,7 +94,7 @@
   const track=$('#carTrack'), dots=$('#carDots');
   if(G.length && track && dots){
     track.innerHTML=G.map((g,i)=>'<figure class="cslide2" data-i="'+i+'">'+
-      '<img src="'+g.src+'" alt="'+g.t+'" loading="'+(i<2?'eager':'lazy')+'" decoding="async">'+
+      '<img src="'+g.src+'" alt="'+g.t+'" loading="eager" fetchpriority="'+(i<2?'high':'low')+'" decoding="async">'+
       '<button class="zoom" aria-label="Ampliar"><i data-lucide="expand" class="ico"></i></button>'+
       '<figcaption class="cap"><b>'+g.t+'</b><span class="no">'+(i+1)+' / '+G.length+'</span></figcaption>'+
     '</figure>').join('');
@@ -145,14 +145,16 @@
   (function(){
     const C=p.credito; const sel=$('#crParcela');
     if(!C || !sel){ const s=$('#credito'); if(s) s.remove(); return; }
-    const uf=p.ufSim||p.ufRef||0;
+    let uf=p.ufSim||p.ufRef||0;
+    const baseNote=C.nota||'';
+    const note=$('#crNota');
     const disponibles=(p.parcelas||[]).filter(x=>(x.status||'disponible')==='disponible');
     sel.innerHTML=disponibles.map(x=>'<option value="'+x.uf+'" data-n="'+x.n+'">Parcela '+x.n+' · UF '+nf.format(x.uf)+' · '+nf.format(p.supParcela||5000)+' m²</option>').join('');
     const plazosWrap=$('#crPlazos');
     let plazo=(C.plazos&&C.plazos[C.plazos.length-1])||36;
     plazosWrap.innerHTML=(C.plazos||[36]).map(m=>'<button type="button" data-m="'+m+'"'+(m===plazo?' class="on"':'')+'>'+m+' cuotas</button>').join('');
     const pieEl=$('#crPie'); pieEl.min=C.pieMin||40; pieEl.value=C.pieDefault||50;
-    $('#crNota').textContent=C.nota||'';
+    note.textContent=baseNote;
     const money=(n)=>'$'+nf.format(Math.round(n));
     function calc(){
       const opt=sel.options[sel.selectedIndex]||{};
@@ -183,6 +185,36 @@
       calc();
     }));
     calc();
+    fetch('/api/uf-actual')
+      .then(r=>r.ok?r.json():Promise.reject(new Error('UF no disponible')))
+      .then(info=>{
+        const value=Number(info.value);
+        if(!Number.isFinite(value)||value<=0) throw new Error('UF inválida');
+        uf=value;
+        const date=info.date ? new Date(info.date).toLocaleDateString('es-CL') : '';
+        note.textContent=baseNote+' UF actualizada: 
+  function openLb(src){$('#lbImg').src=src;lb.classList.add('open');document.body.style.overflow='hidden';if(window.lucide)lucide.createIcons();}
+  function closeLb(){lb.classList.remove('open');document.body.style.overflow='';}
+  $('#lbX').addEventListener('click',closeLb);
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLb();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();});
+  $('#mpImg').addEventListener('click',()=>openLb(p.masterplan));
+
+  /* nav móvil */
+  const b=$('#navBurger'), mm=$('#mobileMenu');
+  if(b&&mm){
+    b.addEventListener('click',e=>{e.stopPropagation();mm.classList.toggle('open');});
+    document.addEventListener('click',e=>{if(!mm.contains(e.target)&&!b.contains(e.target))mm.classList.remove('open');});
+    mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mm.classList.remove('open')));
+  }
+
+
+  if(window.lucide) lucide.createIcons();
+})();
++nf.format(Math.round(uf))+(date?' ('+date+')':'')+'.';
+        calc();
+      })
+      .catch(()=>{ note.textContent=baseNote+' Se usó el valor referencial mientras se actualiza la UF.'; });
   })();
 
   const lb=$('#lb');

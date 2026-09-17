@@ -35,8 +35,8 @@ window.PARCELA_PROYECTOS = {
     proyectoEnfoque: [],
     lat: -39.3121548,
     lng: -72.1920067,
-    heroImg: "/assets/parc/car-hero.jpg",
-    masterplan: "/assets/parc/car-masterplan.jpg",
+    heroImg: "/.netlify/images?url=/assets/parc/car-hero.jpg&w=1600&h=900&fit=cover&q=82",
+    masterplan: "/.netlify/images?url=/assets/parc/car-masterplan.jpg&w=1600&q=85",
     lead: "Campo Alto Roble es un loteo de parcelas de 5.000 m² con urbanización de alto estándar a solo 4 km de Villarrica. Cada parcela cuenta con electricidad, agua y fibra óptica, además de un reglamento interno con normativas de construcción, diseño y administración que protegen la plusvalía del conjunto. Vistas al volcán Villarrica, bosque nativo y lagunas dentro del proyecto.",
     urbanizacion: [
       { t: "100% Urbanizados", ic: "home" },
@@ -56,17 +56,17 @@ window.PARCELA_PROYECTOS = {
       { k: "Pucón", v: "18 km" }
     ],
     galeria: [
-      { src: "/assets/parc/car-volcan.jpg", t: "Vista al volcán Villarrica" },
-      { src: "/assets/parc/car-lago.jpg", t: "Lagunas y lago Villarrica" },
-      { src: "/assets/parc/car-acceso.jpg", t: "Acceso urbanizado" },
-      { src: "/assets/parc/car-atardecer.jpg", t: "Atardecer sobre el campo" },
-      { src: "/assets/parc/car-caminos.jpg", t: "Caminos interiores" },
-      { src: "/assets/parc/car-laguna.jpg", t: "Laguna interior" },
-      { src: "/assets/parc/car-vacas-volcan.jpg", t: "Praderas con vista al volcán" },
-      { src: "/assets/parc/car-valle.jpg", t: "El valle y la cordillera" },
-      { src: "/assets/parc/car-aereo1.jpg", t: "Vista aérea del loteo" },
-      { src: "/assets/parc/car-aereo2.jpg", t: "Parcelas y bosque" },
-      { src: "/assets/parc/car-detalle.jpg", t: "Bosque nativo" }
+      { src: "/.netlify/images?url=/assets/parc/car-volcan.jpg&w=1200&q=80", t: "Vista al volcán Villarrica" },
+      { src: "/.netlify/images?url=/assets/parc/car-lago.jpg&w=1200&q=80", t: "Lagunas y lago Villarrica" },
+      { src: "/.netlify/images?url=/assets/parc/car-acceso.jpg&w=1200&q=80", t: "Acceso urbanizado" },
+      { src: "/.netlify/images?url=/assets/parc/car-atardecer.jpg&w=1200&q=80", t: "Atardecer sobre el campo" },
+      { src: "/.netlify/images?url=/assets/parc/car-caminos.jpg&w=1200&q=80", t: "Caminos interiores" },
+      { src: "/.netlify/images?url=/assets/parc/car-laguna.jpg&w=1200&q=80", t: "Laguna interior" },
+      { src: "/.netlify/images?url=/assets/parc/car-vacas-volcan.jpg&w=1200&q=80", t: "Praderas con vista al volcán" },
+      { src: "/.netlify/images?url=/assets/parc/car-valle.jpg&w=1200&q=80", t: "El valle y la cordillera" },
+      { src: "/.netlify/images?url=/assets/parc/car-aereo1.jpg&w=1200&q=80", t: "Vista aérea del loteo" },
+      { src: "/.netlify/images?url=/assets/parc/car-aereo2.jpg&w=1200&q=80", t: "Parcelas y bosque" },
+      { src: "/.netlify/images?url=/assets/parc/car-detalle.jpg&w=1200&q=80", t: "Bosque nativo" }
     ],
     /* Cuadro de superficies — todas de 5.000 m² aprox */
     parcelas: [

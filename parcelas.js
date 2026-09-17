@@ -20,7 +20,10 @@ const STATIC_PROJECTS = [{
   coverPhoto: 'assets/parc/car-hero.jpg',
   photos: ['assets/parc/car-hero.jpg'],
   features: ['5.000 m²', 'Urbanizado', 'Agua', 'Electricidad', 'Fibra óptica'],
-  detailUrl: '/parcelas/campo-alto-roble'
+  detailUrl: '/parcelas/campo-alto-roble',
+  featuredProject: true,
+  projectLead: 'Parcelas urbanizadas de 5.000 m² con agua, electricidad y fibra óptica, a minutos de Villarrica.',
+  coverPhoto: '/.netlify/images?url=/assets/parc/car-hero.jpg&w=1600&h=900&fit=cover&q=82'
 }];
 
 let ALL = [];
@@ -114,27 +117,30 @@ function render(list) {
     grid.appendChild(el('div', 'empty', `<i data-lucide="search-x" class="ico"></i><div>No encontramos parcelas con estos filtros.<br>Prueba ampliando la superficie o el precio.</div>`));
     return;
   }
-  // destacada = la de mayor superficie cuando no hay filtros fuertes y hay >=4
-  let rest = list;
-  const showFeat = list.length >= 4 && !STATE.q && !STATE.carac.length && !STATE.sector;
+  // El proyecto se presenta primero y a mayor escala; las demás parcelas conservan su grilla.
+  const project = list.find(p => p.featuredProject);
+  let rest = project ? list.filter(p => p.id !== project.id) : list;
+  if (project) featWrap.appendChild(featCard(project));
+  const showFeat = rest.length >= 4 && !STATE.q && !STATE.carac.length && !STATE.sector;
   if (showFeat) {
-    const feat = [...list].sort((a, b) => (b.surfaceTotal || 0) - (a.surfaceTotal || 0))[0];
+    const feat = [...rest].sort((a, b) => (b.surfaceTotal || 0) - (a.surfaceTotal || 0))[0];
     featWrap.appendChild(featCard(feat));
-    rest = list.filter(p => p.id !== feat.id);
+    rest = rest.filter(p => p.id !== feat.id);
   }
   rest.forEach(p => grid.appendChild(card(p)));
 }
 
 function featCard(p) {
-  const a = el('a', 'feat');
+  const a = el('a', 'feat' + (p.featuredProject ? ' feat-project' : ''));
   a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 4).map(f => `<span class="fc">${f}</span>`).join('');
   a.innerHTML = `
     <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}">
     <div class="feat-body">
-      <span class="ftag"><i data-lucide="star" class="ico"></i>Parcela destacada</span>
+      <span class="ftag"><i data-lucide="${p.featuredProject ? 'land-plot' : 'star'}" class="ico"></i>${p.featuredProject ? 'Proyecto destacado' : 'Parcela destacada'}</span>
       <h2>${p.title}</h2>
       <div class="fmeta"><i data-lucide="map-pin" class="ico"></i>${p.address || p.commune || ''}</div>
+      ${p.projectLead ? `<p class="feat-copy">${p.projectLead}</p>` : ''}
       <div class="fchars">${chars}</div>
       <div class="frow">
         <div class="fprice">${priceText(p)}<span>${surfText(p)} · ${approxText(p)}</span></div>
