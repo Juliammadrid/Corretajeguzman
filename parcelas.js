@@ -23,26 +23,29 @@ const STATIC_PROJECTS = [{
   detailUrl: '/parcelas/campo-alto-roble',
   featuredProject: true,
   projectLead: 'Parcelas urbanizadas de 5.000 m² con agua, electricidad y fibra óptica, a minutos de Villarrica.',
-  coverPhoto: '/.netlify/images?url=/assets/parc/car-hero.jpg&w=1600&h=900&fit=cover&q=82'
+  coverPhoto: '/assets/parc/car-hero.jpg'
 }];
 
 let ALL = [];
 const STATE = { q: '', supMin: 0, supMax: null, prMin: null, prMax: null, prMoneda: 'UF', sector: '', carac: [], sort: 'rel' };
 
 async function init() {
-  await GZ.loadConfig();
-
-  // El proyecto propio se muestra sin esperar la respuesta de Airtable.
-  const propertiesPromise = GZ.loadProperties();
+  // La tarjeta del proyecto no depende de Airtable y se muestra de inmediato.
   ALL = [...STATIC_PROJECTS];
   buildSectorPills();
   buildEvents();
   updateSummary();
   apply();
 
-  const { data, live } = await propertiesPromise;
-  ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
-  GZ.banner(live, ALL.length);
+  if (!window.GZ) return;
+  try {
+    await GZ.loadConfig();
+    const { data = [], live = false } = await GZ.loadProperties();
+    ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
+    if (typeof GZ.banner === 'function') GZ.banner(live, ALL.length);
+  } catch (error) {
+    if (typeof GZ.banner === 'function') GZ.banner(false, ALL.length);
+  }
   buildSectorPills();
   updateSummary();
   apply();
@@ -56,13 +59,13 @@ function updateSummary() {
 
 /* ---------- precio helpers ---------- */
 function priceInMoneda(p, m) {
-  const uf = GZ.CFG.ufValueClp || 39200;
+  const uf = window.GZ?.CFG?.ufValueClp || 39200;
   if (m === 'UF') return p.currency === 'UF' ? p.priceValue : (p.priceValue / uf);
   return p.currency === 'UF' ? (p.priceValue * uf) : p.priceValue;
 }
 function priceText(p) { return p.currency === 'UF' ? 'UF ' + nf.format(p.priceValue) : '$' + nf.format(p.priceValue); }
 function approxText(p) {
-  const uf = GZ.CFG.ufValueClp || 39200;
+  const uf = window.GZ?.CFG?.ufValueClp || 39200;
   if (p.currency === 'UF') return '≈ $' + nf.format(Math.round(p.priceValue * uf));
   return '≈ UF ' + nf.format(Math.round(p.priceValue / uf));
 }
