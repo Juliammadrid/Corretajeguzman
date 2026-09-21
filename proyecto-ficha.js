@@ -245,7 +245,7 @@
       g('tpOri').textContent = t.orientacion||'—';
       g('tpTot').textContent = t.m2tot||'—';
       g('tpPrice').textContent = t.desdeUF ? 'UF '+nf.format(t.desdeUF) : '—';
-      g('tpCta').href = 'cotizacion.html?slug='+encodeURIComponent(slug)+'&tipo='+i;
+      g('tpCta').href = '/cotizacion.html?slug='+encodeURIComponent(slug)+'&tipo='+i;
       const br=g('tpBroch');
       if(br){ if(p.brochure){ br.href=p.brochure; br.style.display=''; } else br.style.display='none'; }
     }

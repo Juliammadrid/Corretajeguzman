@@ -202,7 +202,7 @@ window.PROYECTO_FICHAS = {
       { k:"Superficie total", v:"38,54 hasta 92,14 m² aprox" },
       { k:"Dormitorios", v:"1, 2 y 3" },
       { k:"Baños", v:"1 y 2" },
-      { k:"Desde", v:"UF 3.365" },
+      { k:"Desde", v:"UF 7.689" },
       { k:"Estado del proyecto", v:"Entrega Inmediata" }
     ],
     disenoTitulo: "Innovación en tu departamento",
