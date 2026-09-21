@@ -251,8 +251,41 @@
     });
   }
 
+
+  function addProjectsToNavigation() {
+    const currentPath = (location.pathname || '/').replace(/\/+$/, '') || '/';
+    const isProjectsPage = currentPath === '/proyectos' || currentPath.indexOf('/proyectos/') === 0;
+
+    document.querySelectorAll('.nav-links').forEach(nav => {
+      if (nav.querySelector('a[href^="/proyectos"]')) return;
+      const link = document.createElement('a');
+      link.href = '/proyectos/';
+      link.textContent = 'Proyectos';
+      if (isProjectsPage) link.classList.add('active');
+
+      const buyLink = [...nav.querySelectorAll('a')].find(a => /comprar/i.test(a.textContent || ''));
+      if (buyLink) buyLink.insertAdjacentElement('afterend', link);
+      else nav.appendChild(link);
+    });
+
+    document.querySelectorAll('.mobile-menu').forEach(menu => {
+      if (menu.querySelector('a[href^="/proyectos"]')) return;
+      const link = document.createElement('a');
+      link.href = '/proyectos/';
+      link.innerHTML = 'Proyectos <i data-lucide="chevron-right" class="ico"></i>';
+      if (isProjectsPage) link.classList.add('active');
+
+      const buyLink = [...menu.querySelectorAll('a')].find(a => /comprar/i.test(a.textContent || ''));
+      if (buyLink) buyLink.insertAdjacentElement('afterend', link);
+      else menu.appendChild(link);
+    });
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+  }
+
   function startLinkCleaner() {
     installPwaMeta();
+    addProjectsToNavigation();
     cleanInternalLinks();
     if (!document.body || !window.MutationObserver) return;
     const observer = new MutationObserver(records => {
