@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyectos nuevos en venta · Corretaje Guzmán</title>
+<meta name="description" content="Proyectos nuevos de departamentos en venta, con entrega inmediata y en verde. Asesoría de compra sin costo de Corretaje Guzmán.">
+<link rel="canonical" href="https://corretajeguzman.com/proyectos">
+<link rel="icon" href="/assets/guzman-logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
+  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
+  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--wa:#1faf54;
+  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
+  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
+  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1240px;--navh:76px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-.02em}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.ico{width:20px;height:20px;stroke-width:1.85}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--violet)}
+
+/* NAV */
+header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:26px;height:var(--navh);max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.nav-inner .logo{height:32px;width:auto}
+.nav-links{display:flex;gap:24px;margin-left:6px}
+.nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.nav-wa-full{display:inline-flex}
+.nav-burger{display:none;color:#fff;width:44px;height:44px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center;flex:none}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:69;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+
+/* HERO */
+.hero{position:relative;background:linear-gradient(118deg,#160c28,#3a1a78 58%,#5b2bb0);color:#fff;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-150px;right:-120px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(176,132,255,.32),transparent 62%)}
+.hero-inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:52px 26px 58px;display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+.hero-tx{flex:1 1 460px}
+.hero .he-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:8px 15px;border-radius:50px;font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#ede6fc}
+.hero h1{font-size:42px;font-weight:800;line-height:1.05;margin-top:16px}
+.hero h1 .u{color:#c9b8f5}
+.hero p{font-size:17px;color:rgba(255,255,255,.86);max-width:54ch;margin-top:14px;line-height:1.55}
+.hero-badge{flex:0 0 auto;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:22px 26px;text-align:center}
+.hero-badge .big{font-family:'Sora';font-weight:800;font-size:40px;line-height:1;color:#fff}
+.hero-badge .sm{font-size:13px;color:rgba(255,255,255,.8);font-weight:600;margin-top:6px}
+
+/* TOOLBAR */
+.toolbar{position:sticky;top:var(--navh);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+.toolbar-in{max-width:var(--maxw);margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.toolbar .count{font-size:15px;color:var(--ink-2)}
+.toolbar .count b{color:var(--ink);font-weight:700}
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:9px 15px;font-weight:600;font-size:13px;color:var(--ink-2);transition:all .15s}
+.chip:hover{border-color:var(--violet);color:var(--violet-d)}
+.chip.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.selct{position:relative}
+.selct select{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:9px 36px 9px 15px;font-family:inherit;font-weight:600;font-size:13px;color:var(--ink);cursor:pointer}
+.selct select:focus{outline:none;border-color:var(--violet)}
+.selct .ico{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-3);pointer-events:none}
+
+/* GRID / GROUPS */
+.grid{max-width:var(--maxw);margin:0 auto;padding:26px 26px 64px}
+.cgroup{margin-bottom:44px}
+.cghead{display:flex;align-items:baseline;gap:14px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.cghead h2{font-size:24px;font-weight:800}
+.cghead span{font-size:13.5px;color:var(--ink-3);font-weight:600}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+
+/* CARD */
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .16s,box-shadow .16s}
+.pcard:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.pcard .ph{position:relative;height:208px;background:var(--line-2);overflow:hidden}
+.pcard .ph img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pcard:hover .ph img{transform:scale(1.05)}
+.pcard .ph-fallback{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;background:linear-gradient(135deg,var(--violet-dd),var(--violet));color:rgba(255,255,255,.92);text-align:center;padding:20px}
+.pcard .ph-fallback .ico{width:32px;height:32px}
+.pcard .ph-fallback b{font-family:'Sora';font-size:16px}
+.pcard .ph-fallback span{font-size:12px;opacity:.85}
+.pcard .badge{position:absolute;z-index:2;top:14px;left:14px;color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border-radius:50px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.pcard .bd{padding:18px 19px 20px;display:flex;flex-direction:column;flex:1}
+.pcard h3{font-size:18px;font-weight:700;line-height:1.2}
+.pcard .addr{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-3);margin-top:6px}
+.pcard .addr .ico{width:14px;height:14px;flex:none}
+.pcard .specs{font-size:13px;color:var(--ink-2);font-weight:600;margin-top:10px}
+.pcard .foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:16px;padding-top:15px;border-top:1px solid var(--line)}
+.pcard .dl{font-size:11.5px;color:var(--ink-3);font-weight:600;display:block}
+.pcard .uf{font-family:'Sora';font-weight:800;font-size:22px;color:var(--violet-d)}
+.pcard .go{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.pcard .go .ico{width:15px;height:15px;transition:transform .15s}
+.pcard:hover .go .ico{transform:translateX(3px)}
+
+/* ALLY */
+.ally{background:var(--surface);border-top:1px solid var(--line)}
+.ally-in{max-width:var(--maxw);margin:0 auto;padding:34px 26px;display:flex;align-items:center;gap:18px;justify-content:center;flex-wrap:wrap;text-align:center}
+.ally-in .ico{width:26px;height:26px;color:var(--violet)}
+.ally-in p{font-size:15px;color:var(--ink-2);max-width:72ch}
+.ally-in b{color:var(--ink)}
+
+/* FOOTER */
+footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px}
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 26px 40px;display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px}
+.foot-grid .logo{height:34px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78)}.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{max-width:var(--maxw);margin:0 auto;padding:24px 26px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+@media(max-width:980px){
+  .nav-links,.nav-wa-full{display:none}.nav-burger{display:grid}
+  .nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}
+  .cgrid{grid-template-columns:1fr 1fr;gap:18px}
+  .foot-grid{grid-template-columns:1fr;gap:30px}
+  .toolbar-in{padding:14px 18px}
+}
+@media(max-width:640px){
+  .wrap{padding:0 18px}.hero h1{font-size:31px}.hero-inner{padding:40px 18px 46px}
+  .grid{padding:22px 18px 50px}.cgrid{grid-template-columns:1fr}
+  .nav-inner{padding:0 16px}
+  .controls{width:100%}.controls .selct,.controls .selct select{flex:1;width:100%}
+}
+
+/* menú Comprar con submenú */
+.navdd{position:relative}
+.navdd>button{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);background:none;border:0;cursor:pointer;padding:0;transition:color .15s}
+.navdd>button:hover,.navdd.open>button{color:#fff}
+.navdd>button svg{width:14px;height:14px;transition:transform .2s}
+.navdd.open>button svg{transform:rotate(180deg)}
+.navdd-menu{position:absolute;top:calc(100% + 14px);left:-14px;min-width:268px;background:#fff;border-radius:14px;box-shadow:0 18px 44px rgba(20,15,30,.28);padding:8px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .18s;z-index:90}
+.navdd.open .navdd-menu{opacity:1;visibility:visible;transform:none}
+.navdd-menu a{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;color:#16121f;font-size:14.5px;font-weight:600;transition:background .14s}
+.navdd-menu a:hover{background:#f1eafe;color:#4c1d95}
+.navdd-menu a i{width:34px;height:34px;border-radius:9px;background:#f1eafe;color:#6b27d6;display:grid;place-items:center;flex:none}
+.navdd-menu a i svg{width:17px;height:17px}
+.navdd-menu a b{display:block;font-family:'Sora',sans-serif;font-size:14.5px}
+.navdd-menu a span span{display:block;font-size:12px;color:#938caa;font-weight:500;margin-top:2px}
+.mm-sub{padding-left:52px!important;color:rgba(255,255,255,.72)!important}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/"><img class="logo" src="/assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <nav class="nav-links">
+      <a href="/arriendos">Arrendar</a>
+      <div class="navdd" data-navdd>
+        <button type="button">Comprar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="navdd-menu">
+          <a href="/proyectos"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h2M9 13h2M9 17h2"/></svg></i><span><b>Proyectos nuevos</b><span>Departamentos de estreno y en verde</span></span></a>
+          <a href="/comprar"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><path d="M9 21v-8h6v8"/></svg></i><span><b>Propiedades en venta</b><span>Casas y departamentos disponibles</span></span></a>
+          <a href="/parcelas"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 22V9M5 22V13M19 22V13M2 9l10-6 10 6"/></svg></i><span><b>Parcelas</b><span>Terrenos y loteos urbanizados</span></span></a>
+        </div>
+      </div>
+      <a href="/proyectos" class="active">Proyectos</a>
+      <a href="/parcelas">Parcelas</a>
+      <a href="/propietarios">Arrendar mi propiedad</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+      <button class="nav-burger" id="navBurger" aria-label="Menú"><i data-lucide="menu" class="ico"></i></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/arriendos">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/proyectos">Comprar · Proyectos nuevos <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/comprar" class="mm-sub">Propiedades en venta <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/proyectos">Proyectos <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/parcelas">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/propietarios">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a class="mm-wa" href="https://wa.me/56944637680" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tx">
+      <span class="he-eyebrow"><i data-lucide="building-2" class="ico" style="width:15px;height:15px"></i>Proyectos en venta</span>
+      <h1>Departamentos nuevos <span class="u">en los mejores sectores</span></h1>
+      <p>Proyectos de departamentos en venta, entrega inmediata y en verde, con subsidio de tasa y descuentos. Te asesoramos en todo el proceso de compra, sin costo.</p>
+    </div>
+    <div class="hero-badge">
+      <div class="big" id="hbCount">—</div>
+      <div class="sm">proyectos<br>disponibles</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-in">
+    <div class="count" id="count">—</div>
+    <div class="controls">
+      <div class="chips" id="entregaChips">
+        <button class="chip on" data-e="todas">Todas</button>
+        <button class="chip" data-e="inmediata">Entrega inmediata</button>
+        <button class="chip" data-e="verde">En verde</button>
+        <button class="chip" data-e="futura">Entrega futura</button>
+      </div>
+      <div class="selct">
+        <select id="comunaSel"><option value="todas">Todas las comunas</option></select>
+        <i data-lucide="chevron-down" class="ico"></i>
+      </div>
+      <div class="selct">
+        <select id="sortSel">
+          <option value="destacados">Por comuna</option>
+          <option value="priceAsc">Precio: menor a mayor</option>
+          <option value="priceDesc">Precio: mayor a menor</option>
+        </select>
+        <i data-lucide="chevron-down" class="ico"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- ALLY -->
+<section class="ally">
+  <div class="ally-in">
+    <i data-lucide="handshake" class="ico"></i>
+    <p><b>Corretaje Guzmán te asesora en la compra de tu departamento nuevo.</b> Te ayudamos a elegir el proyecto, evaluar el subsidio y coordinar la reserva y firma. Escríbenos y te guiamos sin costo.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <img class="logo" src="/assets/guzman-logo.png" alt="Corretaje Guzmán">
+      <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+    </div>
+    <div>
+      <h4>Acceso rápido</h4>
+      <div class="foot-links"><a href="/arriendos">Arrendar</a><a href="/comprar">Comprar</a><a href="/proyectos">Proyectos</a><a href="/parcelas">Parcelas</a><a href="/propietarios">Arrendar mi propiedad</a><a href="https://wa.me/56944637680" target="_blank">Contáctanos por WhatsApp</a></div>
+    </div>
+    <div>
+      <h4>Contacto y sucursales</h4>
+      <div class="foot-contact">
+        <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+        <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+        <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/corretaje_guzman" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+        <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+        <a href="https://www.tiktok.com/@corretaje_guzman" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span><span>Proyectos en venta · alianza comercial</span></div>
+</footer>
+
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="/data-proyectos.js"></script>
+<script src="/data-proyectos-detalle.js"></script>
+<script src="/proyectos.js"></script>
+<script>
+(function(){
+  var b=document.getElementById('navBurger'), m=document.getElementById('mobileMenu');
+  if(b&&m){
+    b.addEventListener('click',function(e){e.stopPropagation();m.classList.toggle('open');});
+    document.addEventListener('click',function(e){if(!m.contains(e.target)&&!b.contains(e.target))m.classList.remove('open');});
+    m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');});});
+  }
+})();
+</script>
+<script>
+(function(){
+  document.querySelectorAll('[data-navdd]').forEach(function(dd){
+    var b=dd.querySelector('button');
+    b.addEventListener('click',function(e){e.stopPropagation();dd.classList.toggle('open');});
+    dd.addEventListener('mouseenter',function(){dd.classList.add('open');});
+    dd.addEventListener('mouseleave',function(){dd.classList.remove('open');});
+  });
+  document.addEventListener('click',function(e){
+    if(!e.target.closest('[data-navdd]')) document.querySelectorAll('[data-navdd].open').forEach(function(d){d.classList.remove('open');});
+  });
+})();
+</script>
+<script>(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');if(b&&m)b.addEventListener('click',function(){m.classList.toggle('open');b.setAttribute('aria-expanded',String(m.classList.contains('open')));});})();</script></body>
+</html>
