@@ -160,6 +160,16 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 .vcard p{font-size:12.8px;color:var(--ink-2);line-height:1.45;margin-top:4px}
 .tour-wrap{margin-top:40px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--bg);aspect-ratio:16/9;min-height:420px}
 .tour-wrap iframe{width:100%;height:100%;border:0;display:block}
+.tour-lazy{position:relative;min-height:0;background:var(--dark)}
+.tour-lazy:not(.tour-open) iframe{display:none}
+.tour-gate{position:absolute;inset:0;display:grid;place-items:center;isolation:isolate;color:#fff;background:#160f22}
+.tour-gate img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7}
+.tour-gate::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.2),rgba(20,15,30,.76));z-index:-1}
+.tour-gate-in{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:26px}
+.tour-gate b{font-family:'Sora',sans-serif;font-size:clamp(21px,3vw,30px)}
+.tour-gate p{font-size:15px;color:rgba(255,255,255,.9);max-width:44ch}
+.tour-start{background:#fff!important;color:var(--violet-dd)!important;box-shadow:var(--shadow-md)}
+.tour-start:hover{background:var(--violet-tint)!important}
 .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
 .fcard{background:var(--bg);border-radius:16px;padding:26px 24px;display:flex;align-items:center;gap:15px}
 .fcard .ic{width:48px;height:48px;border-radius:13px;background:var(--surface);color:var(--violet-d);display:grid;place-items:center;flex:none;box-shadow:var(--shadow-sm)}
@@ -467,8 +477,16 @@ body>*:not(header):not(.pricebar):not(.lb){max-width:100%}
   <div class="wrap">
     <h2>Recorre Campo Alto Roble en 360°</h2>
     <p class="lead">Explora el proyecto y su entorno antes de visitar las parcelas.</p>
-    <div class="tour-wrap">
-      <iframe src="https://mybakerlab.com/altoroble/" title="Recorrido virtual 360° de Campo Alto Roble" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen" allowfullscreen></iframe>
+    <div class="tour-wrap tour-lazy" id="tour360">
+      <div class="tour-gate">
+        <img src="/assets/parc/car-vacas-volcan.jpg" alt="Vista al volcán Villarrica desde Campo Alto Roble" loading="lazy">
+        <div class="tour-gate-in">
+          <b>Recorrido virtual 360°</b>
+          <p>Ábrelo cuando quieras explorar el proyecto. Así la ficha carga más rápido.</p>
+          <button class="btn btn-violet tour-start" id="tourStart" type="button"><i data-lucide="play" class="ico"></i>Abrir recorrido 360°</button>
+        </div>
+      </div>
+      <iframe id="tour360Frame" data-src="https://mybakerlab.com/altoroble/" title="Recorrido virtual 360° de Campo Alto Roble" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="fullscreen" allowfullscreen></iframe>
     </div>
   </div>
 </section>
@@ -600,5 +618,17 @@ body>*:not(header):not(.pricebar):not(.lb){max-width:100%}
 <script src="/data-parcelas-proyectos.js"></script>
 <script>window.PARCELA_SLUG="campo-alto-roble";</script>
 <script src="/parcela-ficha.js"></script>
+<script>
+(function(){
+  const wrap=document.getElementById('tour360');
+  const button=document.getElementById('tourStart');
+  const frame=document.getElementById('tour360Frame');
+  if(!wrap||!button||!frame) return;
+  button.addEventListener('click',function(){
+    if(!frame.src||frame.src==='about:blank') frame.src=frame.dataset.src;
+    wrap.classList.add('tour-open');
+  },{once:true});
+})();
+</script>
 </body>
 </html>
