@@ -102,19 +102,19 @@
     const topeConPieFin=topePorCredito;
     const topeConPieFinUF=topeConPieFin/UF_();
     const cuotaPieDe=(v)=>Math.max(0, v*UF_()*(1-pct)-ahorro)/mp;
+    const sinPiePropio=ahorro<=0;
+    const capacidadMostrada=sinPiePropio ? topeConPieFin : tope;
+    const capacidadMostradaUF=sinPiePropio ? topeConPieFinUF : topeUF;
 
     $('#rIngreso').textContent=money(ingreso);
     $('#rDiv').textContent=money(div);
     $('#rCredito').textContent=money(credito)+' · '+uf(credito/UF_());
-    $('#rTope').textContent=uf(topeUF);
-    $('#rTopeClp').textContent=money(tope);
-    $('#rPie').textContent=money(tope*(1-pct))+' ('+Math.round((1-pct)*100)+'%)';
+    $('#rCapLabel').textContent=sinPiePropio ? 'Capacidad con pie financiado' : 'Tu capacidad de compra estimada';
+    $('#rTope').textContent=uf(capacidadMostradaUF);
+    $('#rTopeClp').textContent=money(capacidadMostrada);
+    $('#rPieLabel').textContent=sinPiePropio ? 'Pie propio disponible' : 'Pie requerido';
+    $('#rPie').textContent=sinPiePropio ? money(ahorro)+' · financiable en cuotas' : money(tope*(1-pct))+' ('+Math.round((1-pct)*100)+'%)';
     $('#rPlazoTxt').textContent=plazo+' años · tasa '+String(tasa).replace('.',',')+'% anual';
-    $('#rLimit').textContent = limitante==='sinpie'
-      ? 'Sin ahorro para el pie, tu camino es el pie financiado (más abajo).'
-      : limitante==='pie'
-        ? 'Tu tope hoy lo define el ahorro para el pie, no tu renta.'
-        : 'Tu tope hoy lo define tu capacidad de crédito.';
     const ePF=$('#rPieFin'); if(ePF) ePF.textContent=uf(topeConPieFinUF);
 
     /* clasificar proyectos */
@@ -130,6 +130,14 @@
     alcanza.sort((a,b)=>b.desdeUF-a.desdeUF);
     conPie.sort((a,b)=>a.desdeUF-b.desdeUF);
     cerca.sort((a,b)=>a.desdeUF-b.desdeUF);
+
+    $('#rLimit').textContent = limitante==='sinpie'
+      ? (conPie.length
+        ? 'Con pie financiado, tu renta alcanza '+conPie.length+' '+(conPie.length===1?'proyecto':'proyectos')+' hasta '+uf(topeConPieFinUF)+'. Revisa las alternativas a continuación.'
+        : 'Sin ahorro para el pie propio. Revisa las alternativas con pie financiado más abajo.')
+      : limitante==='pie'
+        ? 'Tu tope hoy lo define el ahorro para el pie, no tu renta.'
+        : 'Tu tope hoy lo define tu capacidad de crédito.';
 
     ultimo={ingreso,div,credito,tope,topeUF,ahorro,plazo,destino,pct,alcanza:alcanza.length,conPie:conPie.length};
 
@@ -152,7 +160,7 @@
       '• Ingreso considerado: '+money(ingreso),
       '• Ahorro para pie: '+(ahorro?money(ahorro):'por definir'),
       '• Plazo: '+plazo+' años · Destino: '+({primera:'primera vivienda',inversion:'inversión',segunda:'segunda vivienda'}[destino]),
-      '• Capacidad estimada: '+uf(topeUF)+' ('+money(tope)+')',
+      '• Capacidad estimada: '+uf(capacidadMostradaUF)+' ('+money(capacidadMostrada)+')'+(sinPiePropio?' con pie financiado':''),
       '• Dividendo estimado: '+money(div),
       alcanza.length?('Me interesan: '+alcanza.slice(0,3).map(x=>x.name).join(', ')):'Quiero saber qué alternativas tengo.',
       '¿Me pueden asesorar?'

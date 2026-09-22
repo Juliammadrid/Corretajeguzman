@@ -359,7 +359,7 @@ window.PROYECTO_FICHAS = {
     lng: -70.60828,
     fotos: [],
     comunesFotos: [],
-    heroImg: "assets/proy/residential-park-nunoa-hero.jpg",
+    heroImg: "/assets/proy/residential-park-nunoa-hero.jpg",
     detallesStats: [
       { k:"Superficie total", v:"38,79 hasta 94,68 m² aprox" },
       { k:"Dormitorios", v:"1, 2 y 3" },
@@ -379,17 +379,17 @@ window.PROYECTO_FICHAS = {
     comunesTabs: [],
     seguridadTitulo: "Alto estándar en seguridad",
     seguridad: [
-      { t:"Control de Acceso", img:"assets/proy/seg-perimetral.png", items:[
+      { t:"Control de Acceso", img:"/assets/proy/seg-perimetral.png", items:[
         "Control de acceso en lobby de última generación.",
         "Cerco eléctrico en el perímetro del terreno.",
         "Circuito cerrado de televisión en todo el proyecto."
       ]},
-      { t:"Cámaras de Seguridad", img:"assets/proy/seg-interior.png", items:[
+      { t:"Cámaras de Seguridad", img:"/assets/proy/seg-interior.png", items:[
         "Cámaras de seguridad en accesos del edificio.",
         "Cámaras de seguridad en espacios comunes.",
         "Cámaras de seguridad en el perímetro del terreno."
       ]},
-      { t:"Control Departamentos", img:"assets/proy/seg-departamentos.png", items:[
+      { t:"Control Departamentos", img:"/assets/proy/seg-departamentos.png", items:[
         "Cerradura digital en puertas de acceso de todos los departamentos.",
         "Alarma en puertas de acceso de todos los departamentos.",
         "Alarma en ventanas de primer, segundo y tercer piso."

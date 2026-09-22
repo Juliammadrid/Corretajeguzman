@@ -15,7 +15,8 @@
   const imageMarkup = (src, alt, attrs) => {
     const fallback = fallbackImage(src);
     const webp = toWebp(src);
-    return '<picture><source srcset="'+webp+'" type="image/webp"><img src="'+fallback+'" alt="'+alt+'" width="1600" height="900" decoding="async" '+(attrs||'')+'></picture>';
+    const fallbackAttr = fallback.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    return '<picture><source srcset="'+webp+'" type="image/webp"><img src="'+fallback+'" alt="'+alt+'" width="1600" height="900" decoding="async" onerror="var p=this.parentElement,s=p&&p.querySelector(\'source\');if(s)s.remove();this.onerror=null;this.src=\''+fallbackAttr+'\'" '+(attrs||'')+'></picture>';
   };
   const upgradeProjectImages = (scope) => {
     scope.querySelectorAll('img[src]').forEach((img) => {
@@ -29,6 +30,7 @@
       img.before(picture);
       picture.append(source, img);
       img.src = fallbackImage(src);
+      img.addEventListener('error', () => { source.remove(); img.src=fallbackImage(src); }, {once:true});
       if (!img.hasAttribute('width')) img.setAttribute('width', '1600');
       if (!img.hasAttribute('height')) img.setAttribute('height', '900');
       if (!img.hasAttribute('decoding')) img.decoding = 'async';
