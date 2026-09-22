@@ -95,14 +95,14 @@ window.PROYECTO_FICHAS = {
       { t: "Control de acceso y cámaras 24 hrs", ic: "shield-check" }
     ],
     cerca: ["Metro Ñuble", "Metro Irarrázaval", "Autopista Central y Costanera Norte", "Estadio Nacional", "Parque San Eugenio", "Futuro Mall Vivo Ñuñoa"],
-    fotos: ["/assets/proy/metropolitan-park-nunoa/metropolitan-1.jpg","/assets/proy/metropolitan-park-nunoa/metropolitan-2.jpg","/assets/proy/metropolitan-park-nunoa/metropolitan-3.jpg","/assets/proy/metropolitan-park-nunoa/metropolitan-4.jpg"],
+    fotos: ["/assets/proy/metropolitan-park-nunoa/metropolitan-1.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-2.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-3.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-4.jpg?v=metro-hq-20260922"],
     comunesFotos: [
-      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-3.jpg", t:"Adventure Zone" },
-      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-4.jpg", t:"Cowork" },
-      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-5.jpg", t:"Fit & Health Zone" }
+      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-3.jpg?v=metro-hq-20260922", t:"Adventure Zone" },
+      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-4.jpg?v=metro-hq-20260922", t:"Cowork" },
+      { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-5.jpg?v=metro-hq-20260922", t:"Fit & Health Zone" }
     ],
-    heroImg: "/assets/proy/metropolitan-park-nunoa/proyecto-metropolitan-park-nunoa.jpg",
-    bannerHero: "/assets/proy/metropolitan-park-nunoa/metropolitan-banner.jpg",
+    heroImg: "/assets/proy/metropolitan-park-nunoa/proyecto-metropolitan-park-nunoa.jpg?v=metro-hq-20260922",
+    bannerHero: "/assets/proy/metropolitan-park-nunoa/metropolitan-banner.jpg?v=metro-hq-20260922",
     stats: [
       { v:"Studio · 1 · 2 Dorms", k:"Tipologías" },
       { v:"Desde UF 3.919", k:"Precio" },
@@ -112,24 +112,24 @@ window.PROYECTO_FICHAS = {
     ctas: ["Arriendo Garantizado", "Financiamos tu pie"],
     solucionTitulo: "¿Qué es Metropolitan Park?",
     solucionLead: "Metropolitan Park Ñuñoa es el proyecto que cambiará la forma de vivir en el eje de Vicuña Mackenna, donde se encuentra el equilibrio perfecto para la vida actual: la desconexión y tranquilidad que buscas, sin alejarte de la vida urbana. Lo que era un sector dominado por fábricas se convierte en un sitio donde destaca lo último en tendencias y diseño de arquitectura: un parque interior con un paisajismo que cautiva, instalaciones deportivas y para tus mascotas, con altos estándares de seguridad. Una experiencia de vida totalmente renovada.",
-    solucionImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-rueda.png",
+    solucionImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-rueda.png?v=metro-hq-20260922",
     solucionLead2: "Hoy cuenta con stock disponible entre los pisos 3 y 11, en tipologías Studio, 1 y 2 dormitorios, con precios desde UF 3.919. Los departamentos de 1 dormitorio parten desde UF 4.100 y los de 2 dormitorios desde UF 4.917 — una excelente oportunidad tanto para vivienda como para inversión, sujeta a disponibilidad de stock.",
-    premiosImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-premios.jpg",
+    premiosImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-premios.jpg?v=metro-hq-20260922",
     premiosLead: "La arquitectura y paisajismo de este proyecto se trabajó, desde su origen, con dos oficinas premios nacional de arquitectura (Teodoro Fernández e Izquierdo & Lehmann Arquitectos), con el fin de lograr algo diferente, acorde a la esencia de la comuna y del sector, incluyendo las inquietudes y consideraciones de las comunidades del barrio. Es un proyecto que busca transformar la zona, siendo un aporte para la ciudad.",
     parqueTitulo: "Único con un gran parque interior",
     parqueLead: "El diseño de Metropolitan Park Ñuñoa tuvo como base fundamental la relación con la comunidad y cómo la vida de las personas se desarrolla en el interior, con espacios comunes que se conectan con un gran parque que será un pulmón verde para Santiago, compuesto por más de 350 especies de bajo consumo hídrico.",
-    parqueImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-lobby.jpg",
-    parqueRender: "/assets/proy/metropolitan-park-nunoa/metropolitan-parque-render.jpg",
+    parqueImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-lobby.jpg?v=metro-hq-20260922",
+    parqueRender: "/assets/proy/metropolitan-park-nunoa/metropolitan-parque-render.jpg?v=metro-hq-20260922",
     caminataTitulo: "Caminata perfecta con tu mascota",
     caminataLead: "Practicar running, pasear a tu mascota o tan solo caminar relajadamente. El sendero que recorrerá todo el interior del proyecto invita a una experiencia de tranquilidad absoluta.",
-    caminataImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-sendero.png",
-    deptoImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-depto.jpg",
+    caminataImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-sendero.png?v=metro-hq-20260922",
+    deptoImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-depto.jpg?v=metro-hq-20260922",
     deptoTag: "1 · 2 DORM.",
     deptoTitulo: "Departamentos de <b>alto estándar</b>",
     deptoLead: "En Corretaje Guzmán nos inspira la preocupación por cada detalle. Cada departamento de Metropolitan Park está pensado para usar los espacios de forma única, con materialidades que no solo aportan durabilidad, sino también una estética de alto estándar y una funcionalidad real. <i>Imagen referencial del proyecto — actualmente en construcción.</i>",
     comunesTitulo: "Espacios comunes<br>pensados para ti",
     comunesLead: "Cada elemento está pensado estratégicamente. El proyecto, en su etapa final, tendrá más de 15 espacios comunes distribuidos por todo el emplazamiento para que disfrutes con familia, amigos y mascotas: piscinas, zonas de esparcimiento, salones para compartir, quinchos, jardines, sendero, entre otros. Estos espacios se irán desarrollando a medida que avance cada etapa del proyecto.",
-    mapaImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-mapa.jpg",
+    mapaImg: "/assets/proy/metropolitan-park-nunoa/metropolitan-mapa.jpg?v=metro-hq-20260922",
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
   },
@@ -399,3 +399,4 @@ window.PROYECTO_FICHAS = {
     whatsapps: ["56944637680", "56944717233"]
   }
 };
+

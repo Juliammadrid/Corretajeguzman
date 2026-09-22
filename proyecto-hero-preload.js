@@ -4,7 +4,7 @@
   var slug = new URLSearchParams(location.search).get('slug') || route;
   var heroes = {
     'best-site': '/assets/proy/best-site/best-site-hero.webp',
-    'metropolitan-park-nunoa': '/assets/proy/metropolitan-park-nunoa/metropolitan-banner.webp',
+    'metropolitan-park-nunoa': '/assets/proy/metropolitan-park-nunoa/metropolitan-banner.webp?v=metro-hq-20260922',
     'all-nunoa-2': '/assets/proy/all-nunoa-2/all-nunoa-2-hero.webp',
     'residential-park-nunoa': '/assets/proy/residential-park-nunoa-hero.webp',
     'smart-too': '/assets/proy/smart-too/smart-too-banner-hd.webp'
@@ -19,3 +19,4 @@
   link.setAttribute('data-project-hero-preload', '');
   document.head.appendChild(link);
 })();
+
