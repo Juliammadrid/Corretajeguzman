@@ -225,7 +225,7 @@ function renderHomeProjectExtras() {
   const section = document.createElement('section');
   section.id = 'home-projects-extras';
   section.className = 'home-projects-extras';
-  section.innerHTML = \`
+  section.innerHTML = `
     <style>
       .home-projects-extras{padding:78px 0;background:linear-gradient(180deg,#f3f0f8 0%,#ece6f6 100%)}
       .home-extras-head{max-width:720px;margin-bottom:26px}.home-extras-head p{color:var(--ink-2);margin-top:10px;font-size:17px}
@@ -268,7 +268,7 @@ function renderHomeProjectExtras() {
       <div class="home-parcel-band">
         <div><span class="home-extras-tag">Campo Alto Roble</span><h3>Parcelas con naturaleza y conectividad</h3><p>36 parcelas disponibles en Villarrica, desde UF 2.400.</p><a href="/parcelas/campo-alto-roble">Ver parcelas →</a></div>
       </div>
-    </div>\`;
+    </div>`;
   featured.insertAdjacentElement('afterend', section);
 }
 
