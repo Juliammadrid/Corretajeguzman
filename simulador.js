@@ -6,17 +6,23 @@
 (function(){
   const $=(s,r=document)=>r.querySelector(s);
   const nf=new Intl.NumberFormat('es-CL');
-  const FICHAS_=window.PROYECTO_FICHAS||{};
   const FICHAS=window.PROYECTO_FICHAS||{};
-  const P=Object.entries(FICHAS_).map(([slug,f])=>({
-    slug,
-    name:f.name||'Proyecto',
-    commune:f.commune||'',
-    desdeUF:Number(f.desdeUF)||0,
-    entrega:f.entrega||'',
-    detalle:f.ficha||('/proyectos/'+slug+'/'),
-    specs:(f.detallesStats||[]).map(x=>x&&x.v).filter(Boolean).slice(0,2).join(' · ')
-  })).filter(p=>p.desdeUF>0 && p.detalle);
+  const CATALOGO=Array.isArray(window.PROYECTOS)?window.PROYECTOS:[];
+  const normalizaProyecto=(base)=>{
+    const ficha=FICHAS[base.slug]||{};
+    return {
+      slug:base.slug,
+      name:base.name||ficha.name||'Proyecto',
+      commune:base.commune||ficha.commune||'',
+      desdeUF:Number(base.desdeUF||ficha.desdeUF)||0,
+      entrega:base.entrega||ficha.entrega||'',
+      detalle:base.detalle||ficha.ficha||('/proyectos/'+base.slug+'/'),
+      specs:base.specs||(ficha.detallesStats||[]).map(x=>x&&x.v).filter(Boolean).slice(0,2).join(' · ')
+    };
+  };
+  const P=(CATALOGO.length?CATALOGO:Object.keys(FICHAS).map(slug=>({slug})))
+    .map(normalizaProyecto)
+    .filter(p=>p.desdeUF>0&&p.detalle);
   const CFG=window.SIM_CONFIG||{};
   const UFLIVE={v:CFG.uf||40983.58};
   const UF_=()=>UFLIVE.v;
@@ -90,14 +96,10 @@
     const topeUF=tope/UF_();
     const limitante = ahorro<=0 ? 'sinpie' : (topePorPie<topePorCredito ? 'pie' : 'credito');
 
-    /* CON PIE FINANCIADO: el pie que falta se paga en cuotas y también consume
-       capacidad. Tope combinado: V*pct*k + max(0,V*(1-pct)-ahorro)/mp <= div */
+    /* CON PIE FINANCIADO: para clasificar alternativas se usa la
+       capacidad hipotecaria ya calculada; la cuota de pie se informa en cada ficha. */
     const mp=CFG.mesesPie||24;
-    const cuotaCreditoPorPeso=dividendoDe(1, tasa, plazo);
-    const ahorroCubrePieHasta=ahorro>0 ? ahorro/(1-pct) : 0;
-    const topeConPieFin=topePorCredito<=ahorroCubrePieHasta
-      ? topePorCredito
-      : Math.min(topePorCredito, (div+ahorro/mp)/(pct*cuotaCreditoPorPeso+(1-pct)/mp));
+    const topeConPieFin=topePorCredito;
     const topeConPieFinUF=topeConPieFin/UF_();
     const cuotaPieDe=(v)=>Math.max(0, v*UF_()*(1-pct)-ahorro)/mp;
 
