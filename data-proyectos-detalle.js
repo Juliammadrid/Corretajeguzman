@@ -314,5 +314,88 @@ window.PROYECTO_FICHAS = {
     ],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
+  },
+  "residential-park-nunoa": {
+    name: "Residential Park Ñuñoa",
+    ficha: "/proyecto.html?slug=residential-park-nunoa",
+    commune: "Ñuñoa",
+    address: "Marathon 2040, Ñuñoa",
+    desdeUF: 2990,
+    entrega: "futura",
+    noGaleria: true,
+    subsidioTasa: true,
+    reserva: "$100.000",
+    lead: "Residential Park es un nuevo concepto de Inmobiliaria Imagina: una solución integral donde se consolidan los principales anhelos para mejorar la calidad de vida — alto estándar en seguridad, la tranquilidad y paz de un parque natural integrado, y una excelente ubicación. Departamentos de 1, 2 y 3 dormitorios desde UF 2.990, en un nuevo polo de desarrollo residencial en Rodrigo de Araya con Marathon.",
+    tipologias: [],
+    tipologiasDisponibles: [],
+    caracteristicas: [
+      "Departamentos de 1, 2 y 3 dormitorios",
+      "Desde 38,79 m² hasta 94,68 m² aprox",
+      "Cerradura digital en acceso a departamentos",
+      "Alarma en puertas de acceso de todos los departamentos",
+      "Materialidades de alto estándar y durabilidad",
+      "Espacios diseñados con funcionalidad real"
+    ],
+    comunes: [
+      { t: "Parque integrado", ic: "trees" },
+      { t: "Piscina Lounge", ic: "waves" },
+      { t: "Lobby de acceso", ic: "concierge-bell" },
+      { t: "Cowork in & out", ic: "laptop" },
+      { t: "BBQ Zone panorámico", ic: "beef" },
+      { t: "Open Terrace", ic: "sun" },
+      { t: "Bike Parking", ic: "bike" },
+      { t: "Friends Room in & out", ic: "users" },
+      { t: "E-commerce Lockers", ic: "package" },
+      { t: "Laundry Room", ic: "washing-machine" },
+      { t: "Adventure Zone in & out", ic: "gamepad-2" },
+      { t: "Creativity Center", ic: "palette" },
+      { t: "Fit & Health Zone", ic: "dumbbell" },
+      { t: "Pet Spa y Pet Zone", ic: "dog" }
+    ],
+    cerca: ["Metro Rodrigo de Araya", "Metro Estadio Nacional", "Nuevo Parque del Estadio Nacional", "Futuro Mall Vivo", "Estaciones de servicio y comercio"],
+    ubicTitulo: "Justo donde quieres vivir",
+    ubicLead: "Residential Park Ñuñoa se encuentra en una ubicación privilegiada de la comuna, en un nuevo polo de desarrollo residencial ubicado en Rodrigo de Araya con Marathon, cercano al nuevo Parque del Estadio Nacional y a las estaciones de Metro Rodrigo de Araya y Estadio Nacional.",
+    lat: -33.47216,
+    lng: -70.60828,
+    fotos: [],
+    comunesFotos: [],
+    heroImg: "assets/proy/residential-park-nunoa-hero.jpg",
+    detallesStats: [
+      { k:"Superficie total", v:"38,79 hasta 94,68 m² aprox" },
+      { k:"Dormitorios", v:"1, 2 y 3" },
+      { k:"Baños", v:"1 y 2" },
+      { k:"Desde", v:"UF 2.990" },
+      { k:"Estado del proyecto", v:"Entrega Futura" }
+    ],
+    parqueTitulo: "Un vasto oasis natural",
+    parqueLead: "Residential Park Ñuñoa hace realidad lo que a veces parece un sueño: disfrutar de la naturaleza y la paz, en plena ciudad. Es dueño de un boulevard interior inmerso en un parque natural, con un sendero que recorre todo el interior del proyecto para practicar running, pasear a tu mascota o simplemente caminar relajadamente.",
+    premiosTitulo: "Un proyecto sostenible y responsable",
+    premiosLead: "Paisajismo consciente diseñado por Teodoro Fernández (Premio Nacional de Arquitectura), generando un pulmón verde para el barrio, con más de 350 especies de bajo consumo hídrico. Incluye planes de mitigación para el barrio: ciclovías, mejoramiento de calzadas peatonales, veredas y semáforos.",
+    disenoTitulo: "Departamentos de alto estándar",
+    disenoSubtitulo: "Modernidad, comodidad y diseño",
+    disenoLead: "Departamentos de 1, 2 y 3 dormitorios, cada uno diseñado para usar los espacios de forma única y con materialidades que no solo aportan durabilidad, sino también una estética de alto estándar con funcionalidad real.",
+    comunesTitulo: "+15 espacios comunes",
+    comunesLead: "Cada zona pensada estratégicamente. Espacios completamente equipados y decorados, todos desarrollados bajo el concepto Design District Imagina, para que disfrutes con familia, amigos y mascotas.",
+    comunesTabs: [],
+    seguridadTitulo: "Alto estándar en seguridad",
+    seguridad: [
+      { t:"Control de Acceso", img:"assets/proy/seg-perimetral.png", items:[
+        "Control de acceso en lobby de última generación.",
+        "Cerco eléctrico en el perímetro del terreno.",
+        "Circuito cerrado de televisión en todo el proyecto."
+      ]},
+      { t:"Cámaras de Seguridad", img:"assets/proy/seg-interior.png", items:[
+        "Cámaras de seguridad en accesos del edificio.",
+        "Cámaras de seguridad en espacios comunes.",
+        "Cámaras de seguridad en el perímetro del terreno."
+      ]},
+      { t:"Control Departamentos", img:"assets/proy/seg-departamentos.png", items:[
+        "Cerradura digital en puertas de acceso de todos los departamentos.",
+        "Alarma en puertas de acceso de todos los departamentos.",
+        "Alarma en ventanas de primer, segundo y tercer piso."
+      ]}
+    ],
+    wa: "56944637680",
+    whatsapps: ["56944637680", "56944717233"]
   }
 };
