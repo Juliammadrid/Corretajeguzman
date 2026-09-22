@@ -8,6 +8,18 @@
   const P=window.PARCELA_PROYECTOS||{};
   const slug=window.PARCELA_SLUG||new URLSearchParams(location.search).get('slug')||Object.keys(P)[0];
   const p=P[slug]||{};
+  const fallbackImage=(src)=>/\.webp(?:[?#].*)?$/i.test(src||'')?String(src).replace(/\.webp(?=([?#].*)?$)/i,'.jpg'):src;
+  const toWebp=(src,width=1600)=>{const fallback=fallbackImage(src);if(!fallback||/^data:|^\/?\.netlify\/images/i.test(fallback))return fallback;const path=fallback.charAt(0)==='/'?fallback:'/'+fallback.replace(/^\.?\//,'');return '/.netlify/images?url='+encodeURIComponent(path)+'&w='+width+'&fm=webp&q=72';};
+  const imageMarkup=(src,alt,attrs)=>'<picture><source srcset="'+toWebp(src)+'" type="image/webp"><img src="'+fallbackImage(src)+'" alt="'+alt+'" width="1600" height="900" decoding="async" '+(attrs||'')+'></picture>';
+  const setResponsiveImage=(selector,src,alt,priority)=>{
+    const image=$(selector); if(!image||!src) return;
+    const source=image.closest('picture')&&image.closest('picture').querySelector('source[type="image/webp"]');
+    if(source){ source.srcset=toWebp(src); image.src=fallbackImage(src); }
+    else {
+      const identity=(image.id?'id="'+image.id+'" ':'')+(image.className?'class="'+image.className+'" ':'');
+      image.outerHTML=imageMarkup(src,alt||image.alt,identity+(priority?'loading="eager" fetchpriority="high"':'loading="lazy"'));
+    }
+  };
   const WAS=(p.whatsapps&&p.whatsapps.length)?p.whatsapps:[p.wa||'56944637680'];
   const WA=WAS[0];
   const KEY='cg_wa_turno';
@@ -30,8 +42,12 @@
   $('#pName').textContent=p.name||'';
   $('#pAddr').textContent=p.address||[p.sector,p.region].filter(Boolean).join(', ');
   $('#pLead').textContent=p.lead||'';
-  if(p.heroImg) $('#heroImg').src=p.heroImg;
-  if(p.masterplan) $('#mpImg').src=p.masterplan;
+  if(p.heroImg) setResponsiveImage('#heroImg',p.heroImg,p.name||'Campo Alto Roble',true);
+  if(p.masterplan){
+    setResponsiveImage('#mpImg',p.masterplan,'Masterplan del loteo');
+    const masterplan=$('#mpImg');
+    if(masterplan){ masterplan.width=1238; masterplan.height=2048; }
+  }
 
   /* chips del hero */
   const disp=(p.parcelas||[]).filter(x=>(x.status||'disponible')==='disponible');
@@ -94,7 +110,7 @@
   const track=$('#carTrack'), dots=$('#carDots');
   if(G.length && track && dots){
     track.innerHTML=G.map((g,i)=>'<figure class="cslide2" data-i="'+i+'">'+
-      '<img src="'+g.src+'" alt="'+g.t+'" loading="'+(i<2?'eager':'lazy')+'" decoding="async">'+
+      imageMarkup(g.src,g.t,'loading="lazy"')+
       '<button class="zoom" aria-label="Ampliar"><i data-lucide="expand" class="ico"></i></button>'+
       '<figcaption class="cap"><b>'+g.t+'</b><span class="no">'+(i+1)+' / '+G.length+'</span></figcaption>'+
     '</figure>').join('');
@@ -118,13 +134,13 @@
     $('#carPrev').addEventListener('click',()=>goTo(cur-1));
     $('#carNext').addEventListener('click',()=>goTo(cur+1));
     [...dots.children].forEach(d=>d.addEventListener('click',()=>goTo(+d.dataset.i)));
-    slides.forEach(s=>s.querySelector('.zoom').addEventListener('click',e=>{e.stopPropagation();openLb(s.querySelector('img').src);}));
+    slides.forEach(s=>s.querySelector('.zoom').addEventListener('click',e=>{e.stopPropagation();openLb(toWebp(s.querySelector('img').currentSrc||s.querySelector('img').src));}));
     /* arrastre con mouse */
     let down=false,sx=0,sl=0,moved=0;
     track.addEventListener('mousedown',e=>{down=true;moved=0;sx=e.pageX;sl=track.scrollLeft;track.classList.add('drag');});
     window.addEventListener('mouseup',()=>{if(!down)return;down=false;track.classList.remove('drag');sync();});
     track.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();const d=e.pageX-sx;moved=Math.abs(d);track.scrollLeft=sl-d;});
-    slides.forEach(s=>s.addEventListener('click',()=>{if(moved<6) openLb(s.querySelector('img').src);}));
+    slides.forEach(s=>s.addEventListener('click',()=>{if(moved<6) openLb(toWebp(s.querySelector('img').currentSrc||s.querySelector('img').src));}));
     sync();
   }
 
@@ -152,7 +168,9 @@
     let plazo=(C.plazos&&C.plazos[C.plazos.length-1])||36;
     plazosWrap.innerHTML=(C.plazos||[36]).map(m=>'<button type="button" data-m="'+m+'"'+(m===plazo?' class="on"':'')+'>'+m+' cuotas</button>').join('');
     const pieEl=$('#crPie'); pieEl.min=C.pieMin||40; pieEl.value=C.pieDefault||50;
-    $('#crNota').textContent=C.nota||'';
+    const note=$('#crNota');
+    const baseNote=C.nota||'';
+    if(note) note.textContent=baseNote;
     const money=(n)=>'$'+nf.format(Math.round(n));
     function calc(){
       const opt=sel.options[sel.selectedIndex]||{};
@@ -190,10 +208,10 @@
         if(!Number.isFinite(value)||value<=0) throw new Error('UF inválida');
         uf=value;
         const date=info.date ? new Date(info.date).toLocaleDateString('es-CL') : '';
-        note.textContent=baseNote+' UF actualizada: $'+nf.format(Math.round(uf))+(date?' ('+date+')':'')+'.';
+        if(note) note.textContent=baseNote+' UF actualizada: $'+nf.format(Math.round(uf))+(date?' ('+date+')':'')+'.';
         calc();
       })
-      .catch(()=>{ note.textContent=baseNote+' Se usó el valor referencial mientras se actualiza la UF.'; });
+      .catch(()=>{ if(note) note.textContent=baseNote+' Se usó el valor referencial mientras se actualiza la UF.'; });
   })();
 
   const lb=$('#lb');

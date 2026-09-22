@@ -201,6 +201,7 @@ img,iframe,video{max-width:100%}
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png">
+<script src="/proyecto-hero-preload.js?v=20260922-performance-1"></script>
 </head>
 <body>
 
@@ -335,9 +336,9 @@ img,iframe,video{max-width:100%}
   <button class="lb-nav lb-next" id="lbNext"><i data-lucide="chevron-right" class="ico"></i></button>
 </div>
 
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script>window.FICHA_SLUG="best-site";</script><script src="/data-proyectos-detalle.js?v=2"></script>
-<script src="/proyecto-ficha.js?v=2"></script>
+<script defer src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.FICHA_SLUG="best-site";</script><script defer src="/data-proyectos-detalle.js?v=2"></script>
+<script defer src="/proyecto-ficha.js?v=2"></script>
 <script>
 (function(){
   document.querySelectorAll('[data-navdd]').forEach(function(dd){
@@ -351,5 +352,6 @@ img,iframe,video{max-width:100%}
   });
 })();
 </script>
-<script>(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');if(b&&m)b.addEventListener('click',function(){m.classList.toggle('open');b.setAttribute('aria-expanded',String(m.classList.contains('open')));});})();</script></body>
+<script>(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');if(b&&m)b.addEventListener('click',function(){m.classList.toggle('open');b.setAttribute('aria-expanded',String(m.classList.contains('open')));});})();</script><script src="/guzman-header.js?v=20260922-unified-nav-1"></script>
+</body>
 </html>

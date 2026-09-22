@@ -10,6 +10,35 @@
   const slug = window.FICHA_SLUG || new URLSearchParams(location.search).get('slug') || routeSlug || (location.hash||'').replace(/^#\/?/,'') || Object.keys(FICHAS)[0];
   const p = FICHAS[slug];
   const BADGE = { inmediata:{t:'Entrega inmediata',c:'#1f8a5b'}, verde:{t:'Venta en verde',c:'#7c3aed'}, futura:{t:'Entrega futura',c:'#5b7088'}, ultimas:{t:'Últimas unidades',c:'#c0182a'} };
+  const fallbackImage = (src) => /\.webp(?:[?#].*)?$/i.test(src||'') ? String(src).replace(/\.webp(?=([?#].*)?$)/i,'.jpg') : src;
+  const toWebp = (src, width=1600) => {
+    const fallback = fallbackImage(src);
+    if (!fallback || /^data:|^\/?\.netlify\/images/i.test(fallback)) return fallback;
+    const path = fallback.charAt(0)==='/' ? fallback : '/'+fallback.replace(/^\.?\//,'');
+    return '/.netlify/images?url='+encodeURIComponent(path)+'&w='+width+'&fm=webp&q=72';
+  };
+  const imageMarkup = (src, alt, attrs) => {
+    const fallback = fallbackImage(src);
+    const webp = toWebp(src);
+    return '<picture><source srcset="'+webp+'" type="image/webp"><img src="'+fallback+'" alt="'+alt+'" width="1600" height="900" decoding="async" '+(attrs||'')+'></picture>';
+  };
+  const upgradeProjectImages = (scope) => {
+    scope.querySelectorAll('img[src]').forEach((img) => {
+      if (img.closest('picture') || img.id === 'lbImg' || img.id === 'heroImg') return;
+      const src = img.getAttribute('src') || '';
+      if (!/^\/?assets\/(?:proy|parc)\//.test(src)) return;
+      const source = document.createElement('source');
+      source.srcset = toWebp(src);
+      source.type = 'image/webp';
+      const picture = document.createElement('picture');
+      img.before(picture);
+      picture.append(source, img);
+      img.src = fallbackImage(src);
+      if (!img.hasAttribute('width')) img.setAttribute('width', '1600');
+      if (!img.hasAttribute('height')) img.setAttribute('height', '900');
+      if (!img.hasAttribute('decoding')) img.decoding = 'async';
+    });
+  };
 
   if(!p){
     document.body.innerHTML = '<div style="max-width:600px;margin:120px auto;text-align:center;font-family:sans-serif;padding:0 20px"><h1 style="font-size:26px">Proyecto no encontrado</h1><p style="color:#666;margin-top:12px">Vuelve a <a href="/proyectos" style="color:#7c3aed;font-weight:600">Proyectos en venta</a>.</p></div>';
@@ -43,7 +72,7 @@
     phero.classList.add('bannermode');
     const bs=phero.querySelector('.bgslot');
     bs.style.position='relative';
-    bs.innerHTML='<img src="'+p.bannerHero+'" alt="'+p.name+'" style="display:block;width:100%;height:auto">';
+    bs.innerHTML=imageMarkup(p.bannerHero,p.name,'style="display:block;width:100%;height:auto" loading="eager" fetchpriority="high"');
     if(p.stats && p.stats.length){
       const bar=document.createElement('div'); bar.className='proj-stats';
       bar.innerHTML=p.stats.map(function(s){return '<div class="ps"><div class="v">'+s.v+'</div><div class="k">'+s.k+'</div></div>';}).join('');
@@ -69,21 +98,26 @@
         document.head.appendChild(st2);
       }
     }
-  } else if(p.heroImg){ const bs=document.querySelector('.phero .bgslot'); const fb=document.querySelector('.phero .bgfallback'); if(fb) fb.style.display='none'; const h=$('#heroImg'); if(h) h.style.display='none';
+  } else if(p.heroImg){ const bs=document.querySelector('.phero .bgslot'); const h=$('#heroImg');
     if(bs && p.heroBanner){
       document.querySelector('.phero').classList.add('is-banner');
-      bs.insertAdjacentHTML('beforeend','<img class="banner-img" src="'+p.heroImg+'" alt="'+(p.name||'')+'" loading="eager">');
+      bs.innerHTML=imageMarkup(p.heroImg,p.name||'','class="banner-img" loading="eager" fetchpriority="high"');
       const stBn=document.createElement('style');
       stBn.textContent='.phero.is-banner{height:auto!important;min-height:0!important;background:var(--dark)}.phero.is-banner::after{display:none}.phero.is-banner .bgslot{position:relative!important;inset:auto!important;height:auto}.phero.is-banner .banner-img{position:relative;width:100%;height:auto;display:block}.phero.is-banner .ph-tag{position:static!important;padding:20px 26px 0;justify-content:center}.phero.is-banner .ph-body{position:static!important;padding:14px 26px 34px;text-align:center}@media(max-width:680px){.phero.is-banner .ph-tag{padding:16px 18px 0;gap:8px}.phero.is-banner .ph-body{padding:12px 18px 26px}}';
       document.head.appendChild(stBn);
-    } else if(bs){ bs.style.backgroundImage="url('"+p.heroImg+"')"; bs.style.backgroundSize="cover"; bs.style.backgroundPosition="center"; }
+    } else if(h){
+      h.outerHTML=imageMarkup(p.heroImg,p.name||'','id="heroImg" loading="eager" fetchpriority="high"');
+    } else if(bs){
+      bs.style.backgroundImage="image-set(url('"+toWebp(p.heroImg)+"') type('image/webp'),url('"+fallbackImage(p.heroImg)+"') type('image/jpeg'))";
+      bs.style.backgroundSize="cover"; bs.style.backgroundPosition="center";
+    }
   }
 
   // banner promocional inicial (antes del hero)
   if(p.bannerImg){
     const hero=document.querySelector('.phero');
     if(hero){
-      hero.insertAdjacentHTML('beforebegin','<div class="proj-banner"><img src="'+p.bannerImg+'" alt="'+p.name+' — oferta" loading="eager"></div>');
+      hero.insertAdjacentHTML('beforebegin','<div class="proj-banner">'+imageMarkup(p.bannerImg,p.name+' — oferta','loading="lazy"')+'</div>');
       const stB=document.createElement('style');
       stB.textContent='.proj-banner{width:100%;background:var(--dark);line-height:0}.proj-banner img{width:100%;height:auto;display:block;max-height:520px;object-fit:cover;object-position:center}@media(max-width:680px){.proj-banner img{max-height:none}}';
       document.head.appendChild(stB);
@@ -281,7 +315,7 @@
     fotos.forEach((src,i)=>{
       GAL.push(src);
       const g=document.createElement('div'); g.className='g';
-      g.innerHTML=`<div class="gfall"><i data-lucide="image" class="ico"></i></div><img src="${src}" alt="${p.name} ${i+1}" loading="eager" decoding="async" onload="this.style.opacity=1" onerror="this.style.display='none'">`;
+      g.innerHTML=`<div class="gfall"><i data-lucide="image" class="ico"></i></div><img src="${src}" alt="${p.name} ${i+1}" loading="lazy" decoding="async" onload="this.style.opacity=1" onerror="this.style.display='none'">`;
       g.addEventListener('click',()=>openLb(i));
       gal.appendChild(g);
     });
@@ -373,7 +407,7 @@
     GAL.push(src);
     const gi = GAL.length-1;
     const d=document.createElement('div'); d.className='cacc'+(i===0?' on':'');
-    d.style.backgroundImage=`url('${src}')`;
+    d.style.backgroundImage=`image-set(url('${toWebp(src)}') type('image/webp'),url('${fallbackImage(src)}') type('image/jpeg'))`;
     d.innerHTML=`<span class="cacc-cap"><b>${cf.t}</b></span>`;
     d.addEventListener('mouseenter',()=>{ cg.querySelectorAll('.cacc').forEach(x=>x.classList.remove('on')); d.classList.add('on'); });
     d.addEventListener('click',()=>openLb(gi));
@@ -429,12 +463,18 @@
       const wrap=ubic.querySelector('.wrap');
       const mapEl=document.createElement('div'); mapEl.className='ubic-map';
       mapEl.innerHTML='<img src="'+p.mapaImg+'" alt="Ubicación '+p.name+'" loading="lazy">';
-      wrap.insertBefore(mapEl, document.getElementById('near'));
+      const nearNode=document.getElementById('near');
+      if(nearNode && nearNode.parentNode) nearNode.parentNode.insertBefore(mapEl, nearNode);
+      else wrap.appendChild(mapEl);
       const stM=document.createElement('style');
       stM.textContent='.ubic-map{border-radius:18px;overflow:hidden;margin:30px auto 0;max-width:900px;box-shadow:var(--shadow-md)}.ubic-map img{display:block;width:100%;height:auto}';
       document.head.appendChild(stM);
     }
   }
+
+  // Todas las imágenes secundarias quedan diferidas y sirven WebP con
+  // respaldo JPG/PNG. El hero ya fue insertado con prioridad alta.
+  upgradeProjectImages(document);
 
   // price bar
   $('#pbPrice').textContent = 'UF ' + nf.format(p.desdeUF||0);
@@ -474,7 +514,7 @@
   // lightbox
   const lb=$('#lb'), lbImg=$('#lbImg'); let cur=0;
   window.openLb=function(i){cur=i;show();lb.classList.add('open');document.body.style.overflow='hidden';};
-  function show(){cur=(cur+GAL.length)%GAL.length;lbImg.src=GAL[cur];}
+  function show(){cur=(cur+GAL.length)%GAL.length;lbImg.src=toWebp(GAL[cur]);}
   $('#lbClose').onclick=()=>{lb.classList.remove('open');document.body.style.overflow='';};
   $('#lbPrev').onclick=()=>{cur--;show();};
   $('#lbNext').onclick=()=>{cur++;show();};

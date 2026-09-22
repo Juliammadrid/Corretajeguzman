@@ -253,6 +253,9 @@
 
 
   function addProjectsToNavigation() {
+    // El encabezado único ya contiene el acordeón Comprar. No agregamos
+    // enlaces adicionales que rompan su orden visual.
+    return;
     const currentPath = (location.pathname || '/').replace(/\/+$/, '') || '/';
     const isProjectsPage = currentPath === '/proyectos' || currentPath.indexOf('/proyectos/') === 0;
 
