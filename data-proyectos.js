@@ -22,6 +22,16 @@ window.PROYECTOS = [
     "image": "/assets/proy/metropolitan-park-nunoa/proyecto-metropolitan-park-nunoa.jpg"
   },
   {
+    "slug": "residential-park-nunoa",
+    "name": "Residential Park Ñuñoa",
+    "address": "Marathon 2040, Ñuñoa",
+    "commune": "Ñuñoa",
+    "desdeUF": 2990,
+    "entrega": "futura",
+    "specs": "1, 2 y 3 dorm. · 38,79 a 94,68 m²",
+    "detalle": "/proyecto.html?slug=residential-park-nunoa"
+  },
+  {
     "slug": "all-nunoa-2",
     "name": "All Ñuñoa II",
     "address": "Seminario 1499, Ñuñoa",
