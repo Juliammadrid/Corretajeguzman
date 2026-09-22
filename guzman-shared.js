@@ -253,7 +253,7 @@
 
 
   function addProjectsToNavigation() {
-    const currentPath = (location.pathname || '/').replace(/\\/+$/, '') || '/';
+    const currentPath = (location.pathname || '/').replace(/\/+$/, '') || '/';
     const isProjectsPage = currentPath === '/proyectos' || currentPath.indexOf('/proyectos/') === 0;
 
     document.querySelectorAll('.nav-links').forEach(nav => {
