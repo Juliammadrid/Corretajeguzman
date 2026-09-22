@@ -45,7 +45,7 @@ async function init() {
   stats();
   renderReviews(await GZ.loadReviews());
   bindLiveCatalog();
-  render(); bind();
+  render(); renderHomeProjectExtras(); bind();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -214,6 +214,62 @@ function render() {
     drawMap(ordered);
   }
   if (window.lucide) lucide.createIcons();
+}
+
+
+function renderHomeProjectExtras() {
+  if (document.getElementById('home-projects-extras')) return;
+  const featured = document.getElementById('destacados');
+  if (!featured) return;
+
+  const section = document.createElement('section');
+  section.id = 'home-projects-extras';
+  section.className = 'home-projects-extras';
+  section.innerHTML = \`
+    <style>
+      .home-projects-extras{padding:78px 0;background:linear-gradient(180deg,#f3f0f8 0%,#ece6f6 100%)}
+      .home-extras-head{max-width:720px;margin-bottom:26px}.home-extras-head p{color:var(--ink-2);margin-top:10px;font-size:17px}
+      .home-extras-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+      .home-extras-card{min-width:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
+      .home-extras-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+      .home-extras-card img{display:block;width:100%;height:205px;object-fit:cover;background:#e6dfef}
+      .home-extras-card-body{padding:18px}.home-extras-tag{display:inline-flex;background:var(--violet-tint);color:var(--violet-d);border-radius:99px;padding:5px 9px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+      .home-extras-card h3{font-size:20px;margin:10px 0 6px}.home-extras-card p{color:var(--ink-2);font-size:15px}.home-extras-price{color:var(--violet);font-weight:800;font-size:18px;margin-top:12px}.home-extras-cta{display:flex;align-items:center;gap:7px;color:var(--violet);font-weight:800;margin-top:14px}
+      .home-calc-band{margin-top:26px;border-radius:18px;padding:26px 28px;color:#fff;background:linear-gradient(115deg,#1d1630,#512495 60%,#7c3aed);display:flex;align-items:center;justify-content:space-between;gap:24px}
+      .home-calc-band h3{font-size:24px}.home-calc-band p{margin-top:5px;opacity:.86}.home-calc-band a{display:inline-flex;white-space:nowrap;align-items:center;justify-content:center;padding:12px 17px;border-radius:10px;background:#fff;color:#5427a4;text-decoration:none;font-weight:800}
+      .home-parcel-band{margin-top:20px;min-height:240px;border-radius:18px;overflow:hidden;background:linear-gradient(90deg,rgba(19,39,30,.92),rgba(19,39,30,.42)),url('/assets/parc/car-hero.jpg') center/cover;display:flex;align-items:end;padding:28px;color:#fff}
+      .home-parcel-band h3{font-size:27px}.home-parcel-band p{margin:5px 0 14px;max-width:580px}.home-parcel-band a{display:inline-flex;padding:11px 16px;border-radius:9px;background:#fff;color:#163528;text-decoration:none;font-weight:800}
+      @media(max-width:780px){.home-projects-extras{padding:54px 0}.home-extras-grid{grid-template-columns:1fr}.home-extras-card img{height:190px}.home-calc-band{padding:22px;align-items:flex-start;flex-direction:column}.home-calc-band h3{font-size:22px}.home-parcel-band{min-height:225px;padding:22px}.home-parcel-band h3{font-size:24px}}
+    </style>
+    <div class="wrap">
+      <div class="home-extras-head">
+        <span class="eyebrow">Proyectos nuevos</span>
+        <h2>Encuentra tu próximo hogar</h2>
+        <p>Conoce nuestros proyectos inmobiliarios disponibles para compra en Ñuñoa.</p>
+      </div>
+      <div class="home-extras-grid">
+        <a class="home-extras-card" href="/proyectos/metropolitan-park-nunoa/">
+          <img src="/assets/proy/metropolitan-park-nunoa/proyecto-metropolitan-park-nunoa.jpg" alt="Proyecto Metropolitan Park Ñuñoa">
+          <div class="home-extras-card-body"><span class="home-extras-tag">Entrega futura</span><h3>Metropolitan Park Ñuñoa</h3><p>Ñuñoa, Santiago</p><div class="home-extras-price">Desde UF 3.919</div><span class="home-extras-cta">Ver proyecto →</span></div>
+        </a>
+        <a class="home-extras-card" href="/proyectos/smart-too/">
+          <img src="/assets/proy/smart-too/smart-too-banner-hd.jpg" alt="Proyecto Smart Too Ñuñoa">
+          <div class="home-extras-card-body"><span class="home-extras-tag">Entrega inmediata</span><h3>Smart Too Ñuñoa</h3><p>Ñuñoa, Santiago</p><div class="home-extras-price">Desde UF 3.528</div><span class="home-extras-cta">Ver proyecto →</span></div>
+        </a>
+        <a class="home-extras-card" href="/proyectos/all-nunoa-2/">
+          <img src="/assets/proy/all-nunoa-2/all-nunoa-2-hero.jpg" alt="Proyecto All Ñuñoa II">
+          <div class="home-extras-card-body"><span class="home-extras-tag">Entrega inmediata</span><h3>All Ñuñoa II</h3><p>Ñuñoa, Santiago</p><div class="home-extras-price">Desde UF 7.689</div><span class="home-extras-cta">Ver proyecto →</span></div>
+        </a>
+      </div>
+      <div class="home-calc-band">
+        <div><h3>Calcula tu capacidad de compra</h3><p>Obtén una estimación referencial y conoce los proyectos que calzan con tu presupuesto.</p></div>
+        <a href="/simulador-capacidad/">Calcular ahora →</a>
+      </div>
+      <div class="home-parcel-band">
+        <div><span class="home-extras-tag">Campo Alto Roble</span><h3>Parcelas con naturaleza y conectividad</h3><p>36 parcelas disponibles en Villarrica, desde UF 2.400.</p><a href="/parcelas/campo-alto-roble">Ver parcelas →</a></div>
+      </div>
+    </div>\`;
+  featured.insertAdjacentElement('afterend', section);
 }
 
 /* ---------- mapa ---------- */
