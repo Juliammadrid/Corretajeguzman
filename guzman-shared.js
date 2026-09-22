@@ -7,7 +7,7 @@
   const nf = new Intl.NumberFormat('es-CL');
   const FALLBACK_PHOTO = 'assets/home-apartamento.jpg';
   const SITE_ORIGIN = 'https://corretajeguzman.com';
-  const BRAND_ICON = '/assets/guzman-logo.png?v=20260621-3';
+  const BRAND_ICON = '/assets/favicon-32.png?v=20260922-1';
 
   const style = document.createElement('style');
   style.textContent = '.dbanner{display:none!important}.mobile-buy-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 26px;color:#fff;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.07);font:inherit;font-size:16px;font-weight:600;text-align:left}.mobile-buy-toggle .ico{width:18px;height:18px;color:#8b3fff;transition:transform .18s}.mobile-buy-group.open .mobile-buy-toggle .ico{transform:rotate(180deg)}.mobile-buy-submenu{display:none;background:rgba(0,0,0,.12)}.mobile-buy-group.open .mobile-buy-submenu{display:block}.mobile-buy-submenu a{padding:12px 26px 12px 52px!important;font-size:15px!important;color:rgba(255,255,255,.88)!important}';
@@ -296,9 +296,22 @@
     if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
   }
 
+  function addCalculatorFooterLinks() {
+    document.querySelectorAll('footer .foot-links').forEach(links => {
+      if ([...links.querySelectorAll('a')].some(a => (a.getAttribute('href') || '').indexOf('/simulador-capacidad/') === 0)) return;
+      const link = document.createElement('a');
+      link.href = '/simulador-capacidad/';
+      link.textContent = '¿Cuánto puedo comprar?';
+      const parcels = [...links.querySelectorAll('a')].find(a => /parcelas/i.test(a.textContent || ''));
+      if (parcels) parcels.insertAdjacentElement('afterend', link);
+      else links.appendChild(link);
+    });
+  }
+
   function startLinkCleaner() {
     installPwaMeta();
     addProjectsToNavigation();
+    addCalculatorFooterLinks();
     cleanInternalLinks();
     if (!document.body || !window.MutationObserver) return;
     const observer = new MutationObserver(records => {
