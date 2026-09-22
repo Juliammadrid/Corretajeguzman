@@ -10,7 +10,7 @@
   const BRAND_ICON = '/assets/guzman-logo.png?v=20260621-3';
 
   const style = document.createElement('style');
-  style.textContent = '.dbanner{display:none!important}';
+  style.textContent = '.dbanner{display:none!important}.mobile-buy-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:15px 26px;color:#fff;background:transparent;border:0;border-bottom:1px solid rgba(255,255,255,.07);font:inherit;font-size:16px;font-weight:600;text-align:left}.mobile-buy-toggle .ico{width:18px;height:18px;color:#8b3fff;transition:transform .18s}.mobile-buy-group.open .mobile-buy-toggle .ico{transform:rotate(180deg)}.mobile-buy-submenu{display:none;background:rgba(0,0,0,.12)}.mobile-buy-group.open .mobile-buy-submenu{display:block}.mobile-buy-submenu a{padding:12px 26px 12px 52px!important;font-size:15px!important;color:rgba(255,255,255,.88)!important}';
   document.head.appendChild(style);
 
   function ensureHeadTag(tag, attrs) {
@@ -253,7 +253,7 @@
 
 
   function addProjectsToNavigation() {
-    const currentPath = (location.pathname || '/').replace(/\/+$/, '') || '/';
+    const currentPath = (location.pathname || '/').replace(/\\/+$/, '') || '/';
     const isProjectsPage = currentPath === '/proyectos' || currentPath.indexOf('/proyectos/') === 0;
 
     document.querySelectorAll('.nav-links').forEach(nav => {
@@ -262,22 +262,35 @@
       link.href = '/proyectos/';
       link.textContent = 'Proyectos';
       if (isProjectsPage) link.classList.add('active');
-
       const buyLink = [...nav.querySelectorAll('a')].find(a => /comprar/i.test(a.textContent || ''));
       if (buyLink) buyLink.insertAdjacentElement('afterend', link);
       else nav.appendChild(link);
     });
 
     document.querySelectorAll('.mobile-menu').forEach(menu => {
-      if (menu.querySelector('a[href^="/proyectos"]')) return;
-      const link = document.createElement('a');
-      link.href = '/proyectos/';
-      link.innerHTML = 'Proyectos <i data-lucide="chevron-right" class="ico"></i>';
-      if (isProjectsPage) link.classList.add('active');
-
+      if (menu.querySelector('[data-mobile-buy-menu]')) return;
       const buyLink = [...menu.querySelectorAll('a')].find(a => /comprar/i.test(a.textContent || ''));
-      if (buyLink) buyLink.insertAdjacentElement('afterend', link);
-      else menu.appendChild(link);
+      if (!buyLink) return;
+      const oldProjectsLink = [...menu.querySelectorAll('a')].find(a => (a.getAttribute('href') || '').indexOf('/proyectos') === 0);
+      if (oldProjectsLink) oldProjectsLink.remove();
+
+      const group = document.createElement('div');
+      group.className = 'mobile-buy-group';
+      group.setAttribute('data-mobile-buy-menu', '');
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'mobile-buy-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.innerHTML = 'Comprar <i data-lucide="chevron-down" class="ico"></i>';
+      const submenu = document.createElement('div');
+      submenu.className = 'mobile-buy-submenu';
+      submenu.innerHTML = '<a href="/proyectos/">Proyectos nuevos <i data-lucide="chevron-right" class="ico"></i></a><a href="/comprar">Propiedades en venta <i data-lucide="chevron-right" class="ico"></i></a>';
+      toggle.addEventListener('click', () => {
+        const open = group.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
+      group.append(toggle, submenu);
+      buyLink.replaceWith(group);
     });
 
     if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
