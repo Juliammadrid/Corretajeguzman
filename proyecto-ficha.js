@@ -418,7 +418,7 @@
       '<h2 style="text-align:left">'+(p.seguridadTitulo||'Seguridad con la mejor tecnología')+'</h2>'+
       '<div class="sg-top"><div class="sg-nav">'+SG.map((s,i)=>'<button class="sg-tab'+(i===0?' on':'')+'" data-i="'+i+'">'+s.t+'</button>').join('')+'</div>'+
       '<div class="sg-arrows"><button class="sg-arrow" id="sgPrev"><i data-lucide="chevron-left" class="ico"></i></button><button class="sg-arrow" id="sgNext"><i data-lucide="chevron-right" class="ico"></i></button></div></div>'+
-      '<div class="sg-stage">'+SG.map((s,i)=>'<div class="sg-panel'+(i===0?' on':'')+'" data-i="'+i+'"><div class="sg-ic"><img src="'+s.img+'" alt="'+s.t+'" loading="lazy"></div><div class="sg-tx"><h3>'+s.t+'</h3><ul>'+s.items.map(it=>'<li>'+it+'</li>').join('')+'</ul></div></div>').join('')+'</div>'+
+      '<div class="sg-stage">'+SG.map((s,i)=>'<div class="sg-panel'+(i===0?' on':'')+'" data-i="'+i+'"><div class="sg-ic"><img src="'+s.img+'" alt="'+s.t+'" loading="eager" decoding="async"></div><div class="sg-tx"><h3>'+s.t+'</h3><ul>'+s.items.map(it=>'<li>'+it+'</li>').join('')+'</ul></div></div>').join('')+'</div>'+
       '</div></section>';
     const ub=document.getElementById('ubicacion');
     if(ub) ub.insertAdjacentHTML('beforebegin', secHtml);
