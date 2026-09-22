@@ -9,7 +9,7 @@
   const slug=window.PARCELA_SLUG||new URLSearchParams(location.search).get('slug')||Object.keys(P)[0];
   const p=P[slug]||{};
   const fallbackImage=(src)=>/\.webp(?:[?#].*)?$/i.test(src||'')?String(src).replace(/\.webp(?=([?#].*)?$)/i,'.jpg'):src;
-  const toWebp=(src,width=1600)=>{const fallback=fallbackImage(src);if(!fallback||/^data:|^\/?\.netlify\/images/i.test(fallback))return fallback;const path=fallback.charAt(0)==='/'?fallback:'/'+fallback.replace(/^\.?\//,'');return '/.netlify/images?url='+encodeURIComponent(path)+'&w='+width+'&fm=webp&q=72';};
+  const toWebp=(src)=>/\.(?:jpe?g|png|webp)(?:[?#].*)?$/i.test(src||'')?String(src).replace(/\.(?:jpe?g|png|webp)(?=([?#].*)?$)/i,'.webp'):src;
   const imageMarkup=(src,alt,attrs)=>'<picture><source srcset="'+toWebp(src)+'" type="image/webp"><img src="'+fallbackImage(src)+'" alt="'+alt+'" width="1600" height="900" decoding="async" '+(attrs||'')+'></picture>';
   const setResponsiveImage=(selector,src,alt,priority)=>{
     const image=$(selector); if(!image||!src) return;

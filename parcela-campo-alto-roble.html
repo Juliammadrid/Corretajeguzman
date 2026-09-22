@@ -133,7 +133,7 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 
 /* BANDA URBANIZACIÓN (verde con foto) */
 .urb-band{position:relative;border-bottom:none;overflow:hidden;color:#fff;padding:76px 0}
-.urb-bg{position:absolute;inset:0;background:image-set(url('/.netlify/images?url=%2Fassets%2Fparc%2Fcar-detalle.jpg&w=1600&fm=webp&q=72') type('image/webp'),url('/assets/parc/car-detalle.jpg') type('image/jpeg')) center/cover no-repeat}
+.urb-bg{position:absolute;inset:0;background:image-set(url('/assets/parc/car-detalle.webp') type('image/webp'),url('/assets/parc/car-detalle.jpg') type('image/jpeg')) center/cover no-repeat}
 .urb-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(140deg,rgba(18,58,40,.95) 0%,rgba(24,74,52,.9) 45%,rgba(47,110,78,.78) 100%)}
 .urb-in{position:relative;z-index:2;text-align:center}
 .urb-kick{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);padding:8px 16px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#d6f2e2;margin-bottom:18px}
@@ -376,7 +376,7 @@ body>*:not(header):not(.pricebar):not(.lb){max-width:100%}
 </header>
 
 <section class="phero">
-  <picture class="bg-picture"><source srcset="/.netlify/images?url=%2Fassets%2Fparc%2Fcar-hero.jpg&w=1600&fm=webp&q=72" type="image/webp"><img class="bg" id="heroImg" src="/assets/parc/car-hero.jpg" alt="Campo Alto Roble" width="1600" height="894" loading="eager" decoding="async" fetchpriority="high"></picture>
+  <picture class="bg-picture"><source srcset="/assets/parc/car-hero.webp" type="image/webp"><img class="bg" id="heroImg" src="/assets/parc/car-hero.jpg" alt="Campo Alto Roble" width="1600" height="894" loading="eager" decoding="async" fetchpriority="high"></picture>
   <div class="ph-tag" id="phTags"></div>
   <div class="ph-body">
     <h1 id="pName">—</h1>
@@ -514,7 +514,7 @@ body>*:not(header):not(.pricebar):not(.lb){max-width:100%}
         <p id="entLead"></p>
       </div>
       <figure class="vill-img map">
-        <picture><source srcset="/.netlify/images?url=%2Fassets%2Fparc%2Fvillarrica-mapa.jpg&w=1145&fm=webp&q=72" type="image/webp"><img src="/assets/parc/villarrica-mapa.jpg" alt="Mapa de ubicación de Campo Alto Roble en Villarrica" width="1145" height="640" loading="lazy" decoding="async"></picture>
+        <picture><source srcset="/assets/parc/villarrica-mapa.webp" type="image/webp"><img src="/assets/parc/villarrica-mapa.jpg" alt="Mapa de ubicación de Campo Alto Roble en Villarrica" width="1145" height="640" loading="lazy" decoding="async"></picture>
         <figcaption><i data-lucide="map-pin" class="ico"></i>Campo Alto Roble · 4 km de Villarrica</figcaption>
       </figure>
     </div>

@@ -11,12 +11,7 @@
   const p = FICHAS[slug];
   const BADGE = { inmediata:{t:'Entrega inmediata',c:'#1f8a5b'}, verde:{t:'Venta en verde',c:'#7c3aed'}, futura:{t:'Entrega futura',c:'#5b7088'}, ultimas:{t:'Últimas unidades',c:'#c0182a'} };
   const fallbackImage = (src) => /\.webp(?:[?#].*)?$/i.test(src||'') ? String(src).replace(/\.webp(?=([?#].*)?$)/i,'.jpg') : src;
-  const toWebp = (src, width=1600) => {
-    const fallback = fallbackImage(src);
-    if (!fallback || /^data:|^\/?\.netlify\/images/i.test(fallback)) return fallback;
-    const path = fallback.charAt(0)==='/' ? fallback : '/'+fallback.replace(/^\.?\//,'');
-    return '/.netlify/images?url='+encodeURIComponent(path)+'&w='+width+'&fm=webp&q=72';
-  };
+  const toWebp = (src) => /\.(?:jpe?g|png|webp)(?:[?#].*)?$/i.test(src||'') ? String(src).replace(/\.(?:jpe?g|png|webp)(?=([?#].*)?$)/i,'.webp') : src;
   const imageMarkup = (src, alt, attrs) => {
     const fallback = fallbackImage(src);
     const webp = toWebp(src);
