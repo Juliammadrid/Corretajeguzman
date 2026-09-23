@@ -8,6 +8,16 @@
   const FICHAS = window.PROYECTO_FICHAS || {};
   const slug = window.FICHA_SLUG || new URLSearchParams(location.search).get('slug') || (location.hash||'').replace(/^#\/?/,'') || Object.keys(FICHAS)[0];
   const p = FICHAS[slug];
+  // Estas tres fichas usan recursos editoriales amplios. El bloqueo se limita
+  // a la página para evitar que el documento se desplace lateralmente en móvil.
+  const verticalOnlySlugs = new Set(['urban-nunoa','best-nunoa','best-level']);
+  if(verticalOnlySlugs.has(slug)){
+    document.documentElement.classList.add('cg-vertical-project');
+    document.body.classList.add('cg-vertical-project');
+    const sideScrollStyle=document.createElement('style');
+    sideScrollStyle.textContent='html.cg-vertical-project,body.cg-vertical-project{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior-x:none}body.cg-vertical-project{position:relative}';
+    document.head.appendChild(sideScrollStyle);
+  }
   const BADGE = { inmediata:{t:'Entrega inmediata',c:'#1f8a5b'}, verde:{t:'Venta en verde',c:'#7c3aed'}, futura:{t:'Entrega futura',c:'#5b7088'}, ultimas:{t:'Últimas unidades',c:'#c0182a'} };
 
   if(!p){
