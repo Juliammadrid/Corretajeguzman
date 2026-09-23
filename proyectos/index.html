@@ -61,7 +61,7 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 .hero-badge .sm{font-size:13px;color:rgba(255,255,255,.8);font-weight:600;margin-top:6px}
 
 /* Navegación fija de Home + filtros fijos como un mismo bloque. */
-header.nav,body .guzman-header{position:sticky!important;top:0;z-index:1000}
+header.nav,body .guzman-header{position:fixed!important;top:0;left:0;right:0;z-index:1000}
 .projects-catalog{position:relative}
 /* TOOLBAR */
 .toolbar{position:sticky;top:var(--navh)!important;z-index:900;width:100%;background:var(--surface);border-bottom:1px solid var(--line)}
@@ -326,6 +326,6 @@ footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px}
   });
 })();
 </script>
-<script>(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');if(b&&m)b.addEventListener('click',function(){m.classList.toggle('open');b.setAttribute('aria-expanded',String(m.classList.contains('open')));});})();</script><script src="/guzman-header.js?v=20260922-unified-nav-1"></script>
+<script>(function(){var b=document.getElementById('navBurger'),m=document.getElementById('mobileMenu');if(b&&m)b.addEventListener('click',function(){m.classList.toggle('open');b.setAttribute('aria-expanded',String(m.classList.contains('open')));});})();</script><script src="/guzman-header.js?v=fixed-nav-20260923"></script>
 </body>
 </html>
