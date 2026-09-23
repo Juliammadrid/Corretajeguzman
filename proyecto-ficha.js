@@ -516,9 +516,9 @@
       const strip=document.createElement('div');
       strip.className='ubic-person-strip';
       strip.innerHTML='<img src="'+p.ubicSplit.persona+'" alt="Mujer caminando" loading="lazy" decoding="async">';
-      mapEl.insertAdjacentElement('afterend',strip);
+      mapEl.appendChild(strip);
       const stP=document.createElement('style');
-      stP.textContent='.ubic-person-strip{height:230px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 18px 18px;overflow:hidden;display:flex;align-items:flex-end;justify-content:flex-end;padding-right:9%}.ubic-person-strip img{display:block;width:auto;height:260px;max-width:48%;object-fit:contain;object-position:bottom}@media(max-width:860px){.ubic-person-strip{height:150px;border-radius:0 0 14px 14px;padding-right:9%}.ubic-person-strip img{height:172px;max-width:55%}}';
+      stP.textContent='.ubic-map{position:relative}.ubic-person-strip{position:absolute;z-index:2;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;overflow:visible;pointer-events:none}.ubic-person-strip img{display:block;width:auto;height:min(90%,540px);max-width:none;object-fit:contain;object-position:right bottom;transform:translate(5%,5%)}@media(max-width:860px){.ubic-person-strip img{height:88%;max-width:none;transform:translate(5%,3%)}}';
       document.head.appendChild(stP);
     }
   }
