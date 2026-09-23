@@ -1,5 +1,5 @@
 /* ============================================================
-   FICHAS DE PROYECTO (Imagina) — contenido por proyecto
+   FICHAS DE PROYECTO — contenido por proyecto
    ------------------------------------------------------------
    Cada entrada llena la plantilla "Proyecto - Corretaje Guzman.html?slug=..."
    FOTOS:
@@ -423,5 +423,712 @@ window.PROYECTO_FICHAS = {
     comunesFotos: [],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
+  },
+  "urban-life": {
+    "name": "Urban Life",
+    "ficha": "/proyectos/urban-life/",
+    "commune": "Las Condes",
+    "address": "Las Azaleas 44, Las Condes",
+    "desdeUF": 6078,
+    "entrega": "futura",
+    "noGaleria": true,
+    "subsidioTasa": true,
+    "reserva": "$100.000",
+    "heroImg": "/assets/proy/ul-banner.jpg",
+    "bannerHero": "/assets/proy/ul-banner.jpg",
+    "stats": [
+      {
+        "v": "Studio · 1 · 2",
+        "k": "Dormitorios"
+      },
+      {
+        "v": "UF 6.078",
+        "k": "Desde"
+      },
+      {
+        "v": "44,78 – 90,4 m²",
+        "k": "Superficie aprox."
+      },
+      {
+        "v": "Entrega Futura",
+        "k": "1er semestre 2028"
+      }
+    ],
+    "ctas": [
+      "Pie hasta en 24 cuotas con tarjeta de crédito",
+      "Asesoría hipotecaria"
+    ],
+    "lead": "Urban Life es un proyecto único en un sector residencial de Las Condes, con toda la conectividad y vida urbana que te gusta.",
+    "solucionTitulo": "Un nuevo concepto llega a Las Condes",
+    "solucionLead": "Conoce Urban Life, un proyecto que te va a encantar a primera vista. Ubicado en un sector residencial de Las Condes, pero con toda la conectividad y vida urbana que te gusta. Diseñado para sorprenderte desde afuera hacia adentro: una elegante fachada que atrapa todas las miradas y departamentos tipo Studio, 1 y 2 dormitorios con lo último en estilo, tendencias y funcionalidad. 8 pisos, 2 subterráneos y 103 departamentos, con solo 4 unidades con jardín privado en primer piso.",
+    "solucionImg": "/assets/proy/ul-fachada.png",
+    "bloques": [
+      {
+        "img": "/assets/proy/ul-arte.png",
+        "t": "Arte en tu edificio",
+        "d": "El reconocido artista visual chileno Totoy Zamudio intervino los espacios del proyecto y su cerco perimetral, transformándolos en una galería cultural abierta a la ciudad. Su obra ha sido expuesta en el Museo Nacional de Bellas Artes, el Centro Cultural Montecarmelo, la Galería StuArt y el Predio Ferial de Palermo.",
+        "recorte": true
+      },
+      {
+        "img": "/assets/proy/ul-smart.jpg",
+        "t": "Tu departamento es smart",
+        "d": "Todo se conecta a tus dispositivos inteligentes: smart switch en el estar para controlar lámparas, estufas o aspiradoras a distancia (compatible con IFTTT), interruptores sustentables de ABS reciclado, alarma wi-fi conectada a conserjería, cerradura digital wi-fi, calefacción con wi-fi y factibilidad para aire acondicionado en el dormitorio principal.",
+        "mas": [
+          {
+            "t": "Smart switch + interruptor inteligente",
+            "d": "Ubicados en el estar de todos los departamentos: controla el encendido de lámparas, estufas eléctricas, aspiradoras robot o lo que se te ocurra, a distancia o antes de llegar. Compatibles con IFTTT para automatizar funciones avanzadas desde tu teléfono."
+          },
+          {
+            "t": "Interruptores eléctricos sustentables",
+            "d": "Fabricados con ABS reciclado y nylon de redes de pesca, con pintura de baja emisión de VOC, más respetuosa con el medio ambiente."
+          },
+          {
+            "t": "Alarma wi-fi",
+            "d": "Alarma en la puerta de acceso del departamento conectada a conserjería; puedes controlarla a distancia vía wi-fi."
+          },
+          {
+            "t": "Cerradura digital wi-fi",
+            "d": "Sistema de apertura y cierre electromecánico que permite controlar el acceso al departamento mediante app, tarjeta, llave o clave electrónica."
+          },
+          {
+            "t": "Calefacción con wi-fi",
+            "d": "Calefacción más segura y con menos contaminación. Artefacto de bajo mantenimiento que regula la temperatura de forma eficiente; enciéndela o apágala desde tu teléfono."
+          },
+          {
+            "t": "Factibilidad para aire acondicionado",
+            "d": "Tu departamento viene listo para instalar aire acondicionado en el dormitorio principal."
+          }
+        ]
+      }
+    ],
+    "disenoTitulo": "Departamentos de alto estándar",
+    "disenoSubtitulo": "Studio, 1 y 2 dormitorios",
+    "disenoLead": "Departamentos full modernos, diseñados con las últimas tendencias en interiorismo. Más amplitud y luminosidad con vistas despejadas al oriente y al sur. Cocina integrada con cubierta de cuarzo, encimera y horno eléctrico, campana extraíble, piso orgánico lavable y ventanas termopanel.",
+    "disenoImgs": [
+      "/assets/proy/ul-cocina.jpg",
+      "/assets/proy/ul-dorm.jpg",
+      "/assets/proy/ul-bano.jpg"
+    ],
+    "disenoStack": true,
+    "caracteristicas": [
+      "Cerradura digital wi-fi",
+      "Encimera y horno eléctrico",
+      "Cubierta de cuarzo",
+      "Campana extraíble",
+      "Piso orgánico, más ecológico y lavable",
+      "Ventanas termopanel",
+      "Listo para aire acondicionado en dormitorio principal"
+    ],
+    "comunes": [],
+    "comunesTitulo": "Espacios comunes en la azotea",
+    "comunesLead": "Diseñados en la azotea del edificio para disfrutar de una vista panorámica inigualable: Piscina Lounge, un innovador Skybar, 2 quinchos BBQ Zone y hall de acceso tipo hotel. En el primer piso, un boulevard para cafeterías y tiendas.",
+    "comunesTabs": [
+      {
+        "src": "/assets/proy/ul-comun-1.jpg",
+        "t": "Piscina Lounge"
+      },
+      {
+        "src": "/assets/proy/ul-comun-3.jpg",
+        "t": "Skybar"
+      },
+      {
+        "src": "/assets/proy/ul-comun-2.jpg",
+        "t": "BBQ Zone"
+      },
+      {
+        "src": "/assets/proy/ul-comun-4.jpg",
+        "t": "Hall de acceso"
+      },
+      {
+        "src": "/assets/proy/ul-comun-6.jpg",
+        "t": "Boulevard comercial"
+      },
+      {
+        "src": "/assets/proy/ul-comun-5.jpg",
+        "t": "Fachada"
+      }
+    ],
+    "ubicTitulo": "Ubicación insuperable · vive full conectado",
+    "ubicLead": "Urban Life se emplaza en un barrio tranquilo y residencial de Las Condes: frente al Estadio Israelita, cerca del Hospital FACH y a pasos del Mall Alto Las Condes. Salida directa a Av. Las Condes, rápida conexión con Av. Kennedy, cerca de la futura estación Padre Hurtado de la Línea 7 y a minutos de Metro Hernando de Magallanes.",
+    "mapaImg": "/assets/proy/ul-ubicacion.png",
+    "ubicSplit": {
+      "img": "/assets/proy/ul-ubicacion.png",
+      "persona": "/assets/proy/ul-persona.png",
+      "t1": "Ubicación insuperable",
+      "t2": "Vive full conectado",
+      "lead": "Urban Life se emplaza en un barrio tranquilo y residencial de Las Condes rodeado de todo lo que necesitas.",
+      "parrafos": [
+        "Ubicado frente al Estadio Israelita y cercano al Hospital FACH, podrás ir caminando al Alto Las Condes y encontrar los mejores restaurantes, tiendas exclusivas y una vibrante vida urbana.",
+        "Además, el proyecto cuenta con salida directa a Avenida Las Condes y rápida conexión con Avenida Kennedy, a la futura estación de metro Línea 7 Padre Hurtado y a minutos caminando de la estación Hernando de Magallanes."
+      ]
+    },
+    "cerca": [
+      "Futura Metro Padre Hurtado (L7)",
+      "Metro Hernando de Magallanes",
+      "Av. Las Condes",
+      "Av. Kennedy"
+    ],
+    "cercaFotos": [
+      {
+        "src": "/assets/proy/ul-c-metro.jpg",
+        "t": "Futura estación Metro Padre Hurtado"
+      },
+      {
+        "src": "/assets/proy/ul-c-mall.jpg",
+        "t": "Mall Alto Las Condes"
+      },
+      {
+        "src": "/assets/proy/ul-c-kennedy.jpg",
+        "t": "Salida rápida a Av. Kennedy"
+      },
+      {
+        "src": "/assets/proy/ul-c-farmacias.jpg",
+        "t": "Farmacias y servicios cercanos"
+      },
+      {
+        "src": "/assets/proy/ul-c-hospital.jpg",
+        "t": "A pasos del Hospital FACH"
+      },
+      {
+        "src": "/assets/proy/ul-c-estadio.jpg",
+        "t": "Frente al Estadio Israelita"
+      }
+    ],
+    "tipologias": [],
+    "tipologiasDisponibles": [
+      {
+        "nombre": "1 dormitorio + 1 baño",
+        "planta": "A: 501 al 701",
+        "plano": "/assets/proy/ul-plano-p1a.jpg",
+        "m2int": "41,00 m² aprox",
+        "dormBano": "1 dorm + 1 baño",
+        "terraza": "3,78 m² aprox",
+        "orientacion": "Poniente",
+        "m2tot": "44,78 m² aprox",
+        "desdeUF": 6117
+      },
+      {
+        "nombre": "1 dormitorio + 1 baño",
+        "planta": "B: 312 al 712",
+        "plano": "/assets/proy/ul-plano-p1b.jpg",
+        "m2int": "40,64 m² aprox",
+        "dormBano": "1 dorm + 1 baño",
+        "terraza": "5,72 m² aprox",
+        "orientacion": "Sur",
+        "m2tot": "46,36 m² aprox",
+        "desdeUF": 6078
+      },
+      {
+        "nombre": "1 dormitorio + 1 baño",
+        "planta": "C: 105 (con jardín)",
+        "plano": "/assets/proy/ul-plano-p1c.jpg",
+        "m2int": "40,50 m² aprox",
+        "dormBano": "1 dorm + 1 baño",
+        "terraza": "5,72 m² aprox",
+        "orientacion": "Nororiente",
+        "m2tot": "46,22 m² aprox",
+        "desdeUF": 7829
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "A: 302 al 802",
+        "plano": "/assets/proy/ul-plano-p2a.jpg",
+        "m2int": "57,89 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "7,56 m² aprox",
+        "orientacion": "Poniente",
+        "m2tot": "65,45 m² aprox",
+        "desdeUF": 7591
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "B: 208 al 508",
+        "plano": "/assets/proy/ul-plano-p2b.jpg",
+        "m2int": "56,01 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "14,22 m² aprox",
+        "orientacion": "Oriente",
+        "m2tot": "70,23 m² aprox",
+        "desdeUF": 7982
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "C: 207 al 807",
+        "plano": "/assets/proy/ul-plano-p2c.jpg",
+        "m2int": "56,01 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "14,22 m² aprox",
+        "orientacion": "Oriente",
+        "m2tot": "70,23 m² aprox",
+        "desdeUF": 8020
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "D: 213 al 713",
+        "plano": "/assets/proy/ul-plano-p2d.jpg",
+        "m2int": "61,97 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "10,80 m² aprox",
+        "orientacion": "Poniente",
+        "m2tot": "72,77 m² aprox",
+        "desdeUF": 8240
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "E: 210 al 710",
+        "plano": "/assets/proy/ul-plano-p2e.jpg",
+        "m2int": "70,52 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "19,88 m² aprox",
+        "orientacion": "Oriente",
+        "m2tot": "90,4 m² aprox",
+        "desdeUF": 9517
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "F: 206 al 706",
+        "plano": "/assets/proy/ul-plano-p2f.jpg",
+        "m2int": "70,52 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "19,88 m² aprox",
+        "orientacion": "Nororiente",
+        "m2tot": "90,4 m² aprox",
+        "desdeUF": 10660
+      }
+    ],
+    "fotos": [],
+    "comunesFotos": [],
+    "wa": "56944637680",
+    "whatsapps": [
+      "56944637680",
+      "56944717233"
+    ],
+    "originalOnly": true
+  },
+  "smart-la-florida": {
+    "heroFull": true,
+    "name": "Smart La Florida",
+    "ficha": "/proyectos/smart-la-florida/",
+    "commune": "La Florida",
+    "address": "Vicuña Mackenna Poniente 6689, La Florida",
+    "desdeUF": 2806,
+    "entrega": "inmediata",
+    "noGaleria": true,
+    "subsidioTasa": true,
+    "reserva": "$100.000",
+    "lead": "Concepto Smart La Florida es parte de una nueva generación de proyectos inmobiliarios. Ubicado en un sector privilegiado de La Florida, cercano a Metro Mirador y Mall Florida Center. Este proyecto de 16 pisos cuenta con departamentos de 1 y 2 dormitorios con excelentes terminaciones, espacios bien distribuidos y una nueva versatilidad, que entrega un uso más eficiente de los espacios.",
+    "tipologias": [],
+    "tipologiasDisponibles": [
+      {
+        "nombre": "1 dormitorio + 1 baño",
+        "planta": "B: 817 al 1117",
+        "plano": "/assets/proy/slf-plano-1d1b.jpg",
+        "m2int": "30,40 m² aprox",
+        "dormBano": "1 dorm + 1 baño",
+        "terraza": "5,26 m² aprox",
+        "orientacion": "Sur",
+        "m2tot": "35,66 m² aprox",
+        "desdeUF": 2937
+      },
+      {
+        "nombre": "2 dormitorios + 1 baño",
+        "planta": "A: 301 al 1101",
+        "plano": "/assets/proy/slf-plano-2d1b.jpg",
+        "m2int": "43,07 m² aprox",
+        "dormBano": "2 dorm + 1 baño",
+        "terraza": "2,30 m² aprox",
+        "orientacion": "Sur",
+        "m2tot": "45,37 m² aprox",
+        "desdeUF": 3460
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "A: 204 al 1504",
+        "plano": "/assets/proy/slf-plano-2d2b.jpg",
+        "m2int": "50,49 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "2,24 m² aprox",
+        "orientacion": "Norte",
+        "m2tot": "52,73 m² aprox",
+        "desdeUF": 3692
+      }
+    ],
+    "bloques": [
+      {
+        "img": "/assets/proy/slf-fachada.jpg",
+        "t": "Detalles del proyecto",
+        "d": "Un edificio de 16 pisos con departamentos de 1 y 2 dormitorios, desde 31,93 hasta 69,68 m² aprox, con 1 y 2 baños. Proyecto terminado y con entrega inmediata: ya pasó por todas sus etapas, desde el prelanzamiento hasta la entrega."
+      },
+      {
+        "img": "/assets/proy/slf-sostenibilidad.jpg",
+        "t": "Sostenibilidad",
+        "d": "Edificio full electric, sin contaminación intradomiciliaria. Ventanas con marco de PVC que entregan aislamiento térmico y acústico, y ampolletas de bajo consumo eléctrico integradas."
+      }
+    ],
+    "caracteristicas": [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas marco PVC con aislamiento térmico y acústico",
+      "Ampolletas de bajo consumo eléctrico",
+      "Kitchen Concept equipada",
+      "Baños confortables y amplios dormitorios",
+      "Espacios versátiles y eficientes"
+    ],
+    "comunes": [
+      {
+        "t": "Hall de acceso",
+        "ic": "concierge-bell"
+      },
+      {
+        "t": "Cowork",
+        "ic": "laptop"
+      },
+      {
+        "t": "Friends Room",
+        "ic": "users"
+      },
+      {
+        "t": "Pet Spa in & out",
+        "ic": "dog"
+      },
+      {
+        "t": "Fit & Health Zone",
+        "ic": "dumbbell"
+      },
+      {
+        "t": "BBQ Zone",
+        "ic": "beef"
+      },
+      {
+        "t": "Baños comunes",
+        "ic": "bath"
+      },
+      {
+        "t": "E-commerce Lockers",
+        "ic": "package"
+      },
+      {
+        "t": "Piscina Lounge",
+        "ic": "waves"
+      }
+    ],
+    "cerca": [
+      "Metro Mirador",
+      "Metro Bellavista de La Florida",
+      "Mall Plaza Vespucio y Mall Florida Center",
+      "Supermercados, bancos y farmacias",
+      "Colegios, centros médicos y áreas verdes"
+    ],
+    "ubicTitulo": "Vive La Florida",
+    "ubicLead": "Concepto Smart La Florida se ubica en un sector estratégico de la comuna, con una excelente conectividad gracias a su cercanía con estación Metro Mirador y Metro Bellavista de La Florida, Avenida Américo Vespucio y Vicuña Mackenna, para rápidos y cómodos desplazamientos. Además, se encuentra a pocas cuadras de Mall Plaza Vespucio, Mall Florida Center, supermercados, centros médicos, farmacias, bancos, restaurantes, centros educacionales y toda la vida de barrio.",
+    "lat": -33.5168798,
+    "lng": -70.6060369,
+    "fotos": [],
+    "comunesFotos": [],
+    "heroImg": "/assets/proy/slf-portada.jpg",
+    "detallesStats": [
+      {
+        "k": "Superficie total",
+        "v": "31,93 hasta 69,68 m² aprox"
+      },
+      {
+        "k": "Dormitorios",
+        "v": "1 y 2"
+      },
+      {
+        "k": "Baños",
+        "v": "1 y 2"
+      },
+      {
+        "k": "Desde",
+        "v": "UF 2.806"
+      },
+      {
+        "k": "Estado del proyecto",
+        "v": "Entrega Inmediata"
+      }
+    ],
+    "disenoTitulo": "Innovación en tu departamento",
+    "disenoSubtitulo": "Diseño",
+    "disenoImgs": [
+      "/assets/proy/slf-diseno-1.jpg",
+      "/assets/proy/slf-diseno-2.jpg",
+      "/assets/proy/slf-diseno-3.jpg"
+    ],
+    "disenoLead": "Bienvenido a la versatilidad. Concepto Smart La Florida cuenta con departamentos de 1 y 2 dormitorios, con un excelente nivel de terminaciones, espacios bien distribuidos y una nueva versatilidad, que te entrega un uso más eficiente de los espacios.",
+    "disenoTabs": [
+      {
+        "src": "/assets/proy/slf-kitchen.jpg",
+        "t": "Kitchen Concept"
+      },
+      {
+        "src": "/assets/proy/slf-bano.jpg",
+        "t": "Baños confortables"
+      },
+      {
+        "src": "/assets/proy/slf-dormitorio.jpg",
+        "t": "Amplios dormitorios"
+      }
+    ],
+    "comunesTitulo": "Espacios comunes Design District",
+    "comunesLead": "La vida más allá de tu departamento. Espacios modernos, completamente equipados y decorados con las últimas tendencias: Hall de acceso, Cowork, Friends Room, Pet Spa in & out, Fit & Health Zone, BBQ Zone, Baños comunes, E-commerce Lockers y Piscina Lounge.",
+    "comunesTabs": [
+      {
+        "src": "/assets/proy/slf-comun-1.jpg",
+        "t": "Friends Room"
+      },
+      {
+        "src": "/assets/proy/slf-comun-2.jpg",
+        "t": "Fit & Health Zone"
+      },
+      {
+        "src": "/assets/proy/slf-comun-3.jpg",
+        "t": "Cowork"
+      },
+      {
+        "src": "/assets/proy/slf-comun-4.jpg",
+        "t": "BBQ Zone"
+      },
+      {
+        "src": "/assets/proy/slf-comun-5.jpg",
+        "t": "Piscina Lounge"
+      }
+    ],
+    "seguridadTitulo": "Seguridad con la mejor tecnología",
+    "seguridad": [
+      {
+        "t": "Seguridad Perimetral",
+        "img": "/assets/proy/slf-seg-perimetral.png",
+        "items": [
+          "Cámaras en los deslindes hacia los vecinos y hacia las calles.",
+          "Cerco eléctrico perimetral en todo el sitio del edificio.",
+          "Control de acceso vehicular para propietarios con lector de sticker tag o por app en el celular, y portón de cierre con óptima velocidad."
+        ]
+      },
+      {
+        "t": "Seguridad Interior",
+        "img": "/assets/proy/slf-seg-interior.png",
+        "items": [
+          "Cámaras en todas las puertas de acceso del edificio (subterráneos y primer piso).",
+          "Cámaras IP en todos los halls de conserjería y de ascensores en el primer piso.",
+          "Alarmas en todas las ventanas que se abren en el primer piso."
+        ]
+      },
+      {
+        "t": "Control Departamentos",
+        "img": "/assets/proy/slf-seg-departamentos.png",
+        "items": [
+          "Cámaras en todas las cabinas de ascensores.",
+          "Alarmas en todas las ventanas que se abren en el segundo y tercer piso.",
+          "Alarmas en todas las puertas de los departamentos."
+        ]
+      }
+    ],
+    "wa": "56944637680",
+    "whatsapps": [
+      "56944637680",
+      "56944717233"
+    ],
+    "originalOnly": true
+  },
+  "new-life-macul": {
+    "heroFull": true,
+    "name": "New Life Macul",
+    "commune": "Macul",
+    "address": "Exequiel Fernández 3526, Macul",
+    "desdeUF": 4191,
+    "entrega": "inmediata",
+    "noGaleria": true,
+    "subsidioTasa": true,
+    "reserva": "$100.000",
+    "lead": "Concepto New Life Macul, el departamento perfecto para la vida moderna. Un edificio de 18 pisos con departamentos de 2 y 3 dormitorios, gran distribución de espacios y excelentes terminaciones, a pasos de la futura estación de la Línea 8 del Metro. Pilotos de 2 y 3 dormitorios disponibles para visitar. Entrega inmediata.",
+    "tipologias": [],
+    "tipologiasDisponibles": [
+      {
+        "nombre": "2 dormitorios + 1 baño",
+        "planta": "A: 1014 al 1714",
+        "plano": "/assets/proy/nl-plano-pa.jpg",
+        "m2int": "42,0 m² aprox",
+        "dormBano": "2 dorm + 1 baño",
+        "terraza": "5,4 m² aprox",
+        "orientacion": "Poniente",
+        "m2tot": "47,4 m² aprox",
+        "desdeUF": 4191
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "B: 1004 al 1504",
+        "plano": "/assets/proy/nl-plano-pb.jpg",
+        "m2int": "48,72 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "9,61 m² aprox",
+        "orientacion": "Poniente",
+        "m2tot": "58,33 m² aprox",
+        "desdeUF": 4239
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "C: 1008 al 1808",
+        "plano": "/assets/proy/nl-plano-pc.jpg",
+        "m2int": "61,89 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "7,16 m² aprox",
+        "orientacion": "Sur",
+        "m2tot": "69,05 m² aprox",
+        "desdeUF": 4895
+      },
+      {
+        "nombre": "2 dormitorios + 2 baños",
+        "planta": "D: 309 al 1009",
+        "plano": "/assets/proy/nl-plano-pd.jpg",
+        "m2int": "67,63 m² aprox",
+        "dormBano": "2 dorm + 2 baños",
+        "terraza": "3,76 m² aprox",
+        "orientacion": "Norte",
+        "m2tot": "71,39 m² aprox",
+        "desdeUF": 5299
+      }
+    ],
+    "bloques": [
+      {
+        "img": "/assets/proy/nl-fachada.jpg",
+        "t": "Un edificio de 18 pisos",
+        "d": "New Life Macul combina departamentos de 2 y 3 dormitorios con una gran distribución de espacios y excelentes terminaciones. El proyecto ya está terminado y con entrega inmediata: puedes visitar los pilotos de 2 y 3 dormitorios en la sala de ventas, en Exequiel Fernández 3526."
+      },
+      {
+        "img": "/assets/proy/nl-sostenibilidad.jpg",
+        "t": "Sostenibilidad",
+        "d": "Edificio full electric, sin contaminación intradomiciliaria. Ventanas de aluminio gris grafito con aislamiento térmico y acústico, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente."
+      }
+    ],
+    "caracteristicas": [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas de aluminio gris grafito con aislación térmica y acústica",
+      "Ampolletas de bajo consumo eléctrico",
+      "Estufa eléctrica: calefacción limpia y eficiente",
+      "Distribución interior que favorece la amplitud",
+      "Terminaciones de primer nivel en cocina, dormitorios y baños"
+    ],
+    "comunes": [
+      {
+        "t": "Hall de acceso",
+        "ic": "concierge-bell"
+      },
+      {
+        "t": "Friends Room",
+        "ic": "users"
+      },
+      {
+        "t": "Cowork",
+        "ic": "laptop"
+      },
+      {
+        "t": "Fit & Health Zone",
+        "ic": "dumbbell"
+      },
+      {
+        "t": "Creativity Center",
+        "ic": "palette"
+      },
+      {
+        "t": "BBQ Zone",
+        "ic": "beef"
+      },
+      {
+        "t": "Piscina Lounge",
+        "ic": "waves"
+      },
+      {
+        "t": "Green Library",
+        "ic": "book-open"
+      },
+      {
+        "t": "E-commerce Lockers",
+        "ic": "package"
+      },
+      {
+        "t": "Bike Parking",
+        "ic": "bike"
+      }
+    ],
+    "cerca": [
+      "Futura estación Metro Línea 8",
+      "Av. Macul y Av. Quilín",
+      "Supermercados y centros comerciales",
+      "Centros de salud y farmacias",
+      "Colegios, bancos y áreas verdes"
+    ],
+    "ubicTitulo": "Lo mejor de Macul",
+    "ubicLead": "Concepto New Life Macul está ubicado en un nuevo polo de desarrollo de la comuna, a pasos de la futura estación de la Línea 8 del Metro de Santiago, con gran conectividad a Av. Macul y Av. Quilín, y cerca de comercios, bancos y farmacias.",
+    "lat": -33.486063,
+    "lng": -70.6015915,
+    "fotos": [],
+    "comunesFotos": [],
+    "heroImg": "/assets/proy/nl-portada.jpg",
+    "heroAlto": "min(38vw,760px)",
+    "detallesStats": [
+      {
+        "k": "Superficie total",
+        "v": "47,4 hasta 86,26 m² aprox"
+      },
+      {
+        "k": "Dormitorios",
+        "v": "2 y 3"
+      },
+      {
+        "k": "Baños",
+        "v": "1 y 2"
+      },
+      {
+        "k": "Desde",
+        "v": "UF 4.191"
+      },
+      {
+        "k": "Estado del proyecto",
+        "v": "Entrega Inmediata"
+      }
+    ],
+    "disenoTitulo": "Diseñado para la vida de hoy",
+    "disenoSubtitulo": "Innovación",
+    "disenoImgs": [
+      "/assets/proy/nl-diseno-1.jpg",
+      "/assets/proy/nl-diseno-2.jpg",
+      "/assets/proy/nl-diseno-3.jpg"
+    ],
+    "disenoLead": "Distribución interior que favorece la amplitud, terminaciones de primer nivel y detalles en cocina, dormitorios y baños que hacen la diferencia.",
+    "comunesTitulo": "Espacios comunes Design District",
+    "comunesLead": "La vida más allá de tu departamento: espacios modernos, completamente equipados y decorados con las últimas tendencias, diseñados para vivir y compartir momentos inolvidables.",
+    "comunesTabs": [
+      {
+        "src": "/assets/proy/nl-comun-1.jpg",
+        "t": "Hall de acceso"
+      },
+      {
+        "src": "/assets/proy/nl-comun-2.jpg",
+        "t": "Friends Room"
+      },
+      {
+        "src": "/assets/proy/nl-comun-3.jpg",
+        "t": "Cowork"
+      },
+      {
+        "src": "/assets/proy/nl-comun-4.jpg",
+        "t": "Fit & Health Zone"
+      },
+      {
+        "src": "/assets/proy/nl-comun-5.jpg",
+        "t": "Creativity Center"
+      },
+      {
+        "src": "/assets/proy/nl-comun-6.jpg",
+        "t": "BBQ Zone"
+      }
+    ],
+    "wa": "56944637680",
+    "whatsapps": [
+      "56944637680",
+      "56944717233"
+    ],
+    "ficha": "/proyectos/new-life-macul/",
+    "originalOnly": true
   }
 };

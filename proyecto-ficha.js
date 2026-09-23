@@ -16,9 +16,13 @@
     const fallback = fallbackImage(src);
     const webp = toWebp(src);
     const fallbackAttr = fallback.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
-    return '<picture><source srcset="'+webp+'" type="image/webp"><img src="'+fallback+'" alt="'+alt+'" width="1600" height="900" decoding="async" onerror="var p=this.parentElement,s=p&&p.querySelector(\'source\');if(s)s.remove();this.onerror=null;this.src=\''+fallbackAttr+'\'" '+(attrs||'')+'></picture>';
+    const image = '<img src="'+fallback+'" alt="'+alt+'" width="1600" height="900" decoding="async" onerror="var p=this.parentElement,s=p&&p.querySelector(\'source\');if(s)s.remove();this.onerror=null;this.src=\''+fallbackAttr+'\'" '+(attrs||'')+'>';
+    // Los proyectos incorporados desde Drive conservan su JPG/PNG original:
+    // no solicitamos una variante WebP que no existe y así evitamos 404.
+    return p.originalOnly ? image : '<picture><source srcset="'+webp+'" type="image/webp">'+image+'</picture>';
   };
   const upgradeProjectImages = (scope) => {
+    if(p.originalOnly) return;
     scope.querySelectorAll('img[src]').forEach((img) => {
       if (img.closest('picture') || img.id === 'lbImg' || img.id === 'heroImg') return;
       const src = img.getAttribute('src') || '';
@@ -166,10 +170,13 @@
   if(p.bloques && p.bloques.length){
     const anchor=document.getElementById('comodidades');
     if(anchor){
-      const blocks=p.bloques.map((b,i)=>'<section class="sec bloque'+(i%2?' rev':'')+'"><div class="wrap bq-grid"><div class="bq-img'+(b.recorte?' cut':'')+'">'+imageMarkup(b.img,b.t,'loading="lazy"')+'</div><div class="bq-tx"><h2>'+b.t+'</h2><p>'+b.d+'</p></div></div></section>').join('');
+      const blocks=p.bloques.map((b,i)=>{
+        const more=(b.mas&&b.mas.length)?'<details class="bq-mas"><summary>Más información</summary><div class="bq-mas-in">'+b.mas.map(m=>'<h4>'+m.t+'</h4><p>'+m.d+'</p>').join('')+'</div></details>':'';
+        return '<section class="sec bloque'+(i%2?' rev':'')+'"><div class="wrap bq-grid"><div class="bq-img'+(b.recorte?' cut':'')+'">'+imageMarkup(b.img,b.t,'loading="lazy"')+'</div><div class="bq-tx"><h2>'+b.t+'</h2><p>'+b.d+'</p>'+more+'</div></div></section>';
+      }).join('');
       anchor.insertAdjacentHTML('beforebegin',blocks);
       const stBq=document.createElement('style');
-      stBq.textContent='.bq-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}.bloque.rev .bq-img{order:2}.bq-img picture,.bq-img img{display:block;width:100%}.bq-img img{height:auto;border-radius:18px}.bq-img.cut img{border-radius:0;max-width:520px;margin:0 auto}.bq-tx h2{text-align:left}.bq-tx p{font-size:16.5px;color:var(--ink-2);line-height:1.7;margin-top:16px}@media(max-width:860px){.bq-grid{grid-template-columns:1fr;gap:24px}.bloque.rev .bq-img{order:0}.bq-img.cut img{max-width:320px}.bq-tx h2{text-align:center}.bq-tx p{text-align:center}}';
+      stBq.textContent='.bq-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}.bloque.rev .bq-img{order:2}.bq-img picture,.bq-img img{display:block;width:100%}.bq-img img{height:auto;border-radius:18px}.bq-img.cut img{border-radius:0;max-width:520px;margin:0 auto}.bq-tx h2{text-align:left}.bq-tx p{font-size:16.5px;color:var(--ink-2);line-height:1.7;margin-top:16px}.bq-mas{margin-top:22px;border-top:1px solid var(--line)}.bq-mas summary{cursor:pointer;font-family:\'Sora\';font-weight:700;color:var(--violet-d);padding:16px 0}.bq-mas-in h4{font-family:\'Sora\';font-size:15px;margin:14px 0 0}.bq-mas-in p{font-size:15px;margin-top:6px}@media(max-width:860px){.bq-grid{grid-template-columns:1fr;gap:24px}.bloque.rev .bq-img{order:0}.bq-img.cut img{max-width:320px}.bq-tx h2{text-align:center}.bq-tx p{text-align:center}}';
       document.head.appendChild(stBq);
     }
   }
@@ -446,7 +453,7 @@
     const ub=document.getElementById('ubicacion');
     if(ub) ub.insertAdjacentHTML('beforebegin', secHtml);
     const stSg=document.createElement('style');
-    stSg.textContent='.sg-top{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-top:26px}.sg-nav{display:flex;gap:30px;flex-wrap:wrap}.sg-tab{font-family:\'Sora\';font-weight:700;font-size:16px;color:var(--ink-3);padding:0 2px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}.sg-tab.on{color:var(--ink);border-color:var(--violet)}.sg-arrows{display:flex;gap:10px;padding-bottom:10px}.sg-arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}.sg-arrow:hover{border-color:var(--violet);color:var(--violet-d)}.sg-arrow .ico{width:17px;height:17px}.sg-stage{position:relative;margin-top:26px;background:var(--bg);border-radius:20px;min-height:400px}.sg-panel{display:none;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center;padding:44px 46px}.sg-panel.on{display:grid}.sg-ic{display:grid;place-items:center}.sg-ic img{width:100%;max-width:230px;height:auto;display:block;opacity:.9}.sg-tx h3{font-family:\'Sora\';font-weight:700;font-size:23px;margin-bottom:18px}.sg-tx ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:12px}.sg-tx li{font-size:15.5px;color:var(--ink-2);line-height:1.6}@media(max-width:860px){.sg-panel{grid-template-columns:1fr;gap:24px;padding:30px 22px}.sg-ic img{max-width:150px}.sg-nav{gap:16px}.sg-tab{font-size:14px}.sg-stage{min-height:0}}';
+    stSg.textContent='.sg-top{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-top:26px}.sg-nav{display:flex;gap:30px;flex-wrap:wrap}.sg-tab{font-family:\'Sora\';font-weight:700;font-size:16px;color:var(--ink-3);padding:0 2px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}.sg-tab.on{color:var(--ink);border-color:var(--violet)}.sg-arrows{display:flex;gap:10px;padding-bottom:10px}.sg-arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--ink-2)}.sg-arrow:hover{border-color:var(--violet);color:var(--violet-d)}.sg-arrow .ico{width:17px;height:17px}.sg-stage{position:relative;margin-top:26px;background:var(--bg);border-radius:20px}.sg-panel{display:none;grid-template-columns:.55fr 1.45fr;gap:30px;align-items:center;padding:26px 32px}.sg-panel.on{display:grid}.sg-ic{display:grid;place-items:center}.sg-ic img{width:120px;height:120px;border-radius:50%;overflow:hidden;object-fit:cover;display:block;opacity:.9}.sg-tx h3{font-family:\'Sora\';font-weight:700;font-size:18px;margin-bottom:12px}.sg-tx ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px}.sg-tx li{font-size:14.5px;color:var(--ink-2);line-height:1.55}@media(max-width:860px){.sg-panel{grid-template-columns:1fr;gap:18px;padding:22px 18px}.sg-ic img{width:90px;height:90px}.sg-nav{gap:16px}.sg-tab{font-size:14px}}';
     document.head.appendChild(stSg);
     let sgCur=0;
     const sgTabs=[...document.querySelectorAll('.sg-tab')], sgPanels=[...document.querySelectorAll('.sg-panel')];

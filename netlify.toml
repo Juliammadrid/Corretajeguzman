@@ -53,6 +53,21 @@
   status = 200
 
 [[redirects]]
+  from = "/proyectos/urban-life/"
+  to = "/proyecto.html?slug=urban-life"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/smart-la-florida/"
+  to = "/proyecto.html?slug=smart-la-florida"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/new-life-macul/"
+  to = "/proyecto.html?slug=new-life-macul"
+  status = 200
+
+[[redirects]]
   from = "/ventas"
   to = "/Ventas - Corretaje Guzman.html"
   status = 200

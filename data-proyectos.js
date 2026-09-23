@@ -53,5 +53,38 @@ window.PROYECTOS = [
     "specs": "38,27 a 75,28 m² · 1 y 2 dorm · 1 y 2 baños",
     "detalle": "/proyectos/smart-too/",
     "image": "/assets/proy/smart-too/smart-too-banner-hd.jpg"
+  },
+  {
+    "slug": "urban-life",
+    "name": "Urban Life",
+    "address": "Las Azaleas 44, Las Condes",
+    "commune": "Las Condes",
+    "desdeUF": 6078,
+    "entrega": "futura",
+    "specs": "44,78 a 90,4 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/urban-life/",
+    "image": "/assets/proy/ul-banner.jpg"
+  },
+  {
+    "slug": "smart-la-florida",
+    "name": "Smart La Florida",
+    "address": "Vicuña Mackenna Poniente 6689, La Florida",
+    "commune": "La Florida",
+    "desdeUF": 2806,
+    "entrega": "inmediata",
+    "specs": "35,66 a 52,73 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/smart-la-florida/",
+    "image": "/assets/proy/slf-portada.jpg"
+  },
+  {
+    "slug": "new-life-macul",
+    "name": "New Life Macul",
+    "address": "Exequiel Fernández 3526, Macul",
+    "commune": "Macul",
+    "desdeUF": 4191,
+    "entrega": "inmediata",
+    "specs": "47,4 a 86,26 m² · 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/new-life-macul/",
+    "image": "/assets/proy/nl-portada.jpg"
   }
 ];

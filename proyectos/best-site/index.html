@@ -30,8 +30,8 @@
   --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1180px;--navh:76px;--barh:78px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;overflow-x:hidden;max-width:100%}
-body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--surface);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px;overflow-x:clip;max-width:100vw;position:relative;padding-bottom:var(--barh)}
+html{scroll-behavior:smooth;max-width:100%}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--surface);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px;max-width:100vw;position:relative;padding-bottom:var(--barh)}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
@@ -68,12 +68,12 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 .phero .ph-addr .ico{width:18px;height:18px;color:#c9b8f5}
 
 /* SUBNAV */
-.subnav{position:sticky;top:var(--navh);z-index:50;background:var(--surface);border-bottom:1px solid var(--line)}
+.subnav{position:static;background:var(--surface);border-bottom:1px solid var(--line)}
 .subnav-in{max-width:var(--maxw);margin:0 auto;padding:0 26px;display:flex;gap:8px;overflow:hidden;justify-content:center}
 .subnav-in a{flex:0 1 auto;padding:18px 6px;font-size:13.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);border-bottom:2px solid transparent;margin-right:24px;white-space:nowrap;transition:color .15s,border-color .15s}
 .subnav-in a:hover{color:var(--ink)}
 .subnav-in a.on{color:var(--violet-d);border-color:var(--violet)}
-#descripcion,#tipologias,#galeria,#recorrido,#comodidades,#ubicacion,#reservar{scroll-margin-top:calc(var(--navh) + 70px)}
+#descripcion,#tipologias,#galeria,#recorrido,#comodidades,#ubicacion,#reservar{scroll-margin-top:calc(var(--navh) + 16px)}
 
 .sec{padding:66px 0;border-bottom:1px solid var(--line-2)}
 .sec h2{text-align:center;font-size:clamp(25px,3.4vw,36px);font-weight:800;text-transform:uppercase}
@@ -344,8 +344,8 @@ img,iframe,video{max-width:100%}
 </div>
 
 <script defer src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script>window.FICHA_SLUG="best-site";</script><script defer src="/data-proyectos-detalle.js?v=residential-20260922"></script>
-<script defer src="/proyecto-ficha.js?v=residential-20260922"></script>
+<script>window.FICHA_SLUG="best-site";</script><script defer src="/data-proyectos-detalle.js?v=projects-20260922"></script>
+<script defer src="/proyecto-ficha.js?v=projects-20260922"></script>
 <script>
 (function(){
   document.querySelectorAll('[data-navdd]').forEach(function(dd){
