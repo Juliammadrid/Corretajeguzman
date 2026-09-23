@@ -44,6 +44,7 @@ window.PROYECTO_FICHAS = {
     cerca: ["Metro Puente Cal y Canto", "Parque Forestal", "Mercado Central", "Universidades y servicios"],
     fotos: ["/assets/proy/best-site/best-site-1.jpg","/assets/proy/best-site/best-site-2.jpg","/assets/proy/best-site/best-site-3.jpg","/assets/proy/best-site/best-site-4.jpg","/assets/proy/best-site/best-site-5.jpg","/assets/proy/best-site/best-site-6.jpg","/assets/proy/best-site/best-site-7.jpg","/assets/proy/best-site/best-site-8.jpg"],
     matterport: "https://my.matterport.com/show/?m=Q53JqZ841uG",
+    comunesGridMobile: true,
     comunesFotos: [
       { src:"/assets/proy/best-site/best-site-comun-1.jpg", t:"Piscina" },
       { src:"/assets/proy/best-site/best-site-comun-2.jpg", t:"Fireplace" },
@@ -96,6 +97,7 @@ window.PROYECTO_FICHAS = {
     ],
     cerca: ["Metro Ñuble", "Metro Irarrázaval", "Autopista Central y Costanera Norte", "Estadio Nacional", "Parque San Eugenio", "Futuro Mall Vivo Ñuñoa"],
     fotos: ["/assets/proy/metropolitan-park-nunoa/metropolitan-1.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-2.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-3.jpg?v=metro-hq-20260922","/assets/proy/metropolitan-park-nunoa/metropolitan-4.jpg?v=metro-hq-20260922"],
+    comunesCompactos: true,
     comunesFotos: [
       { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-3.jpg?v=metro-hq-20260922", t:"Adventure Zone" },
       { src:"/assets/proy/metropolitan-park-nunoa/metropolitan-comun-4.jpg?v=metro-hq-20260922", t:"Cowork" },
@@ -404,6 +406,7 @@ window.PROYECTO_FICHAS = {
     ubicLead: "Residential Park Ñuñoa se encuentra en un nuevo polo de desarrollo residencial en Rodrigo de Araya con Av. Marathon: a menos de 15 minutos de la Autopista Central y la Autopista Vespucio, cercano a las estaciones de Metro Rodrigo de Araya y Estadio Nacional, al nuevo Parque del Estadio Nacional, supermercados, comercio y restaurantes.",
     mapaImg: "/assets/proy/rp-mapa.jpg",
     cerca: ["Metro Rodrigo de Araya", "Metro Estadio Nacional", "Autopista Central", "Autopista Vespucio", "Nuevo Parque del Estadio Nacional"],
+    cercaCompacta: true,
     cercaFotos: [
       { src:"/assets/proy/rp-u2.jpg", t:"Mall Vivo Ñuñoa" },
       { src:"/assets/proy/rp-u3.jpg", t:"33° Comisaría de Carabineros" },
@@ -455,7 +458,6 @@ window.PROYECTO_FICHAS = {
       }
     ],
     "ctas": [
-      "Pie hasta en 24 cuotas con tarjeta de crédito",
       "Asesoría hipotecaria"
     ],
     "lead": "Urban Life es un proyecto único en un sector residencial de Las Condes, con toda la conectividad y vida urbana que te gusta.",
