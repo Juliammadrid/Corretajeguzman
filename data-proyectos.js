@@ -86,5 +86,38 @@ window.PROYECTOS = [
     "specs": "47,4 a 86,26 m² · 2 y 3 dorm · 1 y 2 baños",
     "detalle": "/proyectos/new-life-macul/",
     "image": "/assets/proy/nl-portada.jpg"
+  },
+  {
+    "slug": "urban-nunoa",
+    "name": "Urban Ñuñoa",
+    "address": "Irarrázaval 1593, Ñuñoa",
+    "commune": "Ñuñoa",
+    "desdeUF": 3692,
+    "entrega": "verde",
+    "specs": "28,5 a 72,5 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyecto.html?slug=urban-nunoa",
+    "image": "/assets/proy/un-fachada.jpg"
+  },
+  {
+    "slug": "best-nunoa",
+    "name": "Best Ñuñoa",
+    "address": "José Pedro Alessandri 1295, Ñuñoa",
+    "commune": "Ñuñoa",
+    "desdeUF": 3913,
+    "entrega": "inmediata",
+    "specs": "41 a 92,93 m² · 1, 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyecto.html?slug=best-nunoa",
+    "image": "/assets/proy/bn-hero.jpg"
+  },
+  {
+    "slug": "best-level",
+    "name": "Best Level",
+    "address": "Romeo Salinas 1529, Ñuñoa",
+    "commune": "Ñuñoa",
+    "desdeUF": 5551,
+    "entrega": "inmediata",
+    "specs": "43,20 a 107,28 m² · 1, 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyecto.html?slug=best-level",
+    "image": "/assets/proy/bl-hero.jpg"
   }
 ];

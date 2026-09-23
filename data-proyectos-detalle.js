@@ -1132,5 +1132,270 @@ window.PROYECTO_FICHAS = {
     ],
     "ficha": "/proyectos/new-life-macul/",
     "originalOnly": true
+  },
+  "urban-nunoa": {
+    heroFull: true,
+    sinKicker: true,
+    sinTituloDesc: true,
+    name: "Urban Ñuñoa",
+    ficha: "Proyecto Urban Nunoa - Corretaje Guzman.html",
+    commune: "Ñuñoa",
+    address: "Irarrázaval 1593, Ñuñoa",
+    desdeUF: 3692,
+    entrega: "verde",
+    noGaleria: true,
+    subsidioTasa: true,
+    reserva: "$100.000",
+    lead: "Urban Ñuñoa es categoría superior, tanto por sus terminaciones de primer nivel como por sus espacios comunes pensados para disfrutar todos los días. Ubicado en plena Avenida Irarrázaval y a menos de 50 pasos del Metro Monseñor Eyzaguirre, te permite moverte a todo Santiago sin problemas: un circuito perimetral con más de 10 espacios comunes Design District, el primer Skybar de Ñuñoa, Bike Workshop, Pet Spa, Pet Zone, Cowork y mucho más.",
+    tipologias: [],
+    tipologiasDisponibles: [
+      { nombre:"1 dormitorio + 1 baño", planta:"B: 214 al 2414", plano:"assets/proy/un-plano-1.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Oriente", m2tot:"37,7 m² aprox", desdeUF:3800 },
+      { nombre:"1 dormitorio + 1 baño", planta:"C: 408 al 2408", plano:"assets/proy/un-plano-2.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Poniente", m2tot:"37,7 m² aprox", desdeUF:3692 },
+      { nombre:"2 dormitorios + 1 baño", planta:"A: 309 al 2309", plano:"assets/proy/un-plano-3.png", m2int:"42,44 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"7,16 m² aprox", orientacion:"Poniente", m2tot:"49,6 m² aprox", desdeUF:4410 },
+      { nombre:"2 dormitorios + 2 baños", planta:"A: 201 al 1601", plano:"assets/proy/un-plano-4.png", m2int:"52,25 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,94 m² aprox", orientacion:"Poniente", m2tot:"55,19 m² aprox", desdeUF:5019 },
+      { nombre:"2 dormitorios + 2 baños", planta:"B: 218 al 1218", plano:"assets/proy/un-plano-5.png", m2int:"62,48 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"9,54 m² aprox", orientacion:"Oriente", m2tot:"72,02 m² aprox", desdeUF:6731 },
+      { nombre:"2 dormitorios + 2 baños", planta:"C: 319 al 1319", plano:"assets/proy/un-plano-6.png", m2int:"66,19 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,64 m² aprox", orientacion:"Poniente", m2tot:"72,83 m² aprox", desdeUF:6574 }
+    ],
+    bloques: [
+      { img:"assets/proy/un-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1 y 2 dormitorios, desde 28,5 hasta 72,5 m² aprox, con 1 y 2 baños. Proyecto en venta en verde, con fecha estimada de entrega para el 1er semestre de 2027." },
+      { img:"assets/proy/un-sostenibilidad.png", t:"Tecnologías sostenibles", d:"Edificio full electric, sin contaminación intradomiciliaria. Marcos y ventanas termopanel de aluminio gris grafito con aislamiento térmico y acústico, sector de punto limpio para reciclaje, ampolletas de bajo consumo y calefacción limpia y eficiente." }
+    ],
+    caracteristicas: [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas termopanel con aislamiento térmico y acústico",
+      "Cocina completamente equipada",
+      "Punto limpio de reciclaje",
+      "Ampolletas de bajo consumo",
+      "Calefacción limpia y eficiente"
+    ],
+    comunes: [
+      { t: "Lobby", ic: "concierge-bell" }, { t: "Gourmet Room", ic: "utensils" },
+      { t: "Friends Room", ic: "users" }, { t: "Bike Workshop", ic: "bike" },
+      { t: "Adventure Zone", ic: "gamepad-2" }, { t: "Fit & Health Zone", ic: "dumbbell" },
+      { t: "Sky Bar", ic: "wine" }, { t: "Piscina Lounge", ic: "waves" },
+      { t: "Pet Spa", ic: "dog" }, { t: "Pet Zone", ic: "paw-print" },
+      { t: "Cowork", ic: "laptop" }, { t: "Laundry Room", ic: "washing-machine" }
+    ],
+    cerca: ["Metro Monseñor Eyzaguirre (L3)", "Estación de servicio", "Colegios", "Áreas verdes", "Bancos y supermercados", "Restaurantes y centros comerciales"],
+    ubicTitulo: "El metro a tus pies",
+    ubicLead: "Urban Ñuñoa está ubicado en un cómodo sector de la comuna, cercano a centros comerciales, servicios, farmacias, bancos y mucho más. Su excelente ubicación proporciona salida directa a Avenida Irarrázaval y acceso inmediato a la estación Metro Monseñor Eyzaguirre.",
+    lat: -33.4534409,
+    lng: -70.6139664,
+    fotos: [],
+    comunesFotos: [],
+    heroImg: "assets/proy/un-fachada.jpg",
+    detallesStats: [
+      { k:"Superficie total", v:"28,5 hasta 72,5 m² aprox" },
+      { k:"Dormitorios", v:"1 y 2" },
+      { k:"Baños", v:"1 y 2" },
+      { k:"Desde", v:"UF 3.692" },
+      { k:"Estado del proyecto", v:"Venta en verde · Entrega 1er sem. 2027" }
+    ],
+    disenoTitulo: "Insuperable en Ñuñoa",
+    disenoSubtitulo: "Departamentos de alto estándar",
+    disenoImgs: ["assets/proy/un-diseno-1.jpg", "assets/proy/un-diseno-2.jpg", "assets/proy/un-diseno-3.jpg"],
+    disenoLead: "Modernos en cada detalle: los departamentos de Urban Ñuñoa están diseñados con terminaciones de alto estándar y look moderno, de acuerdo a las nuevas tendencias de diseño.",
+    disenoTabs: [
+      { src:"assets/proy/un-cocina.jpg", t:"Cocina completamente equipada" },
+      { src:"assets/proy/un-confort.jpg", t:"Confort térmico y acústico" }
+    ],
+    comunesTitulo: "Más de 10 espacios comunes Design District",
+    comunesLead: "Un circuito perimetral con espacios completamente equipados para disfrutar todos los días: el primer Skybar de Ñuñoa, Piscina Lounge, Bike Workshop, Pet Spa, Pet Zone, Cowork y mucho más.",
+    comunesTabs: [
+      { src:"assets/proy/un-comun-1.jpg", t:"Lobby" },
+      { src:"assets/proy/un-comun-2.jpg", t:"Gourmet Room" },
+      { src:"assets/proy/un-comun-3.jpg", t:"Friends Room" },
+      { src:"assets/proy/un-comun-4.webp", t:"Bike Workshop" },
+      { src:"assets/proy/un-comun-5.jpg", t:"Adventure Zone" },
+      { src:"assets/proy/un-comun-6.jpg", t:"Fit & Health Zone" },
+      { src:"assets/proy/un-comun-7.jpg", t:"Sky Bar" },
+      { src:"assets/proy/un-comun-8.jpg", t:"Piscina Lounge" },
+      { src:"assets/proy/un-comun-9.jpg", t:"Pet Spa" },
+      { src:"assets/proy/un-comun-10.jpg", t:"Pet Zone" },
+      { src:"assets/proy/un-comun-11.jpg", t:"Cowork" },
+      { src:"assets/proy/un-comun-12.jpg", t:"Laundry Room" }
+    ],
+    seguridadTitulo: "Seguridad con la mejor tecnología",
+    seguridad: [
+      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:[
+        "Cámaras en los deslindes hacia los vecinos y hacia las calles.",
+        "Cerco eléctrico perimetral en el sitio del edificio.",
+        "Control de acceso vehicular y peatonal."
+      ]},
+      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:[
+        "Torniquetes en el hall de acceso principal.",
+        "Conserjería con control de visitas.",
+        "Accesos con tecnología de identificación."
+      ]},
+      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:[
+        "Cámaras en todas las puertas de acceso del edificio.",
+        "Cámaras en halls de conserjería y ascensores.",
+        "Cámaras en espacios comunes."
+      ]}
+    ],
+    wa: "56944637680",
+    whatsapps: ["56944637680", "56944717233"]
+  },
+  "best-nunoa": {
+    heroFull: true,
+    name: "Best Ñuñoa",
+    ficha: "Proyecto Best Nunoa - Corretaje Guzman.html",
+    commune: "Ñuñoa",
+    address: "José Pedro Alessandri 1295, Ñuñoa",
+    desdeUF: 3913,
+    entrega: "inmediata",
+    noGaleria: true,
+    subsidioTasa: true,
+    reserva: "$100.000",
+    lead: "Best Ñuñoa se ubica en un cómodo sector de la comuna de Ñuñoa, a solo 5 minutos a pie del Mall Portal Ñuñoa, universidades y farmacias, cercano a las estaciones de Metro Chile-España y Estadio Nacional. Cuenta con espacios comunes Design District para disfrutar y compartir momentos inolvidables junto a tu familia y amigos. Entrega inmediata.",
+    tipologias: [],
+    tipologiasDisponibles: [
+      { nombre:"3 dormitorios + 2 baños", planta:"A: 406 al 1506", plano:"assets/proy/bn-plano-1.png", m2int:"79,00 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"11,04 m² aprox", orientacion:"Norte", m2tot:"90,04 m² aprox", desdeUF:8011 }
+    ],
+    bloques: [
+      { img:"assets/proy/bn-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 41 hasta 92,93 m², con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
+      { img:"assets/proy/un-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
+    ],
+    caracteristicas: [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas marco PVC con aislamiento térmico y acústico",
+      "Punto limpio de reciclaje",
+      "Ampolletas de bajo consumo",
+      "Estufa eléctrica: calefacción limpia y eficiente",
+      "Entrega inmediata"
+    ],
+    comunes: [
+      { t: "Lobby", ic: "concierge-bell" }, { t: "Friends Room", ic: "users" },
+      { t: "Fit & Health Zone", ic: "dumbbell" }, { t: "BBQ Zone", ic: "beef" },
+      { t: "Piscina", ic: "waves" }
+    ],
+    cerca: ["Mall Portal Ñuñoa (5 min a pie)", "Metro Chile-España", "Metro Estadio Nacional", "Universidades", "Farmacias y servicios"],
+    ubicTitulo: "Justo donde quieres vivir",
+    ubicLead: "Best Ñuñoa está a solo 5 minutos a pie del Mall Portal Ñuñoa, cerca de universidades, farmacias y servicios, con acceso rápido a las estaciones de Metro Chile-España y Estadio Nacional.",
+    lat: -33.4534409,
+    lng: -70.6139664,
+    fotos: [],
+    comunesFotos: [],
+    heroImg: "assets/proy/bn-hero.jpg",
+    detallesStats: [
+      { k:"Superficie total", v:"41 hasta 92,93 m²" },
+      { k:"Dormitorios", v:"1, 2 y 3" },
+      { k:"Baños", v:"1 y 2" },
+      { k:"Desde", v:"UF 3.913" },
+      { k:"Estado del proyecto", v:"Entrega Inmediata" }
+    ],
+    disenoTitulo: "Innovación en tu departamento",
+    disenoSubtitulo: "Diseño",
+    disenoImgs: ["assets/proy/bn-hero.jpg", "assets/proy/bn-diseno-2.jpg", "assets/proy/bn-diseno-3.jpg"],
+    disenoLead: "Departamentos con terminaciones de calidad, luminosos y con una distribución que aprovecha cada espacio, listos para habitar.",
+    disenoTabs: [
+      { src:"assets/proy/bn-amplitud.jpg", t:"Amplitud" },
+      { src:"assets/proy/bn-comodidad.jpg", t:"Comodidad" }
+    ],
+    comunesTitulo: "Espacios comunes Design District",
+    comunesLead: "Espacios completamente equipados para disfrutar y compartir momentos inolvidables junto a tu familia y amigos.",
+    comunesTabs: [
+      { src:"assets/proy/bn-comun-1.jpg", t:"Lobby" },
+      { src:"assets/proy/bn-comun-2.jpg", t:"Friends Room" },
+      { src:"assets/proy/bn-comun-3.jpg", t:"Fit & Health Zone" },
+      { src:"assets/proy/bn-comun-4.jpg", t:"BBQ Zone" },
+      { src:"assets/proy/bn-comun-5.jpg", t:"Piscina" }
+    ],
+    seguridadTitulo: "Seguridad con la mejor tecnología",
+    seguridad: [
+      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:[
+        "Cámaras en los deslindes hacia los vecinos y hacia las calles.",
+        "Cerco eléctrico perimetral.",
+        "Control de acceso vehicular y peatonal."
+      ]},
+      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:[
+        "Conserjería con control de visitas.",
+        "Accesos con tecnología de identificación."
+      ]},
+      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:[
+        "Cámaras en accesos del edificio.",
+        "Cámaras en halls de conserjería y ascensores.",
+        "Cámaras en espacios comunes."
+      ]}
+    ],
+    wa: "56944637680",
+    whatsapps: ["56944637680", "56944717233"]
+  },
+  "best-level": {
+    heroFull: true,
+    sinTituloDesc: true,
+    name: "Best Level",
+    ficha: "Proyecto Best Level - Corretaje Guzman.html",
+    commune: "Ñuñoa",
+    address: "Romeo Salinas 1529, Ñuñoa",
+    desdeUF: 5551,
+    entrega: "inmediata",
+    noGaleria: true,
+    subsidioTasa: true,
+    reserva: "$100.000",
+    lead: "Best Level es un proyecto como ya no quedan en Ñuñoa. Sus espacios interiores fueron diseñados para la vida familiar, donde todo y todos tienen su espacio. Cuenta con increíbles espacios comunes Design District para disfrutar y compartir momentos inolvidables junto a tu familia y amigos. Se ubica a pasos del Metro Príncipe de Gales, con salida vehicular rápida a Tobalaba y Avenida Ossa.",
+    tipologias: [],
+    tipologiasDisponibles: [
+      { nombre:"2 dormitorios + 1 baño", planta:"B: 112", plano:"assets/proy/bl-plano-1.png", m2int:"45,58 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"6,88 m² aprox", orientacion:"Poniente", m2tot:"52,46 m² aprox", desdeUF:7566 }
+    ],
+    bloques: [
+      { img:"assets/proy/bl-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 43,20 hasta 107,28 m² aprox, con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
+      { img:"assets/proy/bl-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, ampolletas de bajo consumo y radiadores eléctricos para una calefacción limpia y eficiente." }
+    ],
+    caracteristicas: [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas marco PVC con aislamiento térmico y acústico",
+      "Ampolletas de bajo consumo",
+      "Radiadores eléctricos: calefacción limpia y eficiente",
+      "Diseñado para la vida familiar",
+      "Entrega inmediata"
+    ],
+    comunes: [
+      { t: "BBQ Zone", ic: "beef" }, { t: "Friends Room", ic: "users" },
+      { t: "Creativity Center", ic: "palette" }, { t: "Fit & Health Zone", ic: "dumbbell" },
+      { t: "Piscina Lounge", ic: "waves" }
+    ],
+    cerca: ["Metro Príncipe de Gales", "Mall Plaza Egaña", "Supermercados", "Colegios y jardín infantil", "Farmacia y centro de salud", "Parques y áreas verdes"],
+    ubicTitulo: "A pasos del Metro Príncipe de Gales",
+    ubicLead: "Best Level se ubica a pasos del Metro Príncipe de Gales y con salida vehicular directa a Avenida Ossa y Tobalaba. El barrio es tranquilo y residencial, cercano a cafés, áreas verdes y Mall Plaza Egaña.",
+    lat: -33.4395188,
+    lng: -70.5736358,
+    fotos: [],
+    comunesFotos: [],
+    heroImg: "assets/proy/bl-hero.jpg",
+    detallesStats: [
+      { k:"Superficie total", v:"43,20 hasta 107,28 m²" },
+      { k:"Dormitorios", v:"1, 2 y 3" },
+      { k:"Baños", v:"1 y 2" },
+      { k:"Desde", v:"UF 5.551" },
+      { k:"Estado del proyecto", v:"Entrega Inmediata" }
+    ],
+    disenoTitulo: "Diseñado para vivir en familia",
+    disenoSubtitulo: "Diseño",
+    disenoImgs: ["assets/proy/bl-dormitorios.jpg", "assets/proy/bl-diseno-2.jpg", "assets/proy/bl-diseno-3.jpg"],
+    disenoLead: "Espacios interiores amplios y luminosos, pensados para que todos en la familia tengan su lugar.",
+    disenoTabs: [
+      { src:"assets/proy/bl-kitchen.jpg", t:"Kitchen Concept" },
+      { src:"assets/proy/bl-terminaciones.jpg", t:"Terminaciones" },
+      { src:"assets/proy/bl-dormitorios.jpg", t:"Amplios dormitorios" },
+      { src:"assets/proy/bl-banos.jpg", t:"Baños confortables" }
+    ],
+    comunesTitulo: "Espacios comunes Design District",
+    comunesLead: "Espacios modernos, completamente decorados y equipados: Hall de acceso, Friends Room, Creativity Center, BBQ Zone, Piscina Lounge y Fit & Health Zone.",
+    comunesTabs: [
+      { src:"assets/proy/bl-comun-1.jpg", t:"BBQ Zone" },
+      { src:"assets/proy/bl-comun-2.jpg", t:"Friends Room" },
+      { src:"assets/proy/bl-comun-3.jpg", t:"Creativity Center" },
+      { src:"assets/proy/bl-comun-4.jpg", t:"Fit & Health Zone" },
+      { src:"assets/proy/bl-comun-5.jpg", t:"Piscina Lounge" }
+    ],
+    seguridadTitulo: "Seguridad con la mejor tecnología",
+    seguridad: [
+      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
+      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
+      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
+    ],
+    wa: "56944637680",
+    whatsapps: ["56944637680", "56944717233"]
   }
 };
