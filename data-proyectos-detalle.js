@@ -325,9 +325,54 @@ window.PROYECTO_FICHAS = {
     noGaleria: true,
     subsidioTasa: true,
     reserva: "$100.000",
-    lead: "Residential Park es un nuevo concepto de Inmobiliaria Imagina: una solución integral donde se consolidan los principales anhelos para mejorar la calidad de vida — alto estándar en seguridad, la tranquilidad y paz de un parque natural integrado, y una excelente ubicación. Departamentos de 1, 2 y 3 dormitorios desde UF 2.990, en un nuevo polo de desarrollo residencial en Rodrigo de Araya con Marathon.",
-    tipologias: [],
-    tipologiasDisponibles: [],
+    heroImg: "/assets/proy/rp-portada.jpg",
+    bannerHero: "/assets/proy/rp-portada.jpg",
+    stats: [
+      { v:"1 · 2 · 3", k:"Dormitorios" },
+      { v:"UF 2.990", k:"Desde" },
+      { v:"38,79 – 94,68 m²", k:"Superficie aprox." },
+      { v:"Entrega Futura", k:"Estado del proyecto" }
+    ],
+    lead: "Residential Park es una solución integral donde se reúnen los principales anhelos para mejorar la calidad de vida: alto estándar en seguridad, la tranquilidad de un parque natural integrado y una excelente ubicación.",
+    solucionTitulo: "¿Qué es Residential Park?",
+    solucionLead: "Residential Park es un concepto de vivienda que consolida los principales anhelos para mejorar la calidad de vida: alto estándar en seguridad, la tranquilidad y paz de un parque natural integrado, y una excelente ubicación. Parque integrado, calidad de vida, total seguridad, servicios y conectividad en un solo proyecto.",
+    solucionImg: "/assets/proy/rp-solucion.png",
+    parqueImg: "/assets/proy/rp-sendero.jpg",
+    parqueTitulo: "Un vasto oasis natural",
+    parqueLead: "Residential Park Ñuñoa hace realidad lo que a veces parece un sueño: disfrutar de la naturaleza y la paz, en plena ciudad. Emplazado en un punto clave de Santiago que te permite desplazarte rápidamente a donde quieras, cuenta con todo lo que necesitas para una vida de la más alta calidad.",
+    parqueRender: "/assets/proy/rp-parque.jpg",
+    bloques: [
+      { img:"/assets/proy/rp-pausa.png", t:"La pausa ideal", d:"Dueño de un boulevard interior inmerso en un parque natural que te invita a disfrutar de una vida sofisticada y plena. Las características de Residential Park Ñuñoa te permiten vivir como si estuvieras en un resort.", recorte:true },
+      { img:"/assets/proy/rp-mascota.jpg", t:"Caminata perfecta con tu mascota", d:"Practicar running, pasear a tu mascota o tan solo caminar relajadamente. El sendero que recorre todo el interior del proyecto invita a una experiencia de tranquilidad absoluta." }
+    ],
+    disenoTitulo: "Departamentos de 1, 2 y 3 dormitorios",
+    disenoSubtitulo: "Modernidad, comodidad y diseño",
+    disenoLead: "Cada departamento está diseñado para usar los espacios de forma única, con materialidades que aportan durabilidad y una estética de alto estándar con funcionalidad real.",
+    disenoImgs: ["/assets/proy/rp-piloto-3.jpg", "/assets/proy/rp-piloto-6.jpg", "/assets/proy/rp-piloto-8.jpg"],
+    disenoTabs: [
+      { src:"/assets/proy/rp-piloto-1.jpg", t:"Cocina integrada" },
+      { src:"/assets/proy/rp-piloto-2.jpg", t:"Living y terraza" },
+      { src:"/assets/proy/rp-piloto-3.jpg", t:"Cocina con vista" },
+      { src:"/assets/proy/rp-piloto-4.jpg", t:"Living comedor" },
+      { src:"/assets/proy/rp-piloto-5.jpg", t:"Isla de cocina" },
+      { src:"/assets/proy/rp-piloto-6.jpg", t:"Dormitorio principal" },
+      { src:"/assets/proy/rp-piloto-7.jpg", t:"Dormitorio secundario" },
+      { src:"/assets/proy/rp-piloto-8.jpg", t:"Baño" }
+    ],
+    comunesTitulo: "+15 espacios comunes",
+    comunesLead: "Cada zona pensada estratégicamente: espacios completamente equipados para disfrutar con familia, amigos y mascotas, rodeados de un parque natural.",
+    comunesTabs: [
+      { src:"/assets/proy/rp-comun-1.jpg", t:"Adventure Zone" },
+      { src:"/assets/proy/rp-comun-2.jpg", t:"BBQ Zone panorámico" },
+      { src:"/assets/proy/rp-comun-3.jpg", t:"Pet Spa" },
+      { src:"/assets/proy/rp-comun-4.jpg", t:"Piscina Lounge" },
+      { src:"/assets/proy/rp-comun-5.jpg", t:"Sala de billar" },
+      { src:"/assets/proy/rp-comun-6.jpg", t:"Kids Club" },
+      { src:"/assets/proy/rp-comun-7.jpg", t:"Lounge Bar" },
+      { src:"/assets/proy/rp-comun-8.jpg", t:"Friends Room in & out" },
+      { src:"/assets/proy/rp-comun-9.jpg", t:"Sendero y Bike Parking" },
+      { src:"/assets/proy/rp-comun-10.jpg", t:"Game Room" }
+    ],
     caracteristicas: [
       "Departamentos de 1, 2 y 3 dormitorios",
       "Desde 38,79 m² hasta 94,68 m² aprox",
@@ -336,67 +381,47 @@ window.PROYECTO_FICHAS = {
       "Materialidades de alto estándar y durabilidad",
       "Espacios diseñados con funcionalidad real"
     ],
-    comunes: [
-      { t: "Parque integrado", ic: "trees" },
-      { t: "Piscina Lounge", ic: "waves" },
-      { t: "Lobby de acceso", ic: "concierge-bell" },
-      { t: "Cowork in & out", ic: "laptop" },
-      { t: "BBQ Zone panorámico", ic: "beef" },
-      { t: "Open Terrace", ic: "sun" },
-      { t: "Bike Parking", ic: "bike" },
-      { t: "Friends Room in & out", ic: "users" },
-      { t: "E-commerce Lockers", ic: "package" },
-      { t: "Laundry Room", ic: "washing-machine" },
-      { t: "Adventure Zone in & out", ic: "gamepad-2" },
-      { t: "Creativity Center", ic: "palette" },
-      { t: "Fit & Health Zone", ic: "dumbbell" },
-      { t: "Pet Spa y Pet Zone", ic: "dog" }
-    ],
-    cerca: ["Metro Rodrigo de Araya", "Metro Estadio Nacional", "Nuevo Parque del Estadio Nacional", "Futuro Mall Vivo", "Estaciones de servicio y comercio"],
-    ubicTitulo: "Justo donde quieres vivir",
-    ubicLead: "Residential Park Ñuñoa se encuentra en una ubicación privilegiada de la comuna, en un nuevo polo de desarrollo residencial ubicado en Rodrigo de Araya con Marathon, cercano al nuevo Parque del Estadio Nacional y a las estaciones de Metro Rodrigo de Araya y Estadio Nacional.",
-    lat: -33.47216,
-    lng: -70.60828,
-    fotos: [],
-    comunesFotos: [],
-    heroImg: "/assets/proy/residential-park-nunoa-hero.jpg",
-    detallesStats: [
-      { k:"Superficie total", v:"38,79 hasta 94,68 m² aprox" },
-      { k:"Dormitorios", v:"1, 2 y 3" },
-      { k:"Baños", v:"1 y 2" },
-      { k:"Desde", v:"UF 2.990" },
-      { k:"Estado del proyecto", v:"Entrega Futura" }
-    ],
-    parqueTitulo: "Un vasto oasis natural",
-    parqueLead: "Residential Park Ñuñoa hace realidad lo que a veces parece un sueño: disfrutar de la naturaleza y la paz, en plena ciudad. Es dueño de un boulevard interior inmerso en un parque natural, con un sendero que recorre todo el interior del proyecto para practicar running, pasear a tu mascota o simplemente caminar relajadamente.",
-    premiosTitulo: "Un proyecto sostenible y responsable",
-    premiosLead: "Paisajismo consciente diseñado por Teodoro Fernández (Premio Nacional de Arquitectura), generando un pulmón verde para el barrio, con más de 350 especies de bajo consumo hídrico. Incluye planes de mitigación para el barrio: ciclovías, mejoramiento de calzadas peatonales, veredas y semáforos.",
-    disenoTitulo: "Departamentos de alto estándar",
-    disenoSubtitulo: "Modernidad, comodidad y diseño",
-    disenoLead: "Departamentos de 1, 2 y 3 dormitorios, cada uno diseñado para usar los espacios de forma única y con materialidades que no solo aportan durabilidad, sino también una estética de alto estándar con funcionalidad real.",
-    comunesTitulo: "+15 espacios comunes",
-    comunesLead: "Cada zona pensada estratégicamente. Espacios completamente equipados y decorados, todos desarrollados bajo el concepto Design District Imagina, para que disfrutes con familia, amigos y mascotas.",
-    comunesTabs: [],
+    comunes: [],
     seguridadTitulo: "Alto estándar en seguridad",
     seguridad: [
-      { t:"Control de Acceso", img:"/assets/proy/seg-perimetral.png", items:[
-        "Control de acceso en lobby de última generación.",
+      { t:"Control de acceso", img:"/assets/proy/rp-seg1.png", items:[
+        "Control de acceso en lobby.",
         "Cerco eléctrico en el perímetro del terreno.",
         "Circuito cerrado de televisión en todo el proyecto."
       ]},
-      { t:"Cámaras de Seguridad", img:"/assets/proy/seg-interior.png", items:[
-        "Cámaras de seguridad en accesos del edificio.",
-        "Cámaras de seguridad en espacios comunes.",
-        "Cámaras de seguridad en el perímetro del terreno."
-      ]},
-      { t:"Control Departamentos", img:"/assets/proy/seg-departamentos.png", items:[
+      { t:"Control departamentos", img:"/assets/proy/rp-seg2.png", items:[
         "Cerradura digital en puertas de acceso de todos los departamentos.",
         "Alarma en puertas de acceso de todos los departamentos.",
         "Alarma en ventanas de primer, segundo y tercer piso."
+      ]},
+      { t:"Cámaras de seguridad", img:"/assets/proy/rp-seg3.png", items:[
+        "Cámaras de seguridad en accesos del edificio.",
+        "Cámaras de seguridad en espacios comunes.",
+        "Cámaras de seguridad en el perímetro del terreno."
       ]}
     ],
+    ubicTitulo: "Justo donde quieres vivir",
+    ubicLead: "Residential Park Ñuñoa se encuentra en un nuevo polo de desarrollo residencial en Rodrigo de Araya con Av. Marathon: a menos de 15 minutos de la Autopista Central y la Autopista Vespucio, cercano a las estaciones de Metro Rodrigo de Araya y Estadio Nacional, al nuevo Parque del Estadio Nacional, supermercados, comercio y restaurantes.",
+    mapaImg: "/assets/proy/rp-mapa.jpg",
+    cerca: ["Metro Rodrigo de Araya", "Metro Estadio Nacional", "Autopista Central", "Autopista Vespucio", "Nuevo Parque del Estadio Nacional"],
+    cercaFotos: [
+      { src:"/assets/proy/rp-u2.jpg", t:"Mall Vivo Ñuñoa" },
+      { src:"/assets/proy/rp-u3.jpg", t:"33° Comisaría de Carabineros" },
+      { src:"/assets/proy/rp-u4.jpg", t:"Estadio Nacional" },
+      { src:"/assets/proy/rp-u1.jpg", t:"Estaciones de servicio" }
+    ],
+    tipologias: [],
+    tipologiasDisponibles: [
+      { nombre:"1 dormitorio + 1 baño", planta:"A: 202 al 2102", plano:"/assets/proy/rp-plano-p1a.jpg", m2int:"35,39 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"3,40 m² aprox", orientacion:"Sur", m2tot:"38,79 m² aprox", desdeUF:3025 },
+      { nombre:"1 dormitorio + 1 baño", planta:"B: 307 al 2207", plano:"/assets/proy/rp-plano-p1b.jpg", m2int:"33,81 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,88 m² aprox", orientacion:"Norte", m2tot:"36,69 m² aprox", desdeUF:3190 },
+      { nombre:"2 dormitorios + 1 baño", planta:"A: 304 al 2104", plano:"/assets/proy/rp-plano-p2a1b.jpg", m2int:"43,75 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"8,28 m² aprox", orientacion:"Poniente", m2tot:"52,03 m² aprox", desdeUF:3878 },
+      { nombre:"2 dormitorios + 2 baños", planta:"A: 203 al 2203", plano:"/assets/proy/rp-plano-p2a.jpg", m2int:"52,15 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,50 m² aprox", orientacion:"Sur", m2tot:"55,65 m² aprox", desdeUF:4196 },
+      { nombre:"2 dormitorios + 2 baños", planta:"B: 306 al 1906", plano:"/assets/proy/rp-plano-p2b.jpg", m2int:"60,32 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"11,38 m² aprox", orientacion:"Norte", m2tot:"71,7 m² aprox", desdeUF:5114 },
+      { nombre:"3 dormitorios + 2 baños", planta:"A: 208 al 2008", plano:"/assets/proy/rp-plano-p3a.jpg", m2int:"82,40 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,28 m² aprox", orientacion:"Oriente", m2tot:"94,68 m² aprox", desdeUF:6521 }
+    ],
+    fotos: [],
+    comunesFotos: [],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
   }
 };
-

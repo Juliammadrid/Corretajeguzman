@@ -28,8 +28,9 @@ window.PROYECTOS = [
     "commune": "Ñuñoa",
     "desdeUF": 2990,
     "entrega": "futura",
-    "specs": "1, 2 y 3 dorm. · 38,79 a 94,68 m²",
-    "detalle": "/proyecto.html?slug=residential-park-nunoa"
+    "specs": "38,79 a 94,68 m² · 1, 2 y 3 dorm. · 1 y 2 baños",
+    "detalle": "/proyecto.html?slug=residential-park-nunoa",
+    "image": "/assets/proy/rp-portada.jpg"
   },
   {
     "slug": "all-nunoa-2",

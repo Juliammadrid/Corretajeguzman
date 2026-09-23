@@ -19,4 +19,3 @@
   link.setAttribute('data-project-hero-preload', '');
   document.head.appendChild(link);
 })();
-

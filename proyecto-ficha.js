@@ -160,6 +160,20 @@
     }
   })();
 
+  // Bloques editoriales de imagen y texto. Se insertan antes de los espacios
+  // comunes para que cada proyecto pueda contar su historia sin alterar la
+  // estructura compartida de las fichas.
+  if(p.bloques && p.bloques.length){
+    const anchor=document.getElementById('comodidades');
+    if(anchor){
+      const blocks=p.bloques.map((b,i)=>'<section class="sec bloque'+(i%2?' rev':'')+'"><div class="wrap bq-grid"><div class="bq-img'+(b.recorte?' cut':'')+'">'+imageMarkup(b.img,b.t,'loading="lazy"')+'</div><div class="bq-tx"><h2>'+b.t+'</h2><p>'+b.d+'</p></div></div></section>').join('');
+      anchor.insertAdjacentHTML('beforebegin',blocks);
+      const stBq=document.createElement('style');
+      stBq.textContent='.bq-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}.bloque.rev .bq-img{order:2}.bq-img picture,.bq-img img{display:block;width:100%}.bq-img img{height:auto;border-radius:18px}.bq-img.cut img{border-radius:0;max-width:520px;margin:0 auto}.bq-tx h2{text-align:left}.bq-tx p{font-size:16.5px;color:var(--ink-2);line-height:1.7;margin-top:16px}@media(max-width:860px){.bq-grid{grid-template-columns:1fr;gap:24px}.bloque.rev .bq-img{order:0}.bq-img.cut img{max-width:320px}.bq-tx h2{text-align:center}.bq-tx p{text-align:center}}';
+      document.head.appendChild(stBq);
+    }
+  }
+
   // sección "Departamento" destacado (foto grande + tag + bloque de texto), estilo Imagina
   (function(){
     if(!p.deptoImg) return;
@@ -280,8 +294,17 @@
       const br=g('tpBroch');
       if(br){ if(p.brochure){ br.href=p.brochure; br.style.display=''; } else br.style.display='none'; }
     }
-    document.getElementById('tselPlanta').addEventListener('change',e=>setPlanta(+e.target.value));
-    setPlanta(0);
+    const tipoSelect=document.getElementById('tselTipo');
+    const plantaSelect=document.getElementById('tselPlanta');
+    plantaSelect.addEventListener('change',e=>setPlanta(+e.target.value));
+    const syncPlantas=()=>{
+      const selected=tipoSelect.value;
+      const indexes=TD.map((t,i)=>i).filter(i=>TD[i].nombre===selected);
+      plantaSelect.innerHTML=indexes.map(i=>'<option value="'+i+'">Planta '+(TD[i].planta||'')+'</option>').join('');
+      if(indexes.length) setPlanta(indexes[0]);
+    };
+    tipoSelect.addEventListener('change',syncPlantas);
+    syncPlantas();
     const stP=document.createElement('style');
     stP.textContent='.tipos-planta{display:block!important;margin-top:36px}.tsel{border:1px solid var(--line);border-radius:16px;padding:22px 26px;display:flex;align-items:center;gap:26px;flex-wrap:wrap;margin-bottom:38px}.tsel-label{font-family:\'Sora\';font-weight:600;font-size:19px;color:var(--ink)}.tsel-fields{display:flex;gap:26px;flex-wrap:wrap;flex:1}.tsel-input{appearance:none;border:0;border-bottom:1px solid var(--ink-3);background:transparent url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'none\' stroke=\'%23574f6b\' stroke-width=\'2\'><path d=\'M3 5l4 4 4-4\'/></svg>") right center no-repeat;padding:8px 26px 8px 0;font-family:inherit;font-size:15.5px;font-weight:600;color:var(--ink);cursor:pointer;min-width:220px}.tsel-input:focus{outline:none;border-color:var(--violet)}.tplanta{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}.tplanta-img img{width:100%;height:auto;display:block}.tplanta-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px 26px}.tp{display:flex;flex-direction:column;gap:3px}.tk{font-size:12.5px;color:var(--ink-3);font-weight:600}.tv{font-family:\'Sora\';font-weight:700;font-size:18px}.tplanta-price{margin-top:28px;display:flex;flex-direction:column;gap:2px}.tplanta-price b{font-family:\'Sora\';font-weight:800;font-size:36px;color:var(--violet-d)}.tplanta-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}.tplanta-cta{display:inline-flex;width:fit-content}.tplanta-broch{display:inline-flex;align-items:center;gap:9px;padding:16px 22px;font-size:14.5px;font-weight:700;border-radius:12px;background:var(--ink);color:#fff}.tplanta-broch:hover{background:#2a2438}@media(max-width:860px){.tplanta{grid-template-columns:1fr;gap:24px}.tsel{flex-direction:column;align-items:flex-start;gap:14px}.tsel-input{min-width:0;width:100%}}';
     document.head.appendChild(stP);
@@ -460,12 +483,30 @@
       const wrap=ubic.querySelector('.wrap');
       const mapEl=document.createElement('div'); mapEl.className='ubic-map';
       mapEl.innerHTML='<img src="'+p.mapaImg+'" alt="Ubicación '+p.name+'" loading="lazy">';
-      const nearNode=document.getElementById('near');
-      if(nearNode && nearNode.parentNode) nearNode.parentNode.insertBefore(mapEl, nearNode);
-      else wrap.appendChild(mapEl);
+      const mapSlot=document.getElementById('ubicMap');
+      if(mapSlot){
+        mapSlot.style.display='';
+        mapSlot.innerHTML='';
+        mapSlot.appendChild(mapEl);
+        mapEl.style.margin='0';
+      } else {
+        const nearNode=document.getElementById('near');
+        if(nearNode && nearNode.parentNode) nearNode.parentNode.insertBefore(mapEl, nearNode);
+        else wrap.appendChild(mapEl);
+      }
       const stM=document.createElement('style');
       stM.textContent='.ubic-map{border-radius:18px;overflow:hidden;margin:30px auto 0;max-width:900px;box-shadow:var(--shadow-md)}.ubic-map img{display:block;width:100%;height:auto}';
       document.head.appendChild(stM);
+    }
+  }
+
+  if(p.cercaFotos && p.cercaFotos.length){
+    const ubic=document.querySelector('#ubicacion .wrap');
+    if(ubic){
+      ubic.insertAdjacentHTML('beforeend','<div class="cf-grid">'+p.cercaFotos.map(c=>'<figure class="cf">'+imageMarkup(c.src,c.t,'loading="lazy"')+'<figcaption>'+c.t+'</figcaption></figure>').join('')+'</div>');
+      const stCf=document.createElement('style');
+      stCf.textContent='.cf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}.cf{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3;margin:0}.cf picture,.cf img{width:100%;height:100%;display:block}.cf img{object-fit:cover}.cf::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 50%,rgba(20,15,30,.75))}.cf figcaption{position:absolute;z-index:2;left:14px;right:14px;bottom:12px;color:#fff;font-family:Sora;font-weight:700;font-size:14px}@media(max-width:860px){.cf-grid{grid-template-columns:1fr 1fr;gap:10px}.cf figcaption{font-size:12.5px}}';
+      document.head.appendChild(stCf);
     }
   }
 
