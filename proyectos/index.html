@@ -60,10 +60,11 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 .hero-badge .big{font-family:'Sora';font-weight:800;font-size:40px;line-height:1;color:#fff}
 .hero-badge .sm{font-size:13px;color:rgba(255,255,255,.8);font-weight:600;margin-top:6px}
 
-/* CATÁLOGO: el menú recorre la página; solo los filtros se mantienen fijos. */
-header.nav,body .guzman-header{position:relative!important}
+/* CATÁLOGO: el header principal se desliza; los filtros conservan siempre su posición arriba. */
+header.nav,body .guzman-header{position:static!important}
+.projects-catalog{position:relative}
 /* TOOLBAR */
-.toolbar{position:sticky;top:0;z-index:1001;background:var(--surface);border-bottom:1px solid var(--line)}
+.toolbar{position:sticky;top:0!important;z-index:1001;width:100%;background:var(--surface);border-bottom:1px solid var(--line)}
 .toolbar-in{max-width:var(--maxw);margin:0 auto;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .toolbar .count{font-size:15px;color:var(--ink-2)}
 .toolbar .count b{color:var(--ink);font-weight:700}
