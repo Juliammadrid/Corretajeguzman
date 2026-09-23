@@ -55,8 +55,9 @@ header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdr
 /* HERO */
 .phero{position:relative;height:min(78vh,640px);min-height:440px;overflow:hidden;background:var(--dark)}
 .phero .bgslot{position:absolute;inset:0}
-.phero .bgslot img{width:100%;height:100%;object-fit:cover}
-.phero .bgfallback{position:absolute;inset:0;background:linear-gradient(135deg,var(--violet-dd),var(--violet))}
+.phero .bgslot picture{position:relative;z-index:1;display:block;width:100%;height:100%}
+.phero .bgslot img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover}
+.phero .bgfallback{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,var(--violet-dd),var(--violet))}
 .phero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.18) 0%,rgba(20,15,30,.2) 45%,rgba(20,15,30,.74) 100%);z-index:1}
 .phero .ph-tag{position:absolute;top:24px;left:0;right:0;z-index:3;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:0 18px}
 .ph-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:8px 15px;border-radius:50px}
