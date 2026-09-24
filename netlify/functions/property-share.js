@@ -88,36 +88,6 @@ function normalizeAirtableProperty(record, tableKind) {
   };
 }
 
-function normalizeRentandoProperty(p) {
-  const fixed = applyCommercialOverrides({ ...(p || {}) });
-  const image = Array.isArray(fixed.photos) && fixed.photos.length ? fixed.photos[0] : (fixed.coverPhoto || DEFAULT_IMAGE);
-  const price = fixed.price || formatClp(fixed.priceValue);
-  return {
-    id: String(fixed.id || fixed.codigo || ""),
-    title: String(fixed.title || "Propiedad Corretaje Guzmán"),
-    operation: fixed.operation === "venta" ? "venta" : "arriendo",
-    comuna: String(fixed.commune || fixed.comuna || ""),
-    direccion: String(fixed.address || fixed.direccion || ""),
-    tipo: String(fixed.propertyType || fixed.tipo || ""),
-    price,
-    moneda: fixed.currency || fixed.moneda || "CLP",
-    image,
-    description: fixed.description || ""
-  };
-}
-
-function buildDescription(p) {
-  if (p.description) return p.description;
-  const parts = [];
-  if (p.operation) parts.push(p.operation === "venta" ? "En venta" : "En arriendo");
-  if (p.tipo) parts.push(p.tipo);
-  if (p.comuna) parts.push(p.comuna);
-  if (p.price) parts.push(`${p.moneda && p.moneda !== "CLP" ? p.moneda + " " : ""}${p.price}`);
-  return parts.length
-    ? `${parts.join(" · ")} en Corretaje Guzmán. Revisa fotos, detalles y agenda tu visita.`
-    : "Propiedades disponibles en arriendo y venta con Corretaje Guzmán.";
-}
-
 function idFromPath(path) {
   const last = decodeURIComponent(String(path || "").split("/").filter(Boolean).pop() || "");
   const airtable = last.match(/(rec[a-zA-Z0-9]+)$/);
@@ -150,30 +120,8 @@ async function findAirtableProperty(id, token) {
   return null;
 }
 
-async function findRentandoProperty(id) {
-  if (!id) return null;
-  try {
-    const res = await fetch(`${SITE_ORIGIN}/data-rentando.js`, { headers: { accept: "application/javascript,text/plain,*/*" } });
-    if (!res.ok) return null;
-    const js = await res.text();
-    const match = js.match(/window\.GUZMAN_RENTANDO\s*=\s*(\[[\s\S]*?\])\s*;/);
-    if (!match || !match[1]) return null;
-    const list = JSON.parse(match[1]);
-    const found = list.find(p => {
-      const itemId = String(p.id || "").trim();
-      const codigo = String(p.codigo || "").replace(/\D/g, "");
-      const link = String(p.link || "");
-      return itemId === String(id) || codigo === String(id).replace(/\D/g, "") || link.endsWith(`/${id}`);
-    });
-    return found ? normalizeRentandoProperty(found) : null;
-  } catch (error) {
-    console.error("property-share Rentando lookup failed", error);
-    return null;
-  }
-}
-
 async function findProperty(id, token) {
-  return (await findAirtableProperty(id, token)) || (await findRentandoProperty(id));
+  return await findAirtableProperty(id, token);
 }
 
 function redirectHtml(id, path) {

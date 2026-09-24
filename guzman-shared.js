@@ -167,21 +167,6 @@
     };
   }
 
-  function activeRentandoProperties() {
-    const rentando = Array.isArray(window.GUZMAN_RENTANDO) ? window.GUZMAN_RENTANDO : [];
-    return rentando.filter(p => p && p.activa !== false && (p.status || 'Disponible') !== 'Arrendada');
-  }
-
-  function mergeProperties(primary, extra) {
-    const seen = new Set();
-    return [...(primary || []), ...(extra || [])].filter(p => {
-      const key = `${p.source || ''}:${p.id || ''}:${p.title || ''}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }
-
   async function loadProperties() {
     let data = null, live = false;
     if (CFG.endpoint) {
@@ -189,8 +174,7 @@
       if (j) { data = Array.isArray(j) ? j : (j.propiedades || j.properties || j.records || null); if (data && data.length) live = true; }
     }
     if (!data || !data.length) data = window.GUZMAN_FALLBACK || [];
-    const rentando = activeRentandoProperties();
-    data = mergeProperties(data, rentando).map(normalizeLoadedProperty);
+    data = (data || []).map(normalizeLoadedProperty);
     window.GUZMAN_PROPERTIES_INDEX = data;
     return { data, live };
   }

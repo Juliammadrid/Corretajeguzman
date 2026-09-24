@@ -11,8 +11,6 @@
 /*.css
   Cache-Control: public, max-age=300, stale-while-revalidate=86400
 
-/data-rentando.js
-  Cache-Control: public, max-age=300, stale-while-revalidate=3600
 
 /data-propiedades.js
   Cache-Control: public, max-age=300, stale-while-revalidate=3600

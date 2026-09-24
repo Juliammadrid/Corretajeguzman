@@ -119,10 +119,6 @@
   to = "/data-propiedades.js"
   status = 200
 
-[[redirects]]
-  from = "/propiedad/data-rentando.js"
-  to = "/data-rentando.js"
-  status = 200
 
 [[redirects]]
   from = "/propiedad/guzman-shared.js"
@@ -401,6 +397,3 @@
   to = "/.netlify/functions/lead-corredor"
   status = 200
 
-# Sincronización diaria con Rentando (empresa aliada)
-[functions."sync-rentando"]
-  schedule = "0 9 * * *"

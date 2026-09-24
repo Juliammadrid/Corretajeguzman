@@ -26,8 +26,7 @@ window.GUZMAN_BROKERS = [
 /* ============================================================
    PROPIEDADES — venta y parcelas vienen EN VIVO desde Airtable
    (/api/properties). Sin datos de ejemplo: la lista queda vacía
-   hasta conectar la base. Los arriendos vienen de data-rentando.js
-   (catálogo real de la empresa aliada Rentando).
+   hasta conectar la base. Los arriendos se consultan en vivo desde Airtable.
    ============================================================ */
 window.GUZMAN_FALLBACK = [];
 
