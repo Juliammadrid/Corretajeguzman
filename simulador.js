@@ -89,33 +89,38 @@
 
     const div=dividendoMax(ingreso);
     const credito=capacidadCredito(div, tasa, plazo);
-    const topePorCredito=credito/pct;                  // tope si el pie estuviera cubierto
-    const topePorPie=ahorro>0 ? ahorro/(1-pct) : 0;    // tope que cubre su ahorro como pie
-    /* HOY necesita el pie en efectivo: sin ahorro no puede pagarlo al contado */
+    const topePorCredito=credito/pct;                  // precio máximo si el pie queda cubierto
+    const topePorPie=ahorro>0 ? ahorro/(1-pct) : 0;    // precio cuyo pie cubre el ahorro propio
     const tope=Math.min(topePorCredito, topePorPie);
     const topeUF=tope/UF_();
     const limitante = ahorro<=0 ? 'sinpie' : (topePorPie<topePorCredito ? 'pie' : 'credito');
 
-    /* CON PIE FINANCIADO: para clasificar alternativas se usa la
-       capacidad hipotecaria ya calculada; la cuota de pie se informa en cada ficha. */
+    /* Pie financiado: usamos primero el ahorro propio y calculamos solo el saldo
+       pendiente. Es referencial y depende de que el proyecto/inmobiliaria lo permita. */
     const mp=CFG.mesesPie||24;
     const topeConPieFin=topePorCredito;
     const topeConPieFinUF=topeConPieFin/UF_();
+    const pieTotalEnTope=topeConPieFin*(1-pct);
+    const saldoPieFinanciable=Math.max(0,pieTotalEnTope-ahorro);
+    const cuotaSaldoPie=saldoPieFinanciable/mp;
     const cuotaPieDe=(v)=>Math.max(0, v*UF_()*(1-pct)-ahorro)/mp;
     const sinPiePropio=ahorro<=0;
-    const capacidadMostrada=sinPiePropio ? topeConPieFin : tope;
-    const capacidadMostradaUF=sinPiePropio ? topeConPieFinUF : topeUF;
+    const tienePieParcial=!sinPiePropio&&topePorPie<topePorCredito;
+    const capacidadMostrada=(sinPiePropio||tienePieParcial)?topeConPieFin:tope;
+    const capacidadMostradaUF=(sinPiePropio||tienePieParcial)?topeConPieFinUF:topeUF;
 
     $('#rIngreso').textContent=money(ingreso);
     $('#rDiv').textContent=money(div);
     $('#rCredito').textContent=money(credito)+' · '+uf(credito/UF_());
-    $('#rCapLabel').textContent=sinPiePropio ? 'Capacidad con pie financiado' : 'Tu capacidad de compra estimada';
+    $('#rCapLabel').textContent=tienePieParcial ? 'Tope con ahorro + saldo de pie financiado' : (sinPiePropio ? 'Capacidad con pie financiado' : 'Tu capacidad de compra estimada');
     $('#rTope').textContent=uf(capacidadMostradaUF);
     $('#rTopeClp').textContent=money(capacidadMostrada);
-    $('#rPieLabel').textContent=sinPiePropio ? 'Pie propio disponible' : 'Pie requerido';
-    $('#rPie').textContent=sinPiePropio ? money(ahorro)+' · financiable en cuotas' : money(tope*(1-pct))+' ('+Math.round((1-pct)*100)+'%)';
+    $('#rPieLabel').textContent=tienePieParcial ? 'Ahorro disponible para el pie' : (sinPiePropio ? 'Pie propio disponible' : 'Pie requerido');
+    $('#rPie').textContent=tienePieParcial ? money(ahorro) : (sinPiePropio ? money(ahorro)+' · financiable en cuotas' : money(tope*(1-pct))+' ('+Math.round((1-pct)*100)+'%)');
     $('#rPlazoTxt').textContent=plazo+' años · tasa '+String(tasa).replace('.',',')+'% anual';
-    const ePF=$('#rPieFin'); if(ePF) ePF.textContent=uf(topeConPieFinUF);
+    const ePF=$('#rPieFin'), ePFLabel=$('#rPieFinLabel');
+    if(ePFLabel) ePFLabel.textContent=tienePieParcial ? 'Saldo de pie a financiar*' : 'Tope con pie financiado';
+    if(ePF) ePF.textContent=tienePieParcial ? money(saldoPieFinanciable)+' · aprox. '+money(cuotaSaldoPie)+'/mes ('+mp+' cuotas)' : uf(topeConPieFinUF);
 
     /* clasificar proyectos */
     const alcanza=[], conPie=[], cerca=[];
@@ -135,8 +140,8 @@
       ? (conPie.length
         ? 'Con pie financiado, tu renta alcanza '+conPie.length+' '+(conPie.length===1?'proyecto':'proyectos')+' hasta '+uf(topeConPieFinUF)+'. Revisa las alternativas a continuación.'
         : 'Sin ahorro para el pie propio. Revisa las alternativas con pie financiado más abajo.')
-      : limitante==='pie'
-        ? 'Tu tope hoy lo define el ahorro para el pie, no tu renta.'
+      : tienePieParcial
+        ? 'Tus '+money(ahorro)+' cubren al contado el pie de una vivienda de '+uf(topeUF)+'. Por tu renta podrías llegar hasta '+uf(topeConPieFinUF)+' si la inmobiliaria permite financiar el saldo de '+money(saldoPieFinanciable)+' en '+mp+' cuotas de aprox. '+money(cuotaSaldoPie)+' al mes.'
         : 'Tu tope hoy lo define tu capacidad de crédito.';
 
     ultimo={ingreso,div,credito,tope,topeUF,ahorro,plazo,destino,pct,alcanza:alcanza.length,conPie:conPie.length};
@@ -160,7 +165,8 @@
       '• Ingreso considerado: '+money(ingreso),
       '• Ahorro para pie: '+(ahorro?money(ahorro):'por definir'),
       '• Plazo: '+plazo+' años · Destino: '+({primera:'primera vivienda',inversion:'inversión',segunda:'segunda vivienda'}[destino]),
-      '• Capacidad estimada: '+uf(capacidadMostradaUF)+' ('+money(capacidadMostrada)+')'+(sinPiePropio?' con pie financiado':''),
+      '• Capacidad estimada: '+uf(capacidadMostradaUF)+' ('+money(capacidadMostrada)+')'+((sinPiePropio||tienePieParcial)?' considerando pie financiado':''),
+      tienePieParcial?('• Ahorro para pie: '+money(ahorro)+' · Saldo referencial a financiar: '+money(saldoPieFinanciable)+' en '+mp+' cuotas de aprox. '+money(cuotaSaldoPie)+'/mes'):'',
       '• Dividendo estimado: '+money(div),
       alcanza.length?('Me interesan: '+alcanza.slice(0,3).map(x=>x.name).join(', ')):'Quiero saber qué alternativas tengo.',
       '¿Me pueden asesorar?'
