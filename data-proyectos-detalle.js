@@ -1397,5 +1397,90 @@ window.PROYECTO_FICHAS = {
     ],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
+  },
+  "style-nunoa": {
+    sinKicker: true,
+    heroFull: true,
+    sinTituloDesc: true,
+    name: "Style Ñuñoa",
+    ficha: "Proyecto Style Nunoa - Corretaje Guzman.html",
+    commune: "Ñuñoa",
+    address: "Eduardo Castillo Velasco 2958, Ñuñoa",
+    desdeUF: 7016,
+    entrega: "inmediata",
+    noGaleria: true,
+    subsidioTasa: true,
+    reserva: "$100.000",
+    lead: "Style Ñuñoa se emplaza en un barrio residencial de Ñuñoa, cercano a las principales avenidas y a las estaciones de Metro Chile España y Ñuñoa. Este elegante edificio de solo 7 pisos cuenta con increíbles departamentos de 1, 2 y 3 dormitorios y espacios comunes Design District, que incorporan lo último en tendencias de arquitectura, diseño y decoración. Últimas unidades con entrega inmediata.",
+    tipologias: [],
+    tipologiasDisponibles: [
+      { nombre:"2 dormitorios + 2 baños", planta:"B: 106", plano:"assets/proy/sn-plano-1.png", m2int:"58,01 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,46 m² aprox", orientacion:"Oriente", m2tot:"65,47 m² aprox", desdeUF:7928 },
+      { nombre:"3 dormitorios + 2 baños", planta:"A: 216 al 716", plano:"assets/proy/sn-plano-2.png", m2int:"96,36 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norponiente", m2tot:"108,88 m² aprox", desdeUF:8985 },
+      { nombre:"3 dormitorios + 2 baños", planta:"B: 405 al 705", plano:"assets/proy/sn-plano-3.png", m2int:"96,46 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norte", m2tot:"108,98 m² aprox", desdeUF:9514 },
+      { nombre:"3 dormitorios + 3 baños", planta:"A: 309 al 709", plano:"assets/proy/sn-plano-4.png", m2int:"103,69 m² aprox", dormBano:"3 dorm + 3 baños", terraza:"18,16 m² aprox", orientacion:"Poniente", m2tot:"121,85 m² aprox", desdeUF:9579 }
+    ],
+    bloques: [
+      { img:"assets/proy/sn-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 65,47 hasta 121,85 m² aprox, con 1 y 2 baños. Edificio de solo 7 pisos, últimas unidades con entrega inmediata." },
+      { img:"assets/proy/sn-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
+    ],
+    caracteristicas: [
+      "Full electric, sin contaminación intradomiciliaria",
+      "Ventanas marco PVC con aislamiento térmico y acústico",
+      "Punto limpio de reciclaje",
+      "Ampolletas de bajo consumo",
+      "Estufa eléctrica: calefacción limpia y eficiente",
+      "Edificio de solo 7 pisos"
+    ],
+    comunes: [
+      { t:"Gourmet Lounge", ic:"utensils" }, { t:"Friends Room", ic:"users" }, { t:"Creativity Center", ic:"palette" },
+      { t:"Adventure Zone", ic:"gamepad-2" }, { t:"Home Cine", ic:"clapperboard" }, { t:"Study Room", ic:"book-open" },
+      { t:"Fit & Health Zone", ic:"dumbbell" }, { t:"BBQ Zone", ic:"beef" }, { t:"Piscina", ic:"waves" }
+    ],
+    cerca: ["Metro Ñuñoa (Línea 6)", "Metro Chile-España (Línea 3)", "Plaza Ñuñoa", "Portal Ñuñoa", "Supermercados y farmacias", "Colegios y universidades"],
+    ubicTitulo: "Vive el estilo Ñuñoa",
+    ubicLead: "Style Ñuñoa se emplaza en un sector residencial donde se siente la tranquilidad y, a la vez, está cercano a las principales avenidas. Próximo a la Plaza Ñuñoa, con excelente gastronomía y panoramas culturales, y cercano a Portal Ñuñoa, supermercados, colegios, farmacias y diversos servicios. A minutos de Metro Ñuñoa (Línea 6) y Chile-España (Línea 3).",
+    lat: -33.4587759,
+    lng: -70.6005104,
+    matterport: "https://my.matterport.com/show/?m=Kqi8edXPaHU",
+    fotos: [],
+    comunesFotos: [],
+    heroImg: "assets/proy/sn-terminaciones.jpg",
+    detallesStats: [
+      { k:"Superficie total", v:"65,47 hasta 121,85 m²" },
+      { k:"Dormitorios", v:"1, 2 y 3" },
+      { k:"Baños", v:"1 y 2" },
+      { k:"Desde", v:"UF 7.016" },
+      { k:"Estado del proyecto", v:"Últimas unidades · Entrega inmediata" }
+    ],
+    disenoTitulo: "Innovación en tu departamento",
+    disenoSubtitulo: "Diseño",
+    disenoImgs: ["assets/proy/sn-detalle.jpg", "assets/proy/sn-diseno-2.jpg", "assets/proy/sn-diseno-3.jpg"],
+    disenoLead: "Style Ñuñoa destaca por sus detalles, entregando funcionalidad y una perfecta distribución del espacio. Todos los interiores fueron diseñados para privilegiar la amplitud y luminosidad, con elegantes detalles en cada espacio.",
+    disenoTabs: [
+      { src:"assets/proy/sn-kitchen.jpg", t:"Kitchen Concept" },
+      { src:"assets/proy/sn-terminaciones.jpg", t:"Terminaciones" },
+      { src:"assets/proy/sn-banos.jpg", t:"Baños confortables" }
+    ],
+    comunesTitulo: "Espacios comunes Design District",
+    comunesLead: "La vida más allá de tu departamento. Espacios modernos, completamente equipados y decorados con las últimas tendencias, diseñados para vivir y compartir momentos inolvidables.",
+    comunesTabs: [
+      { src:"assets/proy/sn-comun-1.jpg", t:"Gourmet Lounge" },
+      { src:"assets/proy/sn-comun-2.jpg", t:"Friends Room" },
+      { src:"assets/proy/sn-comun-3.jpg", t:"Creativity Center" },
+      { src:"assets/proy/sn-comun-4.jpg", t:"Adventure Zone" },
+      { src:"assets/proy/sn-comun-5.jpg", t:"Home Cine" },
+      { src:"assets/proy/sn-comun-6.jpg", t:"Study Room" },
+      { src:"assets/proy/sn-comun-7.jpg", t:"Fit & Health Zone" },
+      { src:"assets/proy/sn-comun-8.jpg", t:"BBQ Zone" },
+      { src:"assets/proy/sn-comun-9.jpg", t:"Piscina" }
+    ],
+    seguridadTitulo: "Seguridad con la mejor tecnología",
+    seguridad: [
+      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
+      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
+      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
+    ],
+    wa: "56944637680",
+    whatsapps: ["56944637680", "56944717233"]
   }
 };

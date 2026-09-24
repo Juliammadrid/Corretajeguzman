@@ -119,5 +119,16 @@ window.PROYECTOS = [
     "specs": "43,20 a 107,28 m² · 1, 2 y 3 dorm · 1 y 2 baños",
     "detalle": "/proyecto.html?slug=best-level",
     "image": "/assets/proy/bl-hero.jpg"
+  },
+  {
+    "slug": "style-nunoa",
+    "name": "Style Ñuñoa",
+    "address": "Eduardo Castillo Velasco 2958, Ñuñoa",
+    "commune": "Ñuñoa",
+    "desdeUF": 7016,
+    "entrega": "ultimas",
+    "specs": "65,47 a 121,85 m² · 1, 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyecto.html?slug=style-nunoa",
+    "image": "/assets/proy/sn-terminaciones.jpg"
   }
 ];
