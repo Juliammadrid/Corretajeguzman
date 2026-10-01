@@ -1,26 +1,10 @@
 # ============================================================
 #  Netlify · Corretaje Guzmán (preview)
-#  Sitio estático + funciones serverless y generación SEO sin dependencias.
+#  Sitio estático + funciones serverless. No requiere build.
 # ============================================================
 [build]
-  command = "node scripts/build-seo.mjs"
   publish = "."
   functions = "netlify/functions"
-
-[[headers]]
-  for = "/seo-templates/*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-
-[[headers]]
-  for = "/tests/*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-
-[[headers]]
-  for = "/entregar-*"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
 
 # ============================================================
 # Iconos oficiales para navegador, iPhone y PWA

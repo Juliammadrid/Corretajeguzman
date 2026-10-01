@@ -26,8 +26,6 @@
     return;
   }
 
-  // Preserve the per-project metadata generated at build time.
-  if (document.documentElement.dataset.seoProject !== slug) {
   /* cg_og_share: banner al compartir por WhatsApp / redes */
   (function(){
     const abs=(u)=>u?new URL(u,location.href).href:'';
@@ -66,7 +64,6 @@
     if(!node){ node=document.createElement('script'); node.type='application/ld+json'; node.dataset.projectSchema=''; document.head.appendChild(node); }
     node.textContent=JSON.stringify(schema).replace(/</g,'\\u003c');
   })();
-  }
   $('#pName').textContent = p.name;
   $('#pAddr').textContent = p.address || p.commune || '';
   if(p.sinTituloDesc){ const dt=$('#descTitle'); if(dt) dt.remove(); } else $('#descTitle').textContent = p.descTitulo || (p.heroFull ? 'El proyecto' : p.name);
