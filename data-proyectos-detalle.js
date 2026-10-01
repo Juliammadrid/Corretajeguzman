@@ -1149,16 +1149,16 @@ window.PROYECTO_FICHAS = {
     lead: "Urban Ñuñoa es categoría superior, tanto por sus terminaciones de primer nivel como por sus espacios comunes pensados para disfrutar todos los días. Ubicado en plena Avenida Irarrázaval y a menos de 50 pasos del Metro Monseñor Eyzaguirre, te permite moverte a todo Santiago sin problemas: un circuito perimetral con más de 10 espacios comunes Design District, el primer Skybar de Ñuñoa, Bike Workshop, Pet Spa, Pet Zone, Cowork y mucho más.",
     tipologias: [],
     tipologiasDisponibles: [
-      { nombre:"1 dormitorio + 1 baño", planta:"B: 214 al 2414", plano:"assets/proy/un-plano-1.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Oriente", m2tot:"37,7 m² aprox", desdeUF:3800 },
-      { nombre:"1 dormitorio + 1 baño", planta:"C: 408 al 2408", plano:"assets/proy/un-plano-2.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Poniente", m2tot:"37,7 m² aprox", desdeUF:3692 },
-      { nombre:"2 dormitorios + 1 baño", planta:"A: 309 al 2309", plano:"assets/proy/un-plano-3.png", m2int:"42,44 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"7,16 m² aprox", orientacion:"Poniente", m2tot:"49,6 m² aprox", desdeUF:4410 },
-      { nombre:"2 dormitorios + 2 baños", planta:"A: 201 al 1601", plano:"assets/proy/un-plano-4.png", m2int:"52,25 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,94 m² aprox", orientacion:"Poniente", m2tot:"55,19 m² aprox", desdeUF:5019 },
-      { nombre:"2 dormitorios + 2 baños", planta:"B: 218 al 1218", plano:"assets/proy/un-plano-5.png", m2int:"62,48 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"9,54 m² aprox", orientacion:"Oriente", m2tot:"72,02 m² aprox", desdeUF:6731 },
-      { nombre:"2 dormitorios + 2 baños", planta:"C: 319 al 1319", plano:"assets/proy/un-plano-6.png", m2int:"66,19 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,64 m² aprox", orientacion:"Poniente", m2tot:"72,83 m² aprox", desdeUF:6574 }
+      { nombre:"1 dormitorio + 1 baño", planta:"B: 214 al 2414", plano:"/assets/proy/un-plano-1.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Oriente", m2tot:"37,7 m² aprox", desdeUF:3800 },
+      { nombre:"1 dormitorio + 1 baño", planta:"C: 408 al 2408", plano:"/assets/proy/un-plano-2.png", m2int:"34,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,90 m² aprox", orientacion:"Poniente", m2tot:"37,7 m² aprox", desdeUF:3692 },
+      { nombre:"2 dormitorios + 1 baño", planta:"A: 309 al 2309", plano:"/assets/proy/un-plano-3.png", m2int:"42,44 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"7,16 m² aprox", orientacion:"Poniente", m2tot:"49,6 m² aprox", desdeUF:4410 },
+      { nombre:"2 dormitorios + 2 baños", planta:"A: 201 al 1601", plano:"/assets/proy/un-plano-4.png", m2int:"52,25 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,94 m² aprox", orientacion:"Poniente", m2tot:"55,19 m² aprox", desdeUF:5019 },
+      { nombre:"2 dormitorios + 2 baños", planta:"B: 218 al 1218", plano:"/assets/proy/un-plano-5.png", m2int:"62,48 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"9,54 m² aprox", orientacion:"Oriente", m2tot:"72,02 m² aprox", desdeUF:6731 },
+      { nombre:"2 dormitorios + 2 baños", planta:"C: 319 al 1319", plano:"/assets/proy/un-plano-6.png", m2int:"66,19 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,64 m² aprox", orientacion:"Poniente", m2tot:"72,83 m² aprox", desdeUF:6574 }
     ],
     bloques: [
-      { img:"assets/proy/un-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1 y 2 dormitorios, desde 28,5 hasta 72,5 m² aprox, con 1 y 2 baños. Proyecto en venta en verde, con fecha estimada de entrega para el 1er semestre de 2027." },
-      { img:"assets/proy/un-sostenibilidad.png", t:"Tecnologías sostenibles", d:"Edificio full electric, sin contaminación intradomiciliaria. Marcos y ventanas termopanel de aluminio gris grafito con aislamiento térmico y acústico, sector de punto limpio para reciclaje, ampolletas de bajo consumo y calefacción limpia y eficiente." }
+      { img:"/assets/proy/un-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1 y 2 dormitorios, desde 28,5 hasta 72,5 m² aprox, con 1 y 2 baños. Proyecto en venta en verde, con fecha estimada de entrega para el 1er semestre de 2027." },
+      { img:"/assets/proy/un-sostenibilidad.png", t:"Tecnologías sostenibles", d:"Edificio full electric, sin contaminación intradomiciliaria. Marcos y ventanas termopanel de aluminio gris grafito con aislamiento térmico y acústico, sector de punto limpio para reciclaje, ampolletas de bajo consumo y calefacción limpia y eficiente." }
     ],
     caracteristicas: [
       "Full electric, sin contaminación intradomiciliaria",
@@ -1183,7 +1183,7 @@ window.PROYECTO_FICHAS = {
     lng: -70.6139664,
     fotos: [],
     comunesFotos: [],
-    heroImg: "assets/proy/un-fachada.jpg",
+    heroImg: "/assets/proy/un-fachada.jpg",
     detallesStats: [
       { k:"Superficie total", v:"28,5 hasta 72,5 m² aprox" },
       { k:"Dormitorios", v:"1 y 2" },
@@ -1193,41 +1193,41 @@ window.PROYECTO_FICHAS = {
     ],
     disenoTitulo: "Insuperable en Ñuñoa",
     disenoSubtitulo: "Departamentos de alto estándar",
-    disenoImgs: ["assets/proy/un-diseno-1.jpg", "assets/proy/un-diseno-2.jpg", "assets/proy/un-diseno-3.jpg"],
+    disenoImgs: ["/assets/proy/un-diseno-1.jpg", "/assets/proy/un-diseno-2.jpg", "/assets/proy/un-diseno-3.jpg"],
     disenoLead: "Modernos en cada detalle: los departamentos de Urban Ñuñoa están diseñados con terminaciones de alto estándar y look moderno, de acuerdo a las nuevas tendencias de diseño.",
     disenoTabs: [
-      { src:"assets/proy/un-cocina.jpg", t:"Cocina completamente equipada" },
-      { src:"assets/proy/un-confort.jpg", t:"Confort térmico y acústico" }
+      { src:"/assets/proy/un-cocina.jpg", t:"Cocina completamente equipada" },
+      { src:"/assets/proy/un-confort.jpg", t:"Confort térmico y acústico" }
     ],
     comunesTitulo: "Más de 10 espacios comunes Design District",
     comunesLead: "Un circuito perimetral con espacios completamente equipados para disfrutar todos los días: el primer Skybar de Ñuñoa, Piscina Lounge, Bike Workshop, Pet Spa, Pet Zone, Cowork y mucho más.",
     comunesTabs: [
-      { src:"assets/proy/un-comun-1.jpg", t:"Lobby" },
-      { src:"assets/proy/un-comun-2.jpg", t:"Gourmet Room" },
-      { src:"assets/proy/un-comun-3.jpg", t:"Friends Room" },
-      { src:"assets/proy/un-comun-4.webp", t:"Bike Workshop" },
-      { src:"assets/proy/un-comun-5.jpg", t:"Adventure Zone" },
-      { src:"assets/proy/un-comun-6.jpg", t:"Fit & Health Zone" },
-      { src:"assets/proy/un-comun-7.jpg", t:"Sky Bar" },
-      { src:"assets/proy/un-comun-8.jpg", t:"Piscina Lounge" },
-      { src:"assets/proy/un-comun-9.jpg", t:"Pet Spa" },
-      { src:"assets/proy/un-comun-10.jpg", t:"Pet Zone" },
-      { src:"assets/proy/un-comun-11.jpg", t:"Cowork" },
-      { src:"assets/proy/un-comun-12.jpg", t:"Laundry Room" }
+      { src:"/assets/proy/un-comun-1.jpg", t:"Lobby" },
+      { src:"/assets/proy/un-comun-2.jpg", t:"Gourmet Room" },
+      { src:"/assets/proy/un-comun-3.jpg", t:"Friends Room" },
+      { src:"/assets/proy/un-comun-4.webp", t:"Bike Workshop" },
+      { src:"/assets/proy/un-comun-5.jpg", t:"Adventure Zone" },
+      { src:"/assets/proy/un-comun-6.jpg", t:"Fit & Health Zone" },
+      { src:"/assets/proy/un-comun-7.jpg", t:"Sky Bar" },
+      { src:"/assets/proy/un-comun-8.jpg", t:"Piscina Lounge" },
+      { src:"/assets/proy/un-comun-9.jpg", t:"Pet Spa" },
+      { src:"/assets/proy/un-comun-10.jpg", t:"Pet Zone" },
+      { src:"/assets/proy/un-comun-11.jpg", t:"Cowork" },
+      { src:"/assets/proy/un-comun-12.jpg", t:"Laundry Room" }
     ],
     seguridadTitulo: "Seguridad con la mejor tecnología",
     seguridad: [
-      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:[
+      { t:"Seguridad Perimetral", img:"/assets/proy/un-seg1.png", items:[
         "Cámaras en los deslindes hacia los vecinos y hacia las calles.",
         "Cerco eléctrico perimetral en el sitio del edificio.",
         "Control de acceso vehicular y peatonal."
       ]},
-      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:[
+      { t:"Control de Acceso", img:"/assets/proy/un-seg2.png", items:[
         "Torniquetes en el hall de acceso principal.",
         "Conserjería con control de visitas.",
         "Accesos con tecnología de identificación."
       ]},
-      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:[
+      { t:"Cámaras de Seguridad", img:"/assets/proy/un-seg3.png", items:[
         "Cámaras en todas las puertas de acceso del edificio.",
         "Cámaras en halls de conserjería y ascensores.",
         "Cámaras en espacios comunes."
@@ -1250,11 +1250,11 @@ window.PROYECTO_FICHAS = {
     lead: "Best Ñuñoa se ubica en un cómodo sector de la comuna de Ñuñoa, a solo 5 minutos a pie del Mall Portal Ñuñoa, universidades y farmacias, cercano a las estaciones de Metro Chile-España y Estadio Nacional. Cuenta con espacios comunes Design District para disfrutar y compartir momentos inolvidables junto a tu familia y amigos. Entrega inmediata.",
     tipologias: [],
     tipologiasDisponibles: [
-      { nombre:"3 dormitorios + 2 baños", planta:"A: 406 al 1506", plano:"assets/proy/bn-plano-1.png", m2int:"79,00 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"11,04 m² aprox", orientacion:"Norte", m2tot:"90,04 m² aprox", desdeUF:8011 }
+      { nombre:"3 dormitorios + 2 baños", planta:"A: 406 al 1506", plano:"/assets/proy/bn-plano-1.png", m2int:"79,00 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"11,04 m² aprox", orientacion:"Norte", m2tot:"90,04 m² aprox", desdeUF:8011 }
     ],
     bloques: [
-      { img:"assets/proy/bn-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 41 hasta 92,93 m², con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
-      { img:"assets/proy/un-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
+      { img:"/assets/proy/bn-fachada.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 41 hasta 92,93 m², con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
+      { img:"/assets/proy/un-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
     ],
     caracteristicas: [
       "Full electric, sin contaminación intradomiciliaria",
@@ -1276,7 +1276,7 @@ window.PROYECTO_FICHAS = {
     lng: -70.6139664,
     fotos: [],
     comunesFotos: [],
-    heroImg: "assets/proy/bn-hero.jpg",
+    heroImg: "/assets/proy/bn-hero.jpg",
     detallesStats: [
       { k:"Superficie total", v:"41 hasta 92,93 m²" },
       { k:"Dormitorios", v:"1, 2 y 3" },
@@ -1286,33 +1286,33 @@ window.PROYECTO_FICHAS = {
     ],
     disenoTitulo: "Innovación en tu departamento",
     disenoSubtitulo: "Diseño",
-    disenoImgs: ["assets/proy/bn-hero.jpg", "assets/proy/bn-diseno-2.jpg", "assets/proy/bn-diseno-3.jpg"],
+    disenoImgs: ["/assets/proy/bn-hero.jpg", "/assets/proy/bn-diseno-2.jpg", "/assets/proy/bn-diseno-3.jpg"],
     disenoLead: "Departamentos con terminaciones de calidad, luminosos y con una distribución que aprovecha cada espacio, listos para habitar.",
     disenoTabs: [
-      { src:"assets/proy/bn-amplitud.jpg", t:"Amplitud" },
-      { src:"assets/proy/bn-comodidad.jpg", t:"Comodidad" }
+      { src:"/assets/proy/bn-amplitud.jpg", t:"Amplitud" },
+      { src:"/assets/proy/bn-comodidad.jpg", t:"Comodidad" }
     ],
     comunesTitulo: "Espacios comunes Design District",
     comunesLead: "Espacios completamente equipados para disfrutar y compartir momentos inolvidables junto a tu familia y amigos.",
     comunesTabs: [
-      { src:"assets/proy/bn-comun-1.jpg", t:"Lobby" },
-      { src:"assets/proy/bn-comun-2.jpg", t:"Friends Room" },
-      { src:"assets/proy/bn-comun-3.jpg", t:"Fit & Health Zone" },
-      { src:"assets/proy/bn-comun-4.jpg", t:"BBQ Zone" },
-      { src:"assets/proy/bn-comun-5.jpg", t:"Piscina" }
+      { src:"/assets/proy/bn-comun-1.jpg", t:"Lobby" },
+      { src:"/assets/proy/bn-comun-2.jpg", t:"Friends Room" },
+      { src:"/assets/proy/bn-comun-3.jpg", t:"Fit & Health Zone" },
+      { src:"/assets/proy/bn-comun-4.jpg", t:"BBQ Zone" },
+      { src:"/assets/proy/bn-comun-5.jpg", t:"Piscina" }
     ],
     seguridadTitulo: "Seguridad con la mejor tecnología",
     seguridad: [
-      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:[
+      { t:"Seguridad Perimetral", img:"/assets/proy/un-seg1.png", items:[
         "Cámaras en los deslindes hacia los vecinos y hacia las calles.",
         "Cerco eléctrico perimetral.",
         "Control de acceso vehicular y peatonal."
       ]},
-      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:[
+      { t:"Control de Acceso", img:"/assets/proy/un-seg2.png", items:[
         "Conserjería con control de visitas.",
         "Accesos con tecnología de identificación."
       ]},
-      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:[
+      { t:"Cámaras de Seguridad", img:"/assets/proy/un-seg3.png", items:[
         "Cámaras en accesos del edificio.",
         "Cámaras en halls de conserjería y ascensores.",
         "Cámaras en espacios comunes."
@@ -1336,11 +1336,11 @@ window.PROYECTO_FICHAS = {
     lead: "Best Level es un proyecto como ya no quedan en Ñuñoa. Sus espacios interiores fueron diseñados para la vida familiar, donde todo y todos tienen su espacio. Cuenta con increíbles espacios comunes Design District para disfrutar y compartir momentos inolvidables junto a tu familia y amigos. Se ubica a pasos del Metro Príncipe de Gales, con salida vehicular rápida a Tobalaba y Avenida Ossa.",
     tipologias: [],
     tipologiasDisponibles: [
-      { nombre:"2 dormitorios + 1 baño", planta:"B: 112", plano:"assets/proy/bl-plano-1.png", m2int:"45,58 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"6,88 m² aprox", orientacion:"Poniente", m2tot:"52,46 m² aprox", desdeUF:7566 }
+      { nombre:"2 dormitorios + 1 baño", planta:"B: 112", plano:"/assets/proy/bl-plano-1.png", m2int:"45,58 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"6,88 m² aprox", orientacion:"Poniente", m2tot:"52,46 m² aprox", desdeUF:7566 }
     ],
     bloques: [
-      { img:"assets/proy/bl-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 43,20 hasta 107,28 m² aprox, con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
-      { img:"assets/proy/bl-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, ampolletas de bajo consumo y radiadores eléctricos para una calefacción limpia y eficiente." }
+      { img:"/assets/proy/bl-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 43,20 hasta 107,28 m² aprox, con 1 y 2 baños. Proyecto terminado, con entrega inmediata." },
+      { img:"/assets/proy/bl-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, ampolletas de bajo consumo y radiadores eléctricos para una calefacción limpia y eficiente." }
     ],
     caracteristicas: [
       "Full electric, sin contaminación intradomiciliaria",
@@ -1362,7 +1362,7 @@ window.PROYECTO_FICHAS = {
     lng: -70.5736358,
     fotos: [],
     comunesFotos: [],
-    heroImg: "assets/proy/bl-hero.jpg",
+    heroImg: "/assets/proy/bl-hero.jpg",
     detallesStats: [
       { k:"Superficie total", v:"43,20 hasta 107,28 m²" },
       { k:"Dormitorios", v:"1, 2 y 3" },
@@ -1372,28 +1372,28 @@ window.PROYECTO_FICHAS = {
     ],
     disenoTitulo: "Diseñado para vivir en familia",
     disenoSubtitulo: "Diseño",
-    disenoImgs: ["assets/proy/bl-dormitorios.jpg", "assets/proy/bl-diseno-2.jpg", "assets/proy/bl-diseno-3.jpg"],
+    disenoImgs: ["/assets/proy/bl-dormitorios.jpg", "/assets/proy/bl-diseno-2.jpg", "/assets/proy/bl-diseno-3.jpg"],
     disenoLead: "Espacios interiores amplios y luminosos, pensados para que todos en la familia tengan su lugar.",
     disenoTabs: [
-      { src:"assets/proy/bl-kitchen.jpg", t:"Kitchen Concept" },
-      { src:"assets/proy/bl-terminaciones.jpg", t:"Terminaciones" },
-      { src:"assets/proy/bl-dormitorios.jpg", t:"Amplios dormitorios" },
-      { src:"assets/proy/bl-banos.jpg", t:"Baños confortables" }
+      { src:"/assets/proy/bl-kitchen.jpg", t:"Kitchen Concept" },
+      { src:"/assets/proy/bl-terminaciones.jpg", t:"Terminaciones" },
+      { src:"/assets/proy/bl-dormitorios.jpg", t:"Amplios dormitorios" },
+      { src:"/assets/proy/bl-banos.jpg", t:"Baños confortables" }
     ],
     comunesTitulo: "Espacios comunes Design District",
     comunesLead: "Espacios modernos, completamente decorados y equipados: Hall de acceso, Friends Room, Creativity Center, BBQ Zone, Piscina Lounge y Fit & Health Zone.",
     comunesTabs: [
-      { src:"assets/proy/bl-comun-1.jpg", t:"BBQ Zone" },
-      { src:"assets/proy/bl-comun-2.jpg", t:"Friends Room" },
-      { src:"assets/proy/bl-comun-3.jpg", t:"Creativity Center" },
-      { src:"assets/proy/bl-comun-4.jpg", t:"Fit & Health Zone" },
-      { src:"assets/proy/bl-comun-5.jpg", t:"Piscina Lounge" }
+      { src:"/assets/proy/bl-comun-1.jpg", t:"BBQ Zone" },
+      { src:"/assets/proy/bl-comun-2.jpg", t:"Friends Room" },
+      { src:"/assets/proy/bl-comun-3.jpg", t:"Creativity Center" },
+      { src:"/assets/proy/bl-comun-4.jpg", t:"Fit & Health Zone" },
+      { src:"/assets/proy/bl-comun-5.jpg", t:"Piscina Lounge" }
     ],
     seguridadTitulo: "Seguridad con la mejor tecnología",
     seguridad: [
-      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
-      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
-      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
+      { t:"Seguridad Perimetral", img:"/assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
+      { t:"Control de Acceso", img:"/assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
+      { t:"Cámaras de Seguridad", img:"/assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
     ],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
@@ -1414,14 +1414,14 @@ window.PROYECTO_FICHAS = {
     lead: "Style Ñuñoa se emplaza en un barrio residencial de Ñuñoa, cercano a las principales avenidas y a las estaciones de Metro Chile España y Ñuñoa. Este elegante edificio de solo 7 pisos cuenta con increíbles departamentos de 1, 2 y 3 dormitorios y espacios comunes Design District, que incorporan lo último en tendencias de arquitectura, diseño y decoración. Últimas unidades con entrega inmediata.",
     tipologias: [],
     tipologiasDisponibles: [
-      { nombre:"2 dormitorios + 2 baños", planta:"B: 106", plano:"assets/proy/sn-plano-1.png", m2int:"58,01 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,46 m² aprox", orientacion:"Oriente", m2tot:"65,47 m² aprox", desdeUF:7928 },
-      { nombre:"3 dormitorios + 2 baños", planta:"A: 216 al 716", plano:"assets/proy/sn-plano-2.png", m2int:"96,36 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norponiente", m2tot:"108,88 m² aprox", desdeUF:8985 },
-      { nombre:"3 dormitorios + 2 baños", planta:"B: 405 al 705", plano:"assets/proy/sn-plano-3.png", m2int:"96,46 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norte", m2tot:"108,98 m² aprox", desdeUF:9514 },
-      { nombre:"3 dormitorios + 3 baños", planta:"A: 309 al 709", plano:"assets/proy/sn-plano-4.png", m2int:"103,69 m² aprox", dormBano:"3 dorm + 3 baños", terraza:"18,16 m² aprox", orientacion:"Poniente", m2tot:"121,85 m² aprox", desdeUF:9579 }
+      { nombre:"2 dormitorios + 2 baños", planta:"B: 106", plano:"/assets/proy/sn-plano-1.png", m2int:"58,01 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,46 m² aprox", orientacion:"Oriente", m2tot:"65,47 m² aprox", desdeUF:7928 },
+      { nombre:"3 dormitorios + 2 baños", planta:"A: 216 al 716", plano:"/assets/proy/sn-plano-2.png", m2int:"96,36 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norponiente", m2tot:"108,88 m² aprox", desdeUF:8985 },
+      { nombre:"3 dormitorios + 2 baños", planta:"B: 405 al 705", plano:"/assets/proy/sn-plano-3.png", m2int:"96,46 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"12,52 m² aprox", orientacion:"Norte", m2tot:"108,98 m² aprox", desdeUF:9514 },
+      { nombre:"3 dormitorios + 3 baños", planta:"A: 309 al 709", plano:"/assets/proy/sn-plano-4.png", m2int:"103,69 m² aprox", dormBano:"3 dorm + 3 baños", terraza:"18,16 m² aprox", orientacion:"Poniente", m2tot:"121,85 m² aprox", desdeUF:9579 }
     ],
     bloques: [
-      { img:"assets/proy/sn-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 65,47 hasta 121,85 m² aprox, con 1 y 2 baños. Edificio de solo 7 pisos, últimas unidades con entrega inmediata." },
-      { img:"assets/proy/sn-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
+      { img:"/assets/proy/sn-detalle.jpg", t:"Detalles del proyecto", d:"Departamentos de 1, 2 y 3 dormitorios, desde 65,47 hasta 121,85 m² aprox, con 1 y 2 baños. Edificio de solo 7 pisos, últimas unidades con entrega inmediata." },
+      { img:"/assets/proy/sn-sostenibilidad.png", t:"Sostenibilidad", d:"Edificio full electric, sin contaminación intradomiciliaria. Ventanas marco PVC con aislamiento térmico y acústico, sector con punto limpio de reciclaje, ampolletas de bajo consumo y estufa eléctrica para una calefacción limpia y eficiente." }
     ],
     caracteristicas: [
       "Full electric, sin contaminación intradomiciliaria",
@@ -1444,7 +1444,7 @@ window.PROYECTO_FICHAS = {
     matterport: "https://my.matterport.com/show/?m=Kqi8edXPaHU",
     fotos: [],
     comunesFotos: [],
-    heroImg: "assets/proy/sn-terminaciones.jpg",
+    heroImg: "/assets/proy/sn-terminaciones.jpg",
     detallesStats: [
       { k:"Superficie total", v:"65,47 hasta 121,85 m²" },
       { k:"Dormitorios", v:"1, 2 y 3" },
@@ -1454,31 +1454,31 @@ window.PROYECTO_FICHAS = {
     ],
     disenoTitulo: "Innovación en tu departamento",
     disenoSubtitulo: "Diseño",
-    disenoImgs: ["assets/proy/sn-detalle.jpg", "assets/proy/sn-diseno-2.jpg", "assets/proy/sn-diseno-3.jpg"],
+    disenoImgs: ["/assets/proy/sn-detalle.jpg", "/assets/proy/sn-diseno-2.jpg", "/assets/proy/sn-diseno-3.jpg"],
     disenoLead: "Style Ñuñoa destaca por sus detalles, entregando funcionalidad y una perfecta distribución del espacio. Todos los interiores fueron diseñados para privilegiar la amplitud y luminosidad, con elegantes detalles en cada espacio.",
     disenoTabs: [
-      { src:"assets/proy/sn-kitchen.jpg", t:"Kitchen Concept" },
-      { src:"assets/proy/sn-terminaciones.jpg", t:"Terminaciones" },
-      { src:"assets/proy/sn-banos.jpg", t:"Baños confortables" }
+      { src:"/assets/proy/sn-kitchen.jpg", t:"Kitchen Concept" },
+      { src:"/assets/proy/sn-terminaciones.jpg", t:"Terminaciones" },
+      { src:"/assets/proy/sn-banos.jpg", t:"Baños confortables" }
     ],
     comunesTitulo: "Espacios comunes Design District",
     comunesLead: "La vida más allá de tu departamento. Espacios modernos, completamente equipados y decorados con las últimas tendencias, diseñados para vivir y compartir momentos inolvidables.",
     comunesTabs: [
-      { src:"assets/proy/sn-comun-1.jpg", t:"Gourmet Lounge" },
-      { src:"assets/proy/sn-comun-2.jpg", t:"Friends Room" },
-      { src:"assets/proy/sn-comun-3.jpg", t:"Creativity Center" },
-      { src:"assets/proy/sn-comun-4.jpg", t:"Adventure Zone" },
-      { src:"assets/proy/sn-comun-5.jpg", t:"Home Cine" },
-      { src:"assets/proy/sn-comun-6.jpg", t:"Study Room" },
-      { src:"assets/proy/sn-comun-7.jpg", t:"Fit & Health Zone" },
-      { src:"assets/proy/sn-comun-8.jpg", t:"BBQ Zone" },
-      { src:"assets/proy/sn-comun-9.jpg", t:"Piscina" }
+      { src:"/assets/proy/sn-comun-1.jpg", t:"Gourmet Lounge" },
+      { src:"/assets/proy/sn-comun-2.jpg", t:"Friends Room" },
+      { src:"/assets/proy/sn-comun-3.jpg", t:"Creativity Center" },
+      { src:"/assets/proy/sn-comun-4.jpg", t:"Adventure Zone" },
+      { src:"/assets/proy/sn-comun-5.jpg", t:"Home Cine" },
+      { src:"/assets/proy/sn-comun-6.jpg", t:"Study Room" },
+      { src:"/assets/proy/sn-comun-7.jpg", t:"Fit & Health Zone" },
+      { src:"/assets/proy/sn-comun-8.jpg", t:"BBQ Zone" },
+      { src:"/assets/proy/sn-comun-9.jpg", t:"Piscina" }
     ],
     seguridadTitulo: "Seguridad con la mejor tecnología",
     seguridad: [
-      { t:"Seguridad Perimetral", img:"assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
-      { t:"Control de Acceso", img:"assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
-      { t:"Cámaras de Seguridad", img:"assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
+      { t:"Seguridad Perimetral", img:"/assets/proy/un-seg1.png", items:["Cámaras en los deslindes hacia los vecinos y hacia las calles.","Cerco eléctrico perimetral.","Control de acceso vehicular y peatonal."]},
+      { t:"Control de Acceso", img:"/assets/proy/un-seg2.png", items:["Conserjería con control de visitas.","Accesos con tecnología de identificación."]},
+      { t:"Cámaras de Seguridad", img:"/assets/proy/un-seg3.png", items:["Cámaras en accesos del edificio.","Cámaras en halls de conserjería y ascensores.","Cámaras en espacios comunes."]}
     ],
     wa: "56944637680",
     whatsapps: ["56944637680", "56944717233"]
