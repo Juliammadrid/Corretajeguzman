@@ -67,6 +67,78 @@
   to = "/proyecto.html?slug=new-life-macul"
   status = 200
 
+# Fichas dinámicas con URL canónica limpia. El slug se obtiene desde la ruta
+# para que cada proyecto pueda indexarse y compartirse de forma independiente.
+[[redirects]]
+  from = "/proyectos/residential-park-nunoa/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/urban-nunoa/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/best-nunoa/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/best-level/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/style-nunoa/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/aldunate-go/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/onetown-santiago/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/hometown-santiago/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/best-too-santiago/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/residential-park-santiago/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/concepto-advance/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/walker-town/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/smart-vicuna/"
+  to = "/proyecto.html"
+  status = 200
+
+[[redirects]]
+  from = "/proyectos/smart-montemar/"
+  to = "/proyecto.html"
+  status = 200
+
 [[redirects]]
   from = "/ventas"
   to = "/Ventas - Corretaje Guzman.html"
@@ -397,3 +469,8 @@
   to = "/.netlify/functions/lead-corredor"
   status = 200
 
+# Cotizaciones de proyectos: guarda el lead antes de abrir el respaldo por WhatsApp.
+[[redirects]]
+  from = "/api/lead-cotizacion"
+  to = "/.netlify/functions/lead-cotizacion"
+  status = 200

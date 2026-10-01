@@ -208,7 +208,7 @@
         ${p.specs?`<p class="pc-specs">${p.specs}</p>`:''}
         <div class="pc-btns">
           ${href?`<a class="btn btn-violet" href="${href}">Ver proyecto</a>`:''}
-          <a class="btn btn-soft" href="https://wa.me/${WAS[0]}?text=${encodeURIComponent('Hola, quiero consultar por '+p.name+' ('+(p.commune||'')+'), desde UF '+nf.format(p.desdeUF)+'. '+(ESTADO[p.entrega]?ESTADO[p.entrega].t+'. ':'')+'¿Me pueden dar más información?')}" target="_blank" rel="noopener">Consultar</a>
+          ${cot?`<a class="btn btn-soft" href="${cot}">Cotizar</a>`:`<a class="btn btn-soft" href="https://wa.me/${WAS[0]}?text=${encodeURIComponent('Hola, quiero consultar por '+p.name+' ('+(p.commune||'')+'), desde UF '+nf.format(p.desdeUF)+'. '+(ESTADO[p.entrega]?ESTADO[p.entrega].t+'. ':'')+'¿Me pueden dar más información?')}" target="_blank" rel="noopener">Consultar</a>`}
         </div>
       </article>`;
     }).join('');

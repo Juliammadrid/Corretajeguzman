@@ -6,11 +6,12 @@
   const $ = (s,r=document)=>r.querySelector(s);
   const nf = new Intl.NumberFormat('es-CL');
   const FICHAS = window.PROYECTO_FICHAS || {};
-  const slug = window.FICHA_SLUG || new URLSearchParams(location.search).get('slug') || (location.hash||'').replace(/^#\/?/,'') || Object.keys(FICHAS)[0];
+  const pathSlug = (location.pathname.match(/^\/proyectos\/([^/]+)\/?$/)||[])[1] || '';
+  const slug = window.FICHA_SLUG || new URLSearchParams(location.search).get('slug') || pathSlug || (location.hash||'').replace(/^#\/?/,'') || Object.keys(FICHAS)[0];
   const p = FICHAS[slug];
   // Estas tres fichas usan recursos editoriales amplios. El bloqueo se limita
   // a la página para evitar que el documento se desplace lateralmente en móvil.
-  const verticalOnlySlugs = new Set(['urban-nunoa','best-nunoa','best-level']);
+  const verticalOnlySlugs = new Set(['urban-nunoa','best-nunoa','best-level','concepto-advance','walker-town','smart-vicuna','smart-montemar']);
   if(verticalOnlySlugs.has(slug)){
     document.documentElement.classList.add('cg-vertical-project');
     document.body.classList.add('cg-vertical-project');
@@ -21,7 +22,7 @@
   const BADGE = { inmediata:{t:'Entrega inmediata',c:'#1f8a5b'}, verde:{t:'Venta en verde',c:'#7c3aed'}, futura:{t:'Entrega futura',c:'#5b7088'}, ultimas:{t:'Últimas unidades',c:'#c0182a'} };
 
   if(!p){
-    document.body.innerHTML = '<div style="max-width:600px;margin:120px auto;text-align:center;font-family:sans-serif;padding:0 20px"><h1 style="font-size:26px">Proyecto no encontrado</h1><p style="color:#666;margin-top:12px">Vuelve a <a href="Proyectos en Venta - Corretaje Guzman.html" style="color:#7c3aed;font-weight:600">Proyectos en venta</a>.</p></div>';
+    document.body.innerHTML = '<div style="max-width:600px;margin:120px auto;text-align:center;font-family:sans-serif;padding:0 20px"><h1 style="font-size:26px">Proyecto no encontrado</h1><p style="color:#666;margin-top:12px">Vuelve a <a href="/proyectos/" style="color:#7c3aed;font-weight:600">Proyectos en venta</a>.</p></div>';
     return;
   }
 
@@ -38,6 +39,31 @@
   })();
 
   document.title = p.name + ' · Corretaje Guzmán';
+  /* Cada ficha conserva una URL canónica propia, incluso cuando la plantilla
+     común se sirve mediante una ruta limpia de Netlify. */
+  (function(){
+    const canonicalPath = p.ficha || ('/proyecto.html?slug='+encodeURIComponent(slug));
+    const canonicalUrl = new URL(canonicalPath, location.origin).href;
+    const setMeta = (property, value) => {
+      let node = document.querySelector('meta[property="'+property+'"]');
+      if(!node){ node=document.createElement('meta'); node.setAttribute('property',property); document.head.appendChild(node); }
+      node.setAttribute('content', value);
+    };
+    const link=document.getElementById('canonical') || document.querySelector('link[rel="canonical"]');
+    if(link) link.href=canonicalUrl;
+    setMeta('og:url',canonicalUrl);
+    const price=p.desdeUF ? String(p.desdeUF) : undefined;
+    const schema={
+      '@context':'https://schema.org', '@type':'RealEstateListing', name:p.name,
+      description:p.lead || ('Proyecto inmobiliario en '+(p.commune||'Santiago')),
+      url:canonicalUrl, image:new URL(p.bannerImg||p.heroImg||'',location.origin).href,
+      address:{'@type':'PostalAddress',streetAddress:p.address||'',addressLocality:p.commune||'',addressCountry:'CL'},
+      offers:price?{'@type':'Offer',price,priceCurrency:'CLF',availability:'https://schema.org/InStock'}:undefined
+    };
+    let node=document.querySelector('script[data-project-schema]');
+    if(!node){ node=document.createElement('script'); node.type='application/ld+json'; node.dataset.projectSchema=''; document.head.appendChild(node); }
+    node.textContent=JSON.stringify(schema).replace(/</g,'\\u003c');
+  })();
   $('#pName').textContent = p.name;
   $('#pAddr').textContent = p.address || p.commune || '';
   if(p.sinTituloDesc){ const dt=$('#descTitle'); if(dt) dt.remove(); } else $('#descTitle').textContent = p.descTitulo || (p.heroFull ? 'El proyecto' : p.name);
@@ -87,7 +113,55 @@
     } else if(bs){ bs.style.backgroundImage="url('"+p.heroImg+"')"; bs.style.backgroundSize="cover"; bs.style.backgroundPosition="center"; }
   }
 
+  // Sello propio de eficiencia energética. Se limita a las fichas que lo
+  // entregan para no alterar la portada de los proyectos existentes.
+  if(p.badgeImg){
+    const hero=document.querySelector('.phero');
+    if(hero && !hero.querySelector('.ph-energy-badge')){
+      const badge=document.createElement('img');
+      badge.className='ph-energy-badge';
+      badge.src=p.badgeImg;
+      badge.alt='Calificación energética '+p.name;
+      hero.appendChild(badge);
+      const badgeCss=document.createElement('style');
+      badgeCss.textContent='.ph-energy-badge{position:absolute;z-index:4;top:26px;right:28px;width:clamp(88px,10vw,148px);height:auto;filter:drop-shadow(0 8px 16px rgba(0,0,0,.24));pointer-events:none}@media(max-width:680px){.ph-energy-badge{top:18px;right:16px;width:94px}}';
+      document.head.appendChild(badgeCss);
+    }
+  }
+
   if(p.heroFull){ const ph=document.querySelector('.phero'); if(ph){ ph.style.height='calc(100vh - 76px - 78px)'; ph.style.minHeight='min(360px, calc(100vh - 154px))'; ph.style.maxHeight='none'; } const t=document.getElementById('pName'); if(t && !p.sinKicker && !document.getElementById('pKicker')) t.insertAdjacentHTML('beforebegin','<div id="pKicker" class="ph-kicker">Concepto</div>'); const heroFullCss=document.createElement('style'); heroFullCss.textContent='.phero .ph-tag{display:none!important}.phero .ph-body{padding-bottom:56px!important}.phero .ph-kicker{font-family:Sora,sans-serif;font-weight:300;font-size:clamp(15px,1.6vw,22px);letter-spacing:.08em;text-transform:uppercase;color:#d9ccff;margin-bottom:6px}.phero h1{font-size:clamp(34px,4.6vw,66px)!important;line-height:1.05!important}.phero .ph-addr{display:flex!important;font-size:clamp(15px,1.7vw,24px)!important;margin-top:12px!important}'; document.head.appendChild(heroFullCss); }
+
+  // Las fichas editoriales con portada completa también entregan sus datos
+  // clave bajo el hero; antes solo aparecían en el modo banner.
+  if(!p.bannerHero && p.stats && p.stats.length && !document.querySelector('.proj-stats')){
+    const hero=document.querySelector('.phero');
+    if(hero){
+      const st=document.createElement('style');
+      st.textContent='.proj-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}.proj-stats .ps{background:#fff;padding:24px 16px;text-align:center}.proj-stats .ps .v{font-family:\'Sora\';font-weight:700;font-size:clamp(15px,1.7vw,20px);letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}.proj-stats .ps .k{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-top:5px}.proj-ctas{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;max-width:900px;margin:20px auto 4px;padding:0 26px}.proj-ctas .pcta{font-family:\'Sora\';font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet-d)}.proj-ctas .psep{color:var(--ink-3);font-weight:700}@media(max-width:680px){.proj-stats{grid-template-columns:1fr 1fr}.proj-stats .ps{padding:18px 12px}}';
+      document.head.appendChild(st);
+      const bar=document.createElement('div');
+      bar.className='proj-stats';
+      bar.innerHTML=p.stats.map(s=>'<div class="ps"><div class="v">'+s.v+'</div><div class="k">'+s.k+'</div></div>').join('');
+      hero.insertAdjacentElement('afterend',bar);
+      if(p.ctas && p.ctas.length){
+        const ctas=document.createElement('div');
+        ctas.className='proj-ctas';
+        ctas.innerHTML=p.ctas.map(c=>'<span class="pcta">'+c+'</span>').join('<span class="psep">·</span>');
+        bar.insertAdjacentElement('afterend',ctas);
+      }
+    }
+  }
+
+  if(!p.bannerHero && p.solucionImg){
+    const desc=document.getElementById('descripcion');
+    if(desc){
+      desc.id='solucion';
+      desc.querySelector('.wrap').innerHTML='<div class="sol-grid"><div class="sol-tx"><h2>'+(p.solucionTitulo||('¿Qué es '+p.name+'?'))+'</h2>'+(p.solucionLead?'<p class="lead">'+p.solucionLead+'</p>':'')+(p.solucionLead2?'<p class="lead" style="margin-top:14px">'+p.solucionLead2+'</p>':'')+'</div><div class="sol-img"><img src="'+p.solucionImg+'" alt="Solución integra '+p.name+'" loading="lazy"></div></div>';
+      const st=document.createElement('style');
+      st.textContent='.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}.sol-tx h2{text-align:left}.sol-tx .lead{text-align:left;margin-left:0;margin-right:0;max-width:none}.sol-img img{display:block;width:100%;height:auto}@media(max-width:860px){.sol-grid{grid-template-columns:1fr;gap:26px}.sol-tx h2{text-align:center}.sol-tx .lead{text-align:center}.sol-img{max-width:520px;margin:0 auto}}';
+      document.head.appendChild(st);
+    }
+  }
   // banner promocional inicial (antes del hero)
   if(p.bannerImg){
     const hero=document.querySelector('.phero');
@@ -278,7 +352,7 @@
       g('tpOri').textContent = t.orientacion||'—';
       g('tpTot').textContent = t.m2tot||'—';
       g('tpPrice').textContent = t.desdeUF ? 'UF '+nf.format(t.desdeUF) : '—';
-      g('tpCta').href = 'Cotizacion - Corretaje Guzman.html?slug='+encodeURIComponent(slug)+'&tipo='+i;
+      g('tpCta').href = '/cotizacion.html?slug='+encodeURIComponent(slug)+'&tipo='+i;
       const br=g('tpBroch');
       if(br){ if(p.brochure){ br.href=p.brochure; br.style.display=''; } else br.style.display='none'; }
     }
@@ -355,7 +429,7 @@
       (p.comunesLead?'<div class="cb-desc"><p>'+p.comunesLead+'</p></div>':'');
     cg.parentElement.insertBefore(band, cg);
     const stB=document.createElement('style');
-    stB.textContent='.comunes-band{background:var(--dark);color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:52px 44px;border-radius:18px;margin-top:10px}.comunes-band h2{font-family:\'Sora\';font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:.02em;text-transform:uppercase;line-height:1.15;color:#fff}.comunes-band .cb-desc p{font-size:15.5px;line-height:1.7;color:rgba(255,255,255,.82)}@media(max-width:860px){.comunes-band{grid-template-columns:1fr;gap:18px;padding:34px 24px;text-align:center;border-radius:0;margin-left:-26px;margin-right:-26px;width:calc(100% + 52px)}}';
+    stB.textContent='.comunes-band{background:var(--dark);color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:52px 44px;border-radius:18px;margin-top:10px}.comunes-band h2{font-family:\'Sora\';font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:.02em;text-transform:uppercase;line-height:1.15;color:#fff}.comunes-band .cb-desc p{font-size:15.5px;line-height:1.7;color:rgba(255,255,255,.82)}@media(max-width:860px){.comunes-band{grid-template-columns:1fr;gap:18px;padding:34px 24px;text-align:center;border-radius:0;margin-left:-18px;margin-right:-18px;width:calc(100% + 36px)}}';
     document.head.appendChild(stB);
   }
   cg.classList.add('comunes-accordion');
@@ -513,7 +587,7 @@
   const wa = p.wa || '56944637680';
   const msg = encodeURIComponent(`Hola, me interesa el proyecto ${p.name} (${p.address||p.commune}), desde UF ${nf.format(p.desdeUF||0)}. ¿Me pueden dar más información?`);
   const href = 'https://wa.me/'+wa+'?text='+msg;
-  const cotHref='Cotizacion - Corretaje Guzman.html?slug='+encodeURIComponent(slug);
+  const cotHref='/cotizacion.html?slug='+encodeURIComponent(slug);
   const cta=$('#ctaWa'); if(cta){cta.href=href;cta.setAttribute('target','_blank');
     if(!document.getElementById('ctaCot')){
       const b=document.createElement('a');

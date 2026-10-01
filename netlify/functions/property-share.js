@@ -36,6 +36,23 @@ function formatClp(value) {
   return `$${new Intl.NumberFormat("es-CL").format(Math.round(number))}`;
 }
 
+function buildDescription(data) {
+  const kind = [data.tipo, data.operation === "venta" ? "en venta" : "en arriendo"].filter(Boolean).join(" ");
+  const location = [data.direccion, data.comuna].filter(Boolean).join(", ");
+  const raw = String(data.price || "").replace(/[^0-9.-]/g, "");
+  const numeric = Number(raw);
+  const currency = String(data.moneda || "").trim().toUpperCase();
+  const price = Number.isFinite(numeric) && numeric > 0
+    ? (currency === "UF" ? `UF ${new Intl.NumberFormat("es-CL").format(Math.round(numeric))}` : formatClp(numeric))
+    : "";
+  return [
+    data.title,
+    kind ? `${kind}${location ? ` en ${location}` : ""}` : location,
+    price ? `Precio ${price}` : "",
+    "Revisa disponibilidad y agenda tu visita con Corretaje Guzmán."
+  ].filter(Boolean).join(". ");
+}
+
 function proxiedImage(src) {
   const value = String(src || "").trim();
   if (!value) return DEFAULT_IMAGE;
@@ -159,13 +176,16 @@ function redirectHtml(id, path) {
 </html>`;
 }
 
-function propertyHtml(data, path) {
+function propertyHtml(data, path, redirectToFicha = true) {
   const title = `${data.title} · Corretaje Guzmán`;
   const desc = buildDescription(data);
   const canonical = `${SITE_ORIGIN}${path}`;
   const fichaUrl = `/ficha?id=${encodeURIComponent(data.id || "")}`;
   const image = proxiedImage(data.image || DEFAULT_IMAGE);
 
+  const redirect = redirectToFicha ? `
+  <meta http-equiv="refresh" content="0;url=${escapeHtml(fichaUrl)}">
+  <script>window.location.replace(${JSON.stringify(fichaUrl)});</script>` : "";
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -202,8 +222,7 @@ function propertyHtml(data, path) {
       availability: "https://schema.org/InStock"
     } : undefined
   }).replace(/</g, "\\u003c")}</script>
-  <meta http-equiv="refresh" content="0;url=${escapeHtml(fichaUrl)}">
-  <script>window.location.replace(${JSON.stringify(fichaUrl)});</script>
+${redirect}
 </head>
 <body>
   <h1>${escapeHtml(data.title)}</h1>
@@ -221,10 +240,13 @@ export default async (request) => {
   const token = process.env.AIRTABLE_API_KEY || process.env.AIRTABLE_PAT;
   const property = await findProperty(id, token);
 
-  return new Response(property ? propertyHtml(property, path) : redirectHtml(id, path), {
+  const userAgent = request.headers.get("user-agent") || "";
+  const isCrawler = /googlebot|bingbot|yandexbot|baiduspider|duckduckbot|slurp|facebookexternalhit|twitterbot|linkedinbot/i.test(userAgent);
+  return new Response(property ? propertyHtml(property, path, !isCrawler) : redirectHtml(id, path), {
     headers: {
       "content-type": "text/html; charset=utf-8",
-      "cache-control": "public, max-age=300"
+      "cache-control": "public, max-age=300",
+      "vary": "User-Agent"
     }
   });
 };

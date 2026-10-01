@@ -29,7 +29,7 @@ window.PROYECTOS = [
     "desdeUF": 2990,
     "entrega": "futura",
     "specs": "38,79 a 94,68 m² · 1, 2 y 3 dorm. · 1 y 2 baños",
-    "detalle": "/proyecto.html?slug=residential-park-nunoa",
+    "detalle": "/proyectos/residential-park-nunoa/",
     "image": "/assets/proy/rp-portada.jpg"
   },
   {
@@ -95,7 +95,7 @@ window.PROYECTOS = [
     "desdeUF": 3692,
     "entrega": "verde",
     "specs": "28,5 a 72,5 m² · 1 y 2 dorm · 1 y 2 baños",
-    "detalle": "/proyecto.html?slug=urban-nunoa",
+    "detalle": "/proyectos/urban-nunoa/",
     "image": "/assets/proy/un-fachada.jpg"
   },
   {
@@ -106,7 +106,7 @@ window.PROYECTOS = [
     "desdeUF": 3913,
     "entrega": "inmediata",
     "specs": "41 a 92,93 m² · 1, 2 y 3 dorm · 1 y 2 baños",
-    "detalle": "/proyecto.html?slug=best-nunoa",
+    "detalle": "/proyectos/best-nunoa/",
     "image": "/assets/proy/bn-hero.jpg"
   },
   {
@@ -117,7 +117,7 @@ window.PROYECTOS = [
     "desdeUF": 5551,
     "entrega": "inmediata",
     "specs": "43,20 a 107,28 m² · 1, 2 y 3 dorm · 1 y 2 baños",
-    "detalle": "/proyecto.html?slug=best-level",
+    "detalle": "/proyectos/best-level/",
     "image": "/assets/proy/bl-hero.jpg"
   },
   {
@@ -128,7 +128,106 @@ window.PROYECTOS = [
     "desdeUF": 7016,
     "entrega": "ultimas",
     "specs": "65,47 a 121,85 m² · 1, 2 y 3 dorm · 1 y 2 baños",
-    "detalle": "/proyecto.html?slug=style-nunoa",
+    "detalle": "/proyectos/style-nunoa/",
     "image": "/assets/proy/sn-terminaciones.jpg"
+  },
+  {
+    "slug": "aldunate-go",
+    "name": "Aldunate GO",
+    "address": "Aldunate 630, Santiago Centro",
+    "commune": "Santiago Centro",
+    "desdeUF": 2666,
+    "entrega": "futura",
+    "specs": "28,11 a 55,58 m² · Estudio, 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/aldunate-go/",
+    "image": "/assets/proy/ag-hero.jpg"
+  },
+  {
+    "slug": "onetown-santiago",
+    "name": "Onetown Santiago",
+    "address": "Lord Cochrane 347, Santiago Centro",
+    "commune": "Santiago Centro",
+    "desdeUF": 3450,
+    "entrega": "inmediata",
+    "specs": "37,43 a 64,66 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/onetown-santiago/",
+    "image": "/assets/proy/ot-kitchen.jpg"
+  },
+  {
+    "slug": "hometown-santiago",
+    "name": "Hometown Santiago",
+    "address": "Santa Elena 1342, Santiago Centro",
+    "commune": "Santiago Centro",
+    "desdeUF": 3800,
+    "entrega": "ultimas",
+    "specs": "39,56 a 69,16 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/hometown-santiago/",
+    "image": "/assets/proy/ht-hero.jpg"
+  },
+  {
+    "slug": "best-too-santiago",
+    "name": "Best Too Santiago",
+    "address": "San Diego 376, Santiago Centro",
+    "commune": "Santiago Centro",
+    "desdeUF": 2800,
+    "entrega": "inmediata",
+    "specs": "37,25 a 67,53 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/best-too-santiago/",
+    "image": "/assets/proy/bt-hero.jpg"
+  },
+  {
+    "slug": "residential-park-santiago",
+    "name": "Residential Park Santiago",
+    "address": "Santa Elena 2140, San Joaquín Norte",
+    "commune": "San Joaquín",
+    "desdeUF": 2990,
+    "entrega": "inmediata",
+    "specs": "41,02 a 82 m² · 1, 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/residential-park-santiago/",
+    "image": "/assets/proy/rs-depto.jpg"
+  },
+  {
+    "slug": "concepto-advance",
+    "name": "Concepto Advance",
+    "address": "Darío Urzúa 1717, Providencia",
+    "commune": "Providencia",
+    "desdeUF": 12700,
+    "entrega": "ultimas",
+    "specs": "76,86 a 136,46 m² · 2 y 3 dorm · 2 y 3 baños",
+    "detalle": "/proyectos/concepto-advance/",
+    "image": "/assets/proy/ca-hero.jpg"
+  },
+  {
+    "slug": "walker-town",
+    "name": "Walker Town",
+    "address": "Walker Martínez 725, La Florida",
+    "commune": "La Florida",
+    "desdeUF": 2837,
+    "entrega": "inmediata",
+    "specs": "35,8 a 68,37 m² · 1 y 2 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/walker-town/",
+    "image": "/assets/proy/wt-hero.jpg"
+  },
+  {
+    "slug": "smart-vicuna",
+    "name": "Smart Vicuña",
+    "address": "Vicuña Mackenna 3897, San Joaquín Norte",
+    "commune": "San Joaquín",
+    "desdeUF": 3075,
+    "entrega": "inmediata",
+    "specs": "40,12 a 79,87 m² · 1, 2 y 3 dorm · 1 y 2 baños",
+    "detalle": "/proyectos/smart-vicuna/",
+    "image": "/assets/proy/sv-hero.jpg"
+  },
+  {
+    "slug": "smart-montemar",
+    "name": "Smart Montemar",
+    "address": "Av. Francisco Soza Cousiño 455, Concón",
+    "commune": "Concón",
+    "desdeUF": 5029,
+    "entrega": "inmediata",
+    "specs": "63,68 a 106,89 m² · 2 y 3 dorm · 2 baños",
+    "detalle": "/proyectos/smart-montemar/",
+    "image": "/assets/proy/sm-portada.jpg"
   }
 ];
