@@ -147,7 +147,7 @@ exports.handler = async function (event) {
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=120" },
-      body: JSON.stringify({ properties: props })
+      body: JSON.stringify({ properties: props, complete: settled.every(s => s.status === "fulfilled") })
     };
   } catch (e) {
     return { statusCode: 502, body: JSON.stringify({ error: String(e.message || e) }) };

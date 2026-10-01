@@ -61,6 +61,7 @@ function setMeta(name, content, property) {
 }
 
 function updateSeo(p) {
+  if (document.getElementById('property-seo-data')) return;
   const canonical = GZ.propertyCanonicalUrl ? GZ.propertyCanonicalUrl(p) : location.href;
   let link = document.head.querySelector('link[rel="canonical"]');
   if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
@@ -77,7 +78,7 @@ function updateSeo(p) {
 }
 
 function renderFicha(p) {
-  document.title = `${p.title} · Corretaje Guzmán`;
+  if (!document.getElementById('property-seo-data')) document.title = `${p.title} · Corretaje Guzmán`;
   updateSeo(p);
   $('#crumbOp').textContent = p.operation === 'venta' ? 'En Venta' : 'Arriendos';
   $('#crumbCom').textContent = p.commune || 'Propiedades';
