@@ -21,6 +21,7 @@
     };
   };
   const P=(CATALOGO.length?CATALOGO:Object.keys(FICHAS).map(slug=>({slug})))
+    .filter(p=>p.activa!==false)
     .map(normalizaProyecto)
     .filter(p=>p.desdeUF>0&&p.detalle);
   const CFG=window.SIM_CONFIG||{};
@@ -125,9 +126,10 @@
     /* clasificar proyectos */
     const alcanza=[], conPie=[], cerca=[];
     P.forEach(p=>{
-      const v=p.desdeUF||0; if(!v) return;
+      const tipos=(window.TIPOLOGIAS_CONFIRMADAS?.[p.slug]||[]).map((t,i)=>({...t,i}));
+      const v=tipos.length?Math.min(...tipos.map(t=>t.desdeUF)):(p.desdeUF||0); if(!v) return;
       const pieNec=v*UF_()*(1-pct);
-      const item={...p, pieNec, div:dividendoDe(v*UF_()*pct, tasa, plazo), cuotaPie:cuotaPieDe(v)};
+      const item={...p, desdeUF:v, tipos, pieNec, div:dividendoDe(v*UF_()*pct, tasa, plazo), cuotaPie:cuotaPieDe(v)};
       if(topeUF>0 && v<=topeUF) alcanza.push(item);
       else if(v<=topeConPieFinUF) conPie.push(item);
       else if(v<=topeConPieFinUF*1.25) cerca.push(item);
@@ -144,7 +146,7 @@
         ? 'Tus '+money(ahorro)+' cubren al contado el pie de una vivienda de '+uf(topeUF)+'. Por tu renta podrías llegar hasta '+uf(topeConPieFinUF)+' si la inmobiliaria permite financiar el saldo de '+money(saldoPieFinanciable)+' en '+mp+' cuotas de aprox. '+money(cuotaSaldoPie)+' al mes.'
         : 'Tu tope hoy lo define tu capacidad de crédito.';
 
-    ultimo={ingreso,div,credito,tope,topeUF,ahorro,plazo,destino,pct,alcanza:alcanza.length,conPie:conPie.length};
+    ultimo={ingreso,div,credito,tope,topeUF,topeConPieFinUF,ahorro,plazo,destino,pct,tasa,alcanza:alcanza.length,conPie:conPie.length};
 
     $('#nAlcanza').textContent=alcanza.length;
     $('#nConPie').textContent=conPie.length;
@@ -182,6 +184,30 @@
     ultimas:{t:'Últimas unidades',c:'est-ult'}
   };
 
+  function tiposHtml(p){
+    const T=p.tipos||[]; if(!T.length) return '';
+    const u=ultimo;
+    const rows=T.slice().sort((a,b)=>a.desdeUF-b.desdeUF).map(t=>{
+      const propio=t.desdeUF<=u.topeUF;
+      const porRenta=t.desdeUF<=u.topeConPieFinUF;
+      const status=propio?'Pie cubierto':porRenta?'Requiere financiar pie':'Sobre tu rango actual';
+      const saldo=Math.max(0,t.desdeUF*UF_()*(1-u.pct)-u.ahorro);
+      const div=dividendoDe(t.desdeUF*UF_()*u.pct,u.tasa,u.plazo);
+      const rentaFaltante=Math.max(0,div/(CFG.cargaMax||0.25)-u.ingreso);
+      const info=propio?'Tu ahorro cubre el pie estimado.':
+        'Pie pendiente: '+money(saldo)+(porRenta?'. Si se permite pagarlo en '+(CFG.mesesPie||24)+' cuotas: '+money(saldo/(CFG.mesesPie||24))+'/mes.':'. Renta adicional referencial: '+money(rentaFaltante)+'/mes.');
+      const href='/cotizacion.html?slug='+encodeURIComponent(p.slug)+'&tipo='+t.i+'&planta='+encodeURIComponent(t.id);
+      return `<a class="sim-tipo" href="${href}" data-plan="${t.id}">
+        <img src="${t.plano}" alt="Planta ${t.planta} · ${t.nombre}" width="88" height="88" loading="lazy">
+        <span><strong>${t.nombre} · Planta ${String(t.planta).split(':')[0]}</strong>
+          <span>${t.m2tot} · ${t.orientacion}</span><b>${uf(t.desdeUF)}</b>
+          <span class="sim-tipo-status">${status}</span><span>${info}</span>
+          <span>Dividendo estimado: ${money(div)}/mes · Cotizar esta planta →</span></span></a>`;
+    }).join('');
+    const n=T.filter(t=>t.desdeUF<=u.topeConPieFinUF).length;
+    return `<details class="sim-tipos"${n?' open':''}><summary>${T.length} plantas · ${n} dentro de tu rango por renta</summary>${rows}<p>Estimación, no aprobación de crédito. El saldo del pie y sus cuotas requieren confirmación de la inmobiliaria; no están incluidos en el dividendo. Disponibilidad y precio final sujetos a confirmación.</p></details>`;
+  }
+
   function render(sel, arr, tipo){
     const wrap=$(sel); if(!wrap) return;
     wrap.innerHTML=arr.map(p=>{
@@ -206,6 +232,7 @@
           <div><span class="k">${tipo==='conpie'?'Cuota de pie':'Pie estimado'}</span><b>${tipo==='conpie'?money(p.cuotaPie)+'/mes':money(p.pieNec)}</b></div>
         </div>
         ${p.specs?`<p class="pc-specs">${p.specs}</p>`:''}
+        ${tiposHtml(p)}
         <div class="pc-btns">
           ${href?`<a class="btn btn-violet" href="${href}">Ver proyecto</a>`:''}
           ${cot?`<a class="btn btn-soft" href="${cot}">Cotizar</a>`:`<a class="btn btn-soft" href="https://wa.me/${WAS[0]}?text=${encodeURIComponent('Hola, quiero consultar por '+p.name+' ('+(p.commune||'')+'), desde UF '+nf.format(p.desdeUF)+'. '+(ESTADO[p.entrega]?ESTADO[p.entrega].t+'. ':'')+'¿Me pueden dar más información?')}" target="_blank" rel="noopener">Consultar</a>`}

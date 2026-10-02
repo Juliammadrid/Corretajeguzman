@@ -35,7 +35,7 @@
   function tiposOf(g){
     const f=g._f||{};
     if(f.tipologiasDisponibles&&f.tipologiasDisponibles.length) return f.tipologiasDisponibles.map(t=>({
-      nombre:t.nombre, planta:t.planta?String(t.planta).split(':')[0].trim():'', plano:t.plano,
+      id:t.id, nombre:t.nombre, planta:t.planta?String(t.planta).split(':')[0].trim():'', plano:t.plano,
       m2:(t.m2tot||t.m2int||'').replace(' aprox',''), orient:t.orientacion||'', uf:t.desdeUF||0
     }));
     if(f.tipologias&&f.tipologias.length) return f.tipologias.map(t=>({nombre:t.nombre, planta:'', plano:'', m2:(t.m2tot||t.m2int||'').replace(' aprox',''), orient:'', uf:t.desdeUF||0}));
@@ -120,6 +120,9 @@
       ['Reserva',money(CFG.reserva||100000)]
     ].map(r=>'<div class="l"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('');
     $('#accHl').innerHTML='<b>Pie financiado:</b> paga el pie en hasta '+meses+' cuotas de <b>'+money(pie/meses)+'</b> directamente con la inmobiliaria.'+((cur._f&&cur._f.subsidioTasa)?' Además tiene <b>subsidio a la tasa</b>.':'');
+    if(window.TIPOLOGIAS_CONFIRMADAS?.[cur._fk||cur.slug]){
+      $('#accHl').innerHTML='<b>Saldo del pie:</b> confirma si la inmobiliaria permite financiarlo. Sin considerar ahorro propio, repartir este pie en '+meses+' cuotas daría <b>'+money(pie/meses)+'/mes</b>, adicionales al dividendo. Es un escenario referencial, no una condición confirmada de esta planta.';
+    }
     $('#accNt').textContent='Referencial: UF '+money(UF)+', tasa '+String(CFG.tasaAnual||4.3).replace('.',',')+'% anual a '+(CFG.plazoAnios||25)+' años y dividendo máximo del '+Math.round((CFG.cargaMax||0.25)*100)+'% de la renta. Sujeto a evaluación bancaria.';
     if(window.lucide) lucide.createIcons();
   }
@@ -133,6 +136,8 @@
     const u=new URL(location.href);
     u.searchParams.set('slug',cur._fk||cur.slug);
     if(curTipo>=0) u.searchParams.set('tipo',curTipo); else u.searchParams.delete('tipo');
+    const id=tiposOf(cur)[curTipo]?.id;
+    if(id) u.searchParams.set('planta',id); else u.searchParams.delete('planta');
     try{ history.replaceState(null,'',u); }catch(e){}
   }
   function pick(g,tipo){
@@ -262,6 +267,7 @@
   /* ---------- inicio ---------- */
   const qs=new URLSearchParams(location.search), qSlug=qs.get('slug');
   const start=(qSlug&&GRID.find(x=>x._fk===qSlug||x.slug===qSlug))||GRID.find(x=>tiposOf(x).length)||GRID[0];
-  pick(start,parseInt(qs.get('tipo')||'-1',10));
+  const planIndex=qs.has('planta')?tiposOf(start).findIndex(t=>t.id===qs.get('planta')):-1;
+  pick(start,planIndex>=0?planIndex:parseInt(qs.get('tipo')||'-1',10));
   if(window.lucide) lucide.createIcons();
 })();
