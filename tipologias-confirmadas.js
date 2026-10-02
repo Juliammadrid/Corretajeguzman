@@ -153,6 +153,62 @@ window.TIPOLOGIAS_CONFIRMADAS = {
     { nombre:"3 dormitorios + 2 baños", planta:"B: Torre A 311 al 1611",  plano:"/assets/proy/sv-plano-3d2b-b.jpg", m2int:"72,99 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"6,88 m² aprox", orientacion:"Norte", m2tot:"79,87 m² aprox", desdeUF:5302 }
   ]
 
+  ,
+  /* -------- New Life Macul · slug: new-life-macul --------
+     Estado: COMPLETO (5 plantas: 2D+1B A, 2D+2B B·C·D, 3D+2B E). */
+  "new-life-macul": [
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 1014 al 1714", plano:"/assets/proy/nlm-plano-2d1b-a.jpg", m2int:"42,0 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"5,4 m² aprox", orientacion:"Poniente", m2tot:"47,4 m² aprox", desdeUF:4191 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 1004 al 1504", plano:"/assets/proy/nlm-plano-2d2b-b.jpg", m2int:"48,72 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"9,61 m² aprox", orientacion:"Poniente", m2tot:"58,33 m² aprox", desdeUF:4239 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 1008 al 1808", plano:"/assets/proy/nlm-plano-2d2b-c.jpg", m2int:"61,89 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,16 m² aprox", orientacion:"Sur",      m2tot:"69,05 m² aprox", desdeUF:4895 },
+    { nombre:"2 dormitorios + 2 baños", planta:"D: 309 al 1009", plano:"/assets/proy/nlm-plano-2d2b-d.jpg", m2int:"67,63 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,76 m² aprox", orientacion:"Norte",    m2tot:"71,39 m² aprox", desdeUF:5299 },
+    { nombre:"3 dormitorios + 2 baños", planta:"E: 205 al 1005", plano:"/assets/proy/nlm-plano-3d2b-e.jpg", m2int:"79,48 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"6,78 m² aprox", orientacion:"Norte",    m2tot:"86,26 m² aprox", desdeUF:6246 }
+  ],
+
+  /* -------- Smart La Florida · slug: smart-la-florida --------
+     Estado: COMPLETO (3 plantas: 1D+1B B, 2D+1B A, 2D+2B A). */
+  "smart-la-florida": [
+    { nombre:"1 dormitorio + 1 baño", planta:"B: 817 al 1117", plano:"/assets/proy/slf-plano-1d-b.jpg", m2int:"30,40 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"5,26 m² aprox", orientacion:"Sur", m2tot:"35,66 m² aprox", desdeUF:2937 },
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 301 al 1101", plano:"/assets/proy/slf-plano-2d1b-a.jpg", m2int:"43,07 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"2,30 m² aprox", orientacion:"Sur", m2tot:"45,37 m² aprox", desdeUF:3460 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 204 al 1504", plano:"/assets/proy/slf-plano-2d2b-a.jpg", m2int:"50,49 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,24 m² aprox", orientacion:"Norte", m2tot:"52,73 m² aprox", desdeUF:3692 }
+  ],
+
+  /* -------- Walker Town (La Florida) · slug: walker-town --------
+     Estado: COMPLETO (4 plantas: 1D+1B A·B, 2D+2B A·C). */
+  "walker-town": [
+    { nombre:"1 dormitorio + 1 baño", planta:"A: 701 al 1401", plano:"/assets/proy/wt-plano-1d-a.jpg", m2int:"32,45 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"3,38 m² aprox", orientacion:"Sur", m2tot:"35,83 m² aprox", desdeUF:2939 },
+    { nombre:"1 dormitorio + 1 baño", planta:"B: 510 al 1410", plano:"/assets/proy/wt-plano-1d-b.jpg", m2int:"32,80 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"3,50 m² aprox", orientacion:"Sur", m2tot:"36,3 m² aprox",  desdeUF:2892 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 209 al 1009", plano:"/assets/proy/wt-plano-2d2b-a.jpg", m2int:"60,15 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"8,06 m² aprox", orientacion:"Norte", m2tot:"68,21 m² aprox", desdeUF:4942 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 405 al 1005", plano:"/assets/proy/wt-plano-2d2b-c.jpg", m2int:"52,09 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,32 m² aprox", orientacion:"Sur",   m2tot:"55,41 m² aprox", desdeUF:4358 }
+  ],
+
+  /* -------- Concepto Advance (Providencia) · slug: concepto-advance --------
+     Estado: COMPLETO (única disponible: 3D+3B A). */
+  "concepto-advance": [
+    { nombre:"3 dormitorios + 3 baños", planta:"A: 207", plano:"/assets/proy/ca-plano-3d3b-a.jpg", m2int:"113,64 m² aprox", dormBano:"3 dorm + 3 baños", terraza:"22,26 m² aprox", orientacion:"Norte", m2tot:"135,9 m² aprox", desdeUF:13148 }
+  ],
+
+  /* -------- Urban Life (Las Condes) · slug: urban-life --------
+     Estado: COMPLETO (9 plantas: 1D+1B A·B·C, 2D+2B A·B·C·D·E·F). */
+  "urban-life": [
+    { nombre:"1 dormitorio + 1 baño", planta:"A: 501 al 701", plano:"/assets/proy/ul-plano-1d-a.jpg", m2int:"41,00 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"3,78 m² aprox", orientacion:"Poniente",   m2tot:"44,78 m² aprox", desdeUF:6117 },
+    { nombre:"1 dormitorio + 1 baño", planta:"B: 312 al 712", plano:"/assets/proy/ul-plano-1d-b.jpg", m2int:"40,64 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"5,72 m² aprox", orientacion:"Sur",        m2tot:"46,36 m² aprox", desdeUF:6078 },
+    { nombre:"1 dormitorio + 1 baño", planta:"C: 105",        plano:"/assets/proy/ul-plano-1d-c.jpg", m2int:"40,50 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"5,72 m² aprox + jardín 26,63 m²", orientacion:"Nororiente", m2tot:"46,22 m² aprox", desdeUF:7829 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 302 al 802", plano:"/assets/proy/ul-plano-2d2b-a.jpg", m2int:"57,89 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,56 m² aprox", orientacion:"Poniente", m2tot:"65,45 m² aprox", desdeUF:7591 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 208 al 508", plano:"/assets/proy/ul-plano-2d2b-b.jpg", m2int:"56,01 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"14,22 m² aprox", orientacion:"Oriente", m2tot:"70,23 m² aprox", desdeUF:7982 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 207 al 807", plano:"/assets/proy/ul-plano-2d2b-c.jpg", m2int:"56,01 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"14,22 m² aprox", orientacion:"Oriente", m2tot:"70,23 m² aprox", desdeUF:8020 },
+    { nombre:"2 dormitorios + 2 baños", planta:"D: 213 al 713", plano:"/assets/proy/ul-plano-2d2b-d.jpg", m2int:"61,97 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"10,80 m² aprox", orientacion:"Poniente", m2tot:"72,77 m² aprox", desdeUF:8240 },
+    { nombre:"2 dormitorios + 2 baños", planta:"E: 210 al 710", plano:"/assets/proy/ul-plano-2d2b-e.jpg", m2int:"70,52 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"19,88 m² aprox", orientacion:"Oriente", m2tot:"90,4 m² aprox", desdeUF:9517 },
+    { nombre:"2 dormitorios + 2 baños", planta:"F: 206 al 706", plano:"/assets/proy/ul-plano-2d2b-f.jpg", m2int:"70,52 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"19,88 m² aprox", orientacion:"Nororiente", m2tot:"90,4 m² aprox", desdeUF:10660 }
+  ],
+
+  /* -------- Smart Montemar (Concón) · slug: smart-montemar --------
+     Estado: COMPLETO (4 plantas: 2D+2B A·B·C, 3D+2B A). */
+  "smart-montemar": [
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 404 al 1604", plano:"/assets/proy/sm-plano-2d2b-a.jpg", m2int:"53,60 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"10,08 m² aprox", orientacion:"Oriente", m2tot:"63,68 m² aprox", desdeUF:5029 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 205 al 1605", plano:"/assets/proy/sm-plano-2d2b-b.jpg", m2int:"62,72 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"20,08 m² aprox", orientacion:"Oriente", m2tot:"82,8 m² aprox",  desdeUF:6015 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 402 al 1602", plano:"/assets/proy/sm-plano-2d2b-c.jpg", m2int:"66,23 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"12,36 m² aprox", orientacion:"Norte",   m2tot:"78,59 m² aprox", desdeUF:6065 },
+    { nombre:"3 dormitorios + 2 baños", planta:"A: 203 al 1603", plano:"/assets/proy/sm-plano-3d2b-a.jpg", m2int:"80,67 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"26,22 m² aprox", orientacion:"Oriente", m2tot:"106,89 m² aprox", desdeUF:7454 }
+  ]
 };
 
 /* ---- Aplica las tipologías confirmadas sobre las fichas ----
