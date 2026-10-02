@@ -354,7 +354,7 @@
       g('tpPrice').textContent = t.desdeUF ? 'UF '+nf.format(t.desdeUF) : '—';
       g('tpCta').href = '/cotizacion.html?slug='+encodeURIComponent(slug)+'&tipo='+i+(t.id?'&planta='+encodeURIComponent(t.id):'');
       const br=g('tpBroch');
-      if(br){ if(p.brochure){ br.href=p.brochure; br.style.display=''; } else br.style.display='none'; }
+      if(br){ if(slug==='all-nunoa-2') br.remove(); else if(p.brochure){ br.href=p.brochure; br.style.display=''; } else br.style.display='none'; }
     }
     document.getElementById('tselPlanta').addEventListener('change',e=>setPlanta(+e.target.value));
     const tsT=document.getElementById('tselTipo'), tsP=document.getElementById('tselPlanta');

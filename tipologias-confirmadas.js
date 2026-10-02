@@ -87,6 +87,72 @@ window.TIPOLOGIAS_CONFIRMADAS = {
     { nombre:"2 dormitorios + 2 baños", planta:"A: 215 al 1015", plano:"/assets/proy/ht-plano-2d2b-a.jpg", m2int:"54,79 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,94 m² aprox", orientacion:"Oriente", m2tot:"57,73 m² aprox", desdeUF:3800 }
   ]
 
+,
+  /* -------- Aldunate GO · slug: aldunate-go --------
+     Estado: COMPLETO (11 plantas: 1D+1B A–F, 2D+1B A·B, 2D+2B A·B·C). */
+  "aldunate-go": [
+    { nombre:"1 dormitorio + 1 baño", planta:"A: 202 al 902 · Estudio", plano:"/assets/proy/agt-plano-1d-a.png", m2int:"28,15 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"0 m² aprox",    orientacion:"Oriente",  m2tot:"28,15 m² aprox", desdeUF:2666 },
+    { nombre:"1 dormitorio + 1 baño", planta:"B: 311 al 911 · Estudio", plano:"/assets/proy/agt-plano-1d-b.png", m2int:"28,11 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"0 m² aprox",    orientacion:"Norte",    m2tot:"28,11 m² aprox", desdeUF:2718 },
+    { nombre:"1 dormitorio + 1 baño", planta:"C: 313 al 813",           plano:"/assets/proy/agt-plano-1d-c.png", m2int:"35,05 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"6,16 m² aprox", orientacion:"Norte",    m2tot:"41,21 m² aprox", desdeUF:3211 },
+    { nombre:"1 dormitorio + 1 baño", planta:"D: 226 al 926",           plano:"/assets/proy/agt-plano-1d-d.png", m2int:"33,50 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,88 m² aprox", orientacion:"Oriente",  m2tot:"36,38 m² aprox", desdeUF:2924 },
+    { nombre:"1 dormitorio + 1 baño", planta:"E: 308 al 908",           plano:"/assets/proy/agt-plano-1d-e.png", m2int:"33,59 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,88 m² aprox", orientacion:"Poniente", m2tot:"36,47 m² aprox", desdeUF:2966 },
+    { nombre:"1 dormitorio + 1 baño", planta:"F: 324 al 924",           plano:"/assets/proy/agt-plano-1d-f.png", m2int:"33,59 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,88 m² aprox", orientacion:"Poniente", m2tot:"36,47 m² aprox", desdeUF:2966 },
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 317 al 917",          plano:"/assets/proy/agt-plano-2d1b-a.png", m2int:"43,40 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"7,00 m² aprox", orientacion:"Sur",      m2tot:"50,4 m² aprox",  desdeUF:3714 },
+    { nombre:"2 dormitorios + 1 baño", planta:"B: 320 al 920",          plano:"/assets/proy/agt-plano-2d1b-b.png", m2int:"42,23 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"5,66 m² aprox", orientacion:"Poniente", m2tot:"47,89 m² aprox", desdeUF:3639 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 310 al 910",         plano:"/assets/proy/agt-plano-2d2b-a.png", m2int:"48,72 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,36 m² aprox", orientacion:"Norte",   m2tot:"51,08 m² aprox", desdeUF:3928 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 316 al 916",         plano:"/assets/proy/agt-plano-2d2b-b.png", m2int:"52,74 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,84 m² aprox", orientacion:"Norte",   m2tot:"55,58 m² aprox", desdeUF:4097 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 319 al 919",         plano:"/assets/proy/agt-plano-2d2b-c.png", m2int:"51,03 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,24 m² aprox", orientacion:"Sur",     m2tot:"54,27 m² aprox", desdeUF:3987 }
+  ],
+
+  /* -------- Onetown Santiago · slug: onetown-santiago --------
+     Estado: 2D+1B A y 2D+2B A·B·C·D confirmadas. */
+  "onetown-santiago": [
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 212 al 912", plano:"/assets/proy/ot-plano-2d1b-a.jpg", m2int:"43,18 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"3,02 m² aprox", orientacion:"Poniente", m2tot:"46,2 m² aprox", desdeUF:3450 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 313 al 913", plano:"/assets/proy/ot-plano-2d2b-a.jpg", m2int:"54,07 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,58 m² aprox", orientacion:"Oriente",  m2tot:"57,65 m² aprox", desdeUF:3625 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 316 al 916", plano:"/assets/proy/ot-plano-2d2b-b.jpg", m2int:"52,09 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,52 m² aprox", orientacion:"Oriente",  m2tot:"54,61 m² aprox", desdeUF:3625 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 317 al 917", plano:"/assets/proy/ot-plano-2d2b-c.jpg", m2int:"52,29 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"3,04 m² aprox", orientacion:"Poniente", m2tot:"55,33 m² aprox", desdeUF:3625 },
+    { nombre:"2 dormitorios + 2 baños", planta:"D: 208 al 908", plano:"/assets/proy/ot-plano-2d2b-d.jpg", m2int:"57,15 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,85 m² aprox", orientacion:"Norte",    m2tot:"65 m² aprox",    desdeUF:4395 }
+  ],
+
+  /* -------- Best Too Santiago · slug: best-too-santiago --------
+     Estado: COMPLETO (5 plantas: 1D+1B A, 2D+1B A, 2D+2B A·B·C). */
+  "best-too-santiago": [
+    { nombre:"1 dormitorio + 1 baño", planta:"A: 401", plano:"/assets/proy/btt-plano-1d-a.jpg", m2int:"34,28 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"2,97 m² aprox", orientacion:"Norte", m2tot:"37,25 m² aprox", desdeUF:2800 },
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 614 al 914", plano:"/assets/proy/btt-plano-2d1b-a.jpg", m2int:"42,95 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"2,97 m² aprox", orientacion:"Oriente", m2tot:"45,92 m² aprox", desdeUF:3490 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 409 al 709", plano:"/assets/proy/btt-plano-2d2b-a.jpg", m2int:"56,69 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,84 m² aprox", orientacion:"Sur",      m2tot:"64,53 m² aprox", desdeUF:4450 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 415 al 815", plano:"/assets/proy/btt-plano-2d2b-b.jpg", m2int:"50,89 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"5,24 m² aprox", orientacion:"Poniente", m2tot:"56,13 m² aprox", desdeUF:3550 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 309 al 809", plano:"/assets/proy/btt-plano-2d2b-c.jpg", m2int:"59,69 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"7,84 m² aprox", orientacion:"Sur",      m2tot:"67,53 m² aprox", desdeUF:4450 }
+  ],
+
+  /* -------- Best Site Santiago · slug: best-site --------
+     Estado: COMPLETO (disponibles: 2D+1B C, 2D+2B D). */
+  "best-site": [
+    { nombre:"2 dormitorios + 1 baño", planta:"C: 702 al 1402", plano:"/assets/proy/bs-plano-2d1b-c.jpg", m2int:"41,87 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"5,7 m² aprox", orientacion:"Sur", m2tot:"47,57 m² aprox", desdeUF:3393 },
+    { nombre:"2 dormitorios + 2 baños", planta:"D: 315 al 1315", plano:"/assets/proy/bs-plano-2d2b-d.jpg", m2int:"49,78 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"2,86 m² aprox", orientacion:"Poniente", m2tot:"52,64 m² aprox", desdeUF:3588 }
+  ],
+
+  /* -------- Residential Park Santiago · slug: residential-park-santiago --------
+     Estado: COMPLETO (6 plantas: 1D+1B B, 2D+1B A, 2D+2B A·B·C, 3D+2B A). */
+  "residential-park-santiago": [
+    { nombre:"1 dormitorio + 1 baño", planta:"B: 504 al 1904", plano:"/assets/proy/rps-plano-1d-b.jpg", m2int:"37,90 m² aprox", dormBano:"1 dorm + 1 baño", terraza:"3,12 m² aprox", orientacion:"Poniente", m2tot:"41,02 m² aprox", desdeUF:3544 },
+    { nombre:"2 dormitorios + 1 baño", planta:"A: 201 al 1901", plano:"/assets/proy/rps-plano-2d1b-a.jpg", m2int:"44,31 m² aprox", dormBano:"2 dorm + 1 baño", terraza:"6,00 m² aprox", orientacion:"Oriente", m2tot:"50,31 m² aprox", desdeUF:4093 },
+    { nombre:"2 dormitorios + 2 baños", planta:"A: 205 al 1905", plano:"/assets/proy/rps-plano-2d2b-a.jpg", m2int:"52,49 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"9,86 m² aprox", orientacion:"Poniente", m2tot:"62,35 m² aprox", desdeUF:3968 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: 202 al 1902", plano:"/assets/proy/rps-plano-2d2b-b.jpg", m2int:"54,43 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,16 m² aprox", orientacion:"Oriente",  m2tot:"60,59 m² aprox", desdeUF:4013 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: 209 al 1909", plano:"/assets/proy/rps-plano-2d2b-c.jpg", m2int:"63,29 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,70 m² aprox", orientacion:"Oriente",  m2tot:"69,99 m² aprox", desdeUF:4489 },
+    { nombre:"3 dormitorios + 2 baños", planta:"A: 208 al 1908", plano:"/assets/proy/rps-plano-3d2b-a.jpg", m2int:"75,02 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"6,98 m² aprox", orientacion:"Poniente", m2tot:"82 m² aprox", desdeUF:5093 }
+  ],
+
+  /* -------- Smart Vicuña (San Joaquín) · slug: smart-vicuna --------
+     Estado: COMPLETO (6 plantas: 2D+2B A·B·C·D, 3D+2B A·B). */
+  "smart-vicuna": [
+    { nombre:"2 dormitorios + 2 baños", planta:"A: Torre B 1607",         plano:"/assets/proy/sv-plano-2d2b-a.jpg", m2int:"54,26 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"5,55 m² aprox", orientacion:"Norte", m2tot:"59,81 m² aprox", desdeUF:3995 },
+    { nombre:"2 dormitorios + 2 baños", planta:"B: Torre A 1205 al 1605", plano:"/assets/proy/sv-plano-2d2b-b.jpg", m2int:"54,24 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"5,56 m² aprox", orientacion:"Norte", m2tot:"59,8 m² aprox",  desdeUF:4063 },
+    { nombre:"2 dormitorios + 2 baños", planta:"C: Torre B 1512",         plano:"/assets/proy/sv-plano-2d2b-c.jpg", m2int:"60,72 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,70 m² aprox", orientacion:"Sur",   m2tot:"67,42 m² aprox", desdeUF:4483 },
+    { nombre:"2 dormitorios + 2 baños", planta:"D: Torre A 1612",         plano:"/assets/proy/sv-plano-2d2b-d.jpg", m2int:"61,06 m² aprox", dormBano:"2 dorm + 2 baños", terraza:"6,82 m² aprox", orientacion:"Sur",   m2tot:"67,88 m² aprox", desdeUF:4416 },
+    { nombre:"3 dormitorios + 2 baños", planta:"A: Torre B 1211 al 1511", plano:"/assets/proy/sv-plano-3d2b-a.jpg", m2int:"72,55 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"6,70 m² aprox", orientacion:"Norte", m2tot:"79,25 m² aprox", desdeUF:5257 },
+    { nombre:"3 dormitorios + 2 baños", planta:"B: Torre A 311 al 1611",  plano:"/assets/proy/sv-plano-3d2b-b.jpg", m2int:"72,99 m² aprox", dormBano:"3 dorm + 2 baños", terraza:"6,88 m² aprox", orientacion:"Norte", m2tot:"79,87 m² aprox", desdeUF:5302 }
+  ]
+
 };
 
 /* ---- Aplica las tipologías confirmadas sobre las fichas ----
@@ -101,7 +167,7 @@ window.TIPOLOGIAS_CONFIRMADAS = {
   Object.keys(C).forEach(function(slug){
     var T = C[slug]; if(!T || !T.length) return;
     T.forEach(function(t){
-      t.id = t.plano.split('/').pop().replace(/\.jpg$/i, '');
+      t.id = t.plano.split('/').pop().replace(/\.(jpg|png)$/i, '');
       var partes = t.nombre.match(/(\d+) dormitorio.*?(\d+) baño/);
       t.dormitorios = partes ? Number(partes[1]) : null;
       t.banos = partes ? Number(partes[2]) : null;

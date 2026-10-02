@@ -205,7 +205,7 @@
           <span>Dividendo estimado: ${money(div)}/mes · Cotizar esta planta →</span></span></a>`;
     }).join('');
     const n=T.filter(t=>t.desdeUF<=u.topeConPieFinUF).length;
-    return `<details class="sim-tipos"${n?' open':''}><summary>${T.length} plantas · ${n} dentro de tu rango por renta</summary>${rows}<p>Estimación, no aprobación de crédito. El saldo del pie y sus cuotas requieren confirmación de la inmobiliaria; no están incluidos en el dividendo. Disponibilidad y precio final sujetos a confirmación.</p></details>`;
+    return `<details class="sim-tipos"><summary>${T.length} plantas · ${n} dentro de tu rango por renta</summary>${rows}<p>Estimación, no aprobación de crédito. El saldo del pie y sus cuotas requieren confirmación de la inmobiliaria; no están incluidos en el dividendo. Disponibilidad y precio final sujetos a confirmación.</p></details>`;
   }
 
   function render(sel, arr, tipo){
