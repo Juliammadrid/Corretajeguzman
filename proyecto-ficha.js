@@ -28,6 +28,7 @@
 
   /* cg_og_share: banner al compartir por WhatsApp / redes */
   (function(){
+    if(document.documentElement.dataset.seoProject===slug)return;
     const abs=(u)=>u?new URL(u,location.href).href:'';
     const img=abs(p.bannerImg||p.heroImg||'');
     const t=(p.name||'Proyecto')+' · '+(p.commune||'')+(p.desdeUF?' · Desde UF '+nf.format(p.desdeUF):'');
@@ -38,10 +39,11 @@
     set('ogImg',img); set('twImg',img);
   })();
 
-  document.title = p.name + ' · Corretaje Guzmán';
+  if(document.documentElement.dataset.seoProject!==slug)document.title = p.name + ' · Corretaje Guzmán';
   /* Cada ficha conserva una URL canónica propia, incluso cuando la plantilla
      común se sirve mediante una ruta limpia de Netlify. */
   (function(){
+    if(document.documentElement.dataset.seoProject===slug)return;
     const canonicalPath = p.ficha || ('/proyecto.html?slug='+encodeURIComponent(slug));
     const canonicalUrl = new URL(canonicalPath, location.origin).href;
     const setMeta = (property, value) => {
@@ -345,6 +347,9 @@
       const t = TD[i]; if(!t) return;
       const g=(id)=>document.getElementById(id);
       g('tpImg').src = t.plano; g('tpImg').alt = 'Planta '+(t.planta||'')+' '+p.name;
+      const dimensionsNode=document.getElementById('seo-image-dimensions');
+      const dimensions=dimensionsNode?JSON.parse(dimensionsNode.textContent)[t.plano]:null;
+      if(dimensions){ g('tpImg').width=dimensions.width; g('tpImg').height=dimensions.height; }
       g('tpPlanta').textContent = t.planta||'—';
       g('tpInt').textContent = t.m2int||'—';
       g('tpDorm').textContent = t.dormBano||'—';

@@ -3,8 +3,12 @@
 #  Sitio estático + funciones serverless. No requiere build.
 # ============================================================
 [build]
+  command = "node scripts/build-seo.mjs"
   publish = "."
   functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
 
 # ============================================================
 # Iconos oficiales para navegador, iPhone y PWA

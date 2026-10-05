@@ -15,10 +15,10 @@ window.PARCELA_PROYECTOS = {
     ufSim: 40746.28,
     credito: {
       pieMin: 40,
-      pieDefault: 50,
+      pieDefault: 40,
       tasaMes: 1.0,
       plazos: [12, 24, 36],
-      recargo: 6,
+      recargo: 0,
       nota: "Simulación referencial de financiamiento directo con el propietario del proyecto. Pie mínimo 40%, tasa 1% mensual. Valores sujetos a evaluación y al valor de la UF del día."
     },
     supParcela: 5000,

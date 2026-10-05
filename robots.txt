@@ -1,4 +1,16 @@
 User-agent: *
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# GPTBot (entrenamiento) conserva la política general existente.
+# No se bloquean CSS, JavaScript ni imágenes.
+
 Sitemap: https://corretajeguzman.com/sitemap.xml

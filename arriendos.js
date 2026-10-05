@@ -15,9 +15,11 @@ async function init() {
   const params = new URLSearchParams(location.search);
   OP = (params.get('op') === 'venta' || window.GUZMAN_OP === 'venta') ? 'venta' : 'arriendo';
   if (params.get('comuna')) { STATE.q = params.get('comuna'); $('#qInput').value = STATE.q; }
+  const initial=document.getElementById('listing-seo-data');
+  if(initial){const meta=JSON.parse(initial.textContent); STATE.q=meta.commune||STATE.q; STATE.tipo=meta.type||'';}
   setOpLabels();
   const { data, live } = await GZ.loadProperties();
-  ALL = data.filter(p => p.operation === OP);
+  ALL = data.filter(p => p.operation === OP && !/arrendad|vendid|no disponible|borrador|reservad|inactiv|ocult|privad|retirad/i.test(p.status||''));
   GZ.banner(live, ALL.length);
   buildEvents();
   buildMobile();
@@ -27,7 +29,8 @@ async function init() {
 
 function setOpLabels() {
   const isVenta = OP === 'venta';
-  document.title = (isVenta ? 'En Venta' : 'Arriendos') + ' · Corretaje Guzmán';
+  const initial=document.getElementById('listing-seo-data');
+  document.title = initial ? JSON.parse(initial.textContent).title : (isVenta ? 'En Venta' : 'Arriendos') + ' · Corretaje Guzmán';
   $$('.nav-links a').forEach(a => a.classList.remove('active'));
   const sel = isVenta ? 'Ventas - Corretaje Guzman.html' : 'Arriendos - Corretaje Guzman.html';
   const link = $(`.nav-links a[href="${sel}"]`);
@@ -85,7 +88,11 @@ function propertyById(id) {
 
 function apply() {
   const list = sortList(ALL.filter(matches));
-  renderList(list);
+  const seoNode=document.getElementById('listing-seo-data');
+  const initial=seoNode?JSON.parse(seoNode.textContent):null;
+  const paginated=initial&&STATE.q===(initial.commune||'')&&STATE.tipo===(initial.type||'')&&!STATE.condicion&&!STATE.prMin&&!STATE.prMax&&!STATE.dorm&&!STATE.banos&&!STATE.areaMin&&!STATE.areaMax&&!STATE.eq.length&&STATE.sort==='rel';
+  const nav=document.querySelector('.seo-pagination');if(nav)nav.hidden=!paginated;
+  renderList(paginated?list.slice((initial.page-1)*initial.pageSize,initial.page*initial.pageSize):list);
   renderMap(list);
   const label = OP === 'venta' ? 'en Venta' : 'de Arriendo';
   $('#count').innerHTML = `<b>${list.length}</b> resultado${list.length === 1 ? '' : 's'} ${label}`;

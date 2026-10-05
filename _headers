@@ -1,4 +1,14 @@
 # Cache de recursos estáticos
+# Plantillas de transporte: no son páginas públicas indexables.
+/seo-templates/*
+  X-Robots-Tag: noindex, nofollow
+
+/SEO-GEO*
+  X-Robots-Tag: noindex
+
+/tests/*
+  X-Robots-Tag: noindex, nofollow
+
 /assets/*
   Cache-Control: public, max-age=604800, immutable
 

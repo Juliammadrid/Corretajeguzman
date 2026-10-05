@@ -161,13 +161,13 @@
   (function(){
     const C=p.credito; const sel=$('#crParcela');
     if(!C || !sel){ const s=$('#credito'); if(s) s.remove(); return; }
-    const uf=p.ufSim||p.ufRef||0;
+    let uf=p.ufSim||p.ufRef||0;
     const disponibles=(p.parcelas||[]).filter(x=>(x.status||'disponible')==='disponible');
     sel.innerHTML=disponibles.map(x=>'<option value="'+x.uf+'" data-n="'+x.n+'">Parcela '+x.n+' · UF '+nf.format(x.uf)+' · '+nf.format(p.supParcela||5000)+' m²</option>').join('');
     const plazosWrap=$('#crPlazos');
     let plazo=(C.plazos&&C.plazos[C.plazos.length-1])||36;
     plazosWrap.innerHTML=(C.plazos||[36]).map(m=>'<button type="button" data-m="'+m+'"'+(m===plazo?' class="on"':'')+'>'+m+' cuotas</button>').join('');
-    const pieEl=$('#crPie'); pieEl.min=C.pieMin||40; pieEl.value=C.pieDefault||50;
+    const pieEl=$('#crPie'); pieEl.min=C.pieMin||40; pieEl.value=C.pieDefault||40;
     const note=$('#crNota');
     const baseNote=C.nota||'';
     if(note) note.textContent=baseNote;
@@ -177,12 +177,15 @@
       const ufVal=+sel.value||0;
       const piePct=+pieEl.value;
       const valor=ufVal*uf;
-      const valorFin=valor*(1+(C.recargo||0)/100);
+      // El precio publicado no lleva recargo ni descuento automático.
+      const valorFin=valor;
       const pie=valorFin*piePct/100;
       const fin=valorFin-pie;
       const i=(C.tasaMes||1)/100;
       const cuota=i>0 ? fin*i/(1-Math.pow(1+i,-plazo)) : fin/plazo;
       $('#crPieVal').textContent=piePct+'%';
+      const ayuda=$('#crPieAyuda');
+      if(ayuda) ayuda.textContent='Tu aporte: '+piePct+'%. Saldo a financiar: '+(100-piePct)+'%. Pie mínimo '+(C.pieMin||40)+'%.';
       $('#crValor').textContent=money(valor)+' \u00b7 UF '+nf.format(ufVal);
       $('#crValorFin').textContent=money(valorFin);
       $('#crPieMonto').textContent=money(pie);

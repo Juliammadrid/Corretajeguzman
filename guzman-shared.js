@@ -97,7 +97,7 @@
   function propertyPath(p) {
     if (!p) return '/propiedad';
     const id = encodeURIComponent(String(p.id || p.codigo || ''));
-    return id ? `/propiedad?id=${id}` : '/propiedad';
+    return id ? `/propiedad/${slugify(propertySlugBase(p))}-${id}` : '/propiedad';
   }
 
   function propertyCanonicalUrl(p) { return SITE_ORIGIN + propertyPath(p); }
@@ -115,6 +115,8 @@
   }
 
   function normalizeOperation(p) {
+    const operation=String(p && p.operation || '').toLowerCase().trim();
+    if(operation==='venta'||operation==='arriendo')return operation;
     const text = `${(p && p.operation) || ''} ${(p && p.title) || ''} ${(p && p.source) || ''}`.toLowerCase();
     return text.includes('vent') ? 'venta' : 'arriendo';
   }
@@ -168,6 +170,14 @@
   }
 
   async function loadProperties() {
+    const initial = document.getElementById('catalog-seo-data');
+    if (initial) {
+      try {
+        const data = JSON.parse(initial.textContent).properties.map(normalizeLoadedProperty);
+        window.GUZMAN_PROPERTIES_INDEX = data;
+        return { data, live: true };
+      } catch (_) { /* Fall back to the normal API if bootstrap data is invalid. */ }
+    }
     let data = null, live = false;
     if (CFG.endpoint) {
       const j = await fetchJSON(CFG.endpoint);

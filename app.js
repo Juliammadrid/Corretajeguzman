@@ -61,6 +61,8 @@ function setMeta(name, content, property) {
 }
 
 function updateSeo(p) {
+  const initial = document.getElementById('property-seo-data');
+  if (initial) { document.title = JSON.parse(initial.textContent).title; return; }
   const canonical = GZ.propertyCanonicalUrl ? GZ.propertyCanonicalUrl(p) : location.href;
   let link = document.head.querySelector('link[rel="canonical"]');
   if (!link) { link = document.createElement('link'); link.rel = 'canonical'; document.head.appendChild(link); }
@@ -80,6 +82,7 @@ function renderFicha(p) {
   document.title = `${p.title} · Corretaje Guzmán`;
   updateSeo(p);
   $('#crumbOp').textContent = p.operation === 'venta' ? 'En Venta' : 'Arriendos';
+  $('#crumbOp').href = p.operation === 'venta' ? '/comprar' : '/arriendos';
   $('#crumbCom').textContent = p.commune || 'Propiedades';
   $('#crumbTitle').textContent = p.title;
   $('#addr').textContent = [p.address, p.commune].filter(Boolean).join(' · ');
@@ -117,7 +120,7 @@ function renderFicha(p) {
 
   const desc = $('#desc'); desc.innerHTML = '';
   const paras = (p.description || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
-  paras.forEach((t, i) => desc.appendChild(el('p', i === 0 ? 'lead' : '', t)));
+  paras.forEach((t, i) => { const paragraph = el('p', i === 0 ? 'lead' : ''); paragraph.textContent = t; desc.appendChild(paragraph); });
   $('#readmore').style.display = paras.length > 1 ? '' : 'none';
 
   const amen = $('#amen'); amen.innerHTML = '';
@@ -162,14 +165,18 @@ function gallery(p) {
   const cells = Math.min(5, PHOTOS.length || 1);
   for (let i = 0; i < cells; i++) {
     const cell = el('div', 'g' + (i === 0 ? ' g-main' : '')); cell.dataset.i = i;
-    const im = el('img'); im.src = PHOTOS[i] || ''; im.alt = p.title; im.loading = 'lazy'; cell.appendChild(im);
+    const im = el('img'); im.src = PHOTOS[i] || ''; im.alt = p.title+' · foto '+(i+1); im.loading = i===0 ? 'eager' : 'lazy';
+    if(i===0) im.fetchPriority='high';
+    const dimensions=(p.photoDimensions||[]).find(d=>d.url===PHOTOS[i]);
+    if(dimensions){ im.width=dimensions.width; im.height=dimensions.height; }
+    cell.appendChild(im);
     if (i === cells - 1 && PHOTOS.length > 1) { const sa = el('button', 'see-all', `<i data-lucide="images" class="ico"></i>Ver las ${PHOTOS.length} fotos`); sa.id = 'seeAll'; cell.appendChild(sa); }
     cell.addEventListener('click', (e) => { if (e.target.closest('#seeAll')) return; openLb(i); });
     g.appendChild(cell);
   }
   const pc = $('#photoCount'); pc.querySelector('span').textContent = `1 / ${PHOTOS.length}`;
   const strip = $('#lbStrip'); strip.innerHTML = '';
-  PHOTOS.forEach((src, i) => { const im = el('img'); im.src = src; im.onclick = () => show(i); strip.appendChild(im); });
+  PHOTOS.forEach((src, i) => { const im = el('img'); im.src = src; im.alt=p.title+' · miniatura '+(i+1); im.loading='lazy'; im.onclick = () => show(i); strip.appendChild(im); });
 }
 
 const PIN = { path: "M12 0C6.5 0 2 4.5 2 10c0 7 10 16 10 16s10-9 10-16C22 4.5 17.5 0 12 0z", fillColor: "#7c3aed", fillOpacity: 1, strokeColor: "#fff", strokeWeight: 2, scale: 1.3, anchor: { x: 12, y: 26 } };
@@ -201,7 +208,8 @@ function drawMap(p) {
 
 function renderSimilares(list, p) {
   const grid = $('#simGrid'); grid.innerHTML = '';
-  const sorted = list.slice().sort((a, b) => (a.commune === p.commune ? -1 : 0) - (b.commune === p.commune ? -1 : 0)).slice(0, 3);
+  const distance=q=>(q.commune===p.commune?0:10)+(q.propertyType===p.propertyType?0:3)+(q.currency===p.currency?Math.abs(q.priceValue-p.priceValue)/Math.max(p.priceValue,1):2);
+  const sorted = list.filter(q=>q.operation===p.operation&&!/arrendad|vendid|no disponible|borrador|reservad|inactiv|ocult|privad|retirad/i.test(q.status||'')).sort((a,b)=>distance(a)-distance(b)).slice(0,3);
   if (!sorted.length) { grid.closest('.sim-sec').style.display = 'none'; return; }
   sorted.forEach(q => {
     const ft = [

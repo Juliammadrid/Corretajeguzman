@@ -1,0 +1,8 @@
+{
+  "name": "corretaje-guzman",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-seo.mjs",
+    "test": "node --test tests/seo.test.mjs"
+  }
+}
