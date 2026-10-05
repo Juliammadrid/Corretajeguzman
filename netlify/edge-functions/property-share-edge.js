@@ -5,6 +5,7 @@ function errorPage(status) {
  return new Response(`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="robots" content="noindex,follow"><title>${unavailable?'Propiedad no encontrada':'Intenta nuevamente'} | Corretaje Guzmán</title></head><body><h1>${unavailable?'Propiedad no encontrada':'No pudimos cargar la propiedad en este momento'}</h1><p>${unavailable?'El enlace no corresponde a una propiedad publicada.':'Intenta nuevamente en unos minutos.'}</p><a href="/arriendos">Ver arriendos</a> · <a href="/comprar">Ver propiedades en venta</a></body></html>`,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',...(status===503?{'Retry-After':'60'}:{})}});
 }
 export default async function handler(request,context) {
+ if(!['GET','HEAD'].includes(request.method))return context.next();
  const url=new URL(request.url);
  if(/\.(?:js|css|png|jpe?g|webp|svg|ico)$/i.test(url.pathname))return context.next();
  const id=url.searchParams.get('id')||url.pathname.match(/-(rec[a-zA-Z0-9]+)\/?$/)?.[1];
@@ -47,4 +48,4 @@ export default async function handler(request,context) {
   return new Response(request.method==='HEAD'?null:html,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=120','X-Robots-Tag':seo.robots}});
  }catch(error){console.error('Property SEO temporarily unavailable',error.name);return errorPage(503);}
 }
-export const config={path:['/propiedad','/propiedad/*','/ficha'],method:['GET','HEAD']};
+export const config={path:['/propiedad','/propiedad/*','/ficha']};

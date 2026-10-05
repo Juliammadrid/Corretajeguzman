@@ -2,6 +2,7 @@ import {SITE,esc,json,head,element,isIndexable,landingPages,TYPES,cardMarkup,bre
 
 const PAGE_SIZE=20;
 export default async function handler(request,context) {
+ if(!['GET','HEAD'].includes(request.method))return context.next();
  const url=new URL(request.url), match=url.pathname.match(/^\/(arriendos|comprar)(?:\/([^/]+))?(?:\/([^/]+))?\/?$/);
  if(!match)return context.next();
  try {
@@ -41,4 +42,4 @@ export default async function handler(request,context) {
   return new Response(request.method==='HEAD'?null:html,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public, max-age=120','X-Robots-Tag':filtered?'noindex,follow':'index,follow'}});
  }catch(error){console.error('Catalog SEO unavailable',error.name);return new Response('No pudimos consultar las propiedades. Intenta nuevamente en unos minutos.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store','Retry-After':'60'}});}
 }
-export const config={path:['/arriendos','/arriendos/*','/comprar','/comprar/*'],method:['GET','HEAD']};
+export const config={path:['/arriendos','/arriendos/*','/comprar','/comprar/*']};
