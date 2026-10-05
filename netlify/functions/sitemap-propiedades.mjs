@@ -12,4 +12,4 @@ export default async function handler(request) {
   return new Response('<error>Catálogo temporalmente no disponible</error>',{status:503,headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'no-store','Retry-After':'60'}});
  }
 }
-export const config={path:'/sitemap-comunas.xml'};
+export const config={path:['/sitemap-comunas.xml','/sitemap-propiedades.xml','/.netlify/functions/sitemap-propiedades']};
