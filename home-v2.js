@@ -8,7 +8,7 @@ import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs
   let REV=[];
   async function getJSON(url){
     try{
-      const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),6000);
+      const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),20000);
       const r=await fetch(url,{headers:{accept:'application/json'},signal:ctrl.signal}); clearTimeout(tm);
       if(!r.ok) return null; return await r.json();
     }catch(e){ return null; }
@@ -136,13 +136,17 @@ import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs
 
   /* carga de datos */
   (async function(){
-    const [props,revs]=await Promise.all([getJSON('/api/properties'),getJSON('/api/reviews')]);
+    getJSON('/api/reviews').then(revs=>{REV=revs?(Array.isArray(revs)?revs:(revs.reviews||[])):[];renderRev();});
+    const props=await getJSON('/api/properties')||await getJSON('/api/properties');
+    if(!props){
+      $('#arrGrid').innerHTML='<div class="arr-empty"><b>No pudimos cargar las propiedades en este momento.</b><a class="btn btn-violet" href="/arriendos">Ver arriendos disponibles</a></div>';
+      return;
+    }
     const records=props?(Array.isArray(props)?props:(props.propiedades||props.properties||props.records||[])):[];
     const P=records.filter(p=>isPublic(p)&&isAvailable(p)&&p.activa!==false&&!/rentando/i.test(p.source||''));
     ARR=P.filter(p=>String(p.operation||'').toLowerCase()==='arriendo' && p.activa!==false && !/rentando/i.test(p.source||''));
     VEN=P.filter(p=>String(p.operation||'').toLowerCase()==='venta').length;
-    REV=revs?(Array.isArray(revs)?revs:(revs.reviews||[])):[];
-    setupArr(); renderRev();
+    setupArr();
     if(window.lucide) lucide.createIcons();
   })();
 
