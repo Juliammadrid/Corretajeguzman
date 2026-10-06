@@ -245,6 +245,7 @@ footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px;margin-top:10px}
 /* CTA ¿No encuentras arriendo? */
 .cta-arriendo{background:var(--bg);padding:8px 0 56px}
 .cta-arriendo-inner{max-width:var(--maxw,1260px);margin:0 auto;padding:40px 44px;border-radius:22px;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;box-shadow:var(--shadow-md)}
+.cta-arriendo-inner{overflow:clip}
 .cta-arriendo-inner::after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
 .cta-arriendo-inner::before{content:"";position:absolute;left:-70px;bottom:-130px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05)}
 .cta-arriendo .cta-tx{position:relative;z-index:2;min-width:260px;flex:1 1 380px}
