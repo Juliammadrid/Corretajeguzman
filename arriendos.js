@@ -17,6 +17,7 @@ async function init() {
   if (params.get('comuna')) { STATE.q = params.get('comuna'); $('#qInput').value = STATE.q; }
   const initial=document.getElementById('listing-seo-data');
   if(initial){const meta=JSON.parse(initial.textContent); STATE.q=meta.commune||STATE.q; STATE.tipo=meta.type||'';}
+  if (['Departamento','Casa','Estudio','Parcela'].includes(params.get('tipo'))) STATE.tipo=params.get('tipo');
   setOpLabels();
   const { data, live } = await GZ.loadProperties();
   ALL = data.filter(p => p.operation === OP && !/arrendad|vendid|no disponible|borrador|reservad|inactiv|ocult|privad|retirad/i.test(p.status||''));
@@ -24,6 +25,7 @@ async function init() {
   buildEvents();
   buildMobile();
   apply();
+  if(params.get('vista')==='mapa') toggleMap();
   if (window.lucide) lucide.createIcons();
 }
 

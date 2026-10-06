@@ -1,302 +1,371 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta property="og:title" content="Corretaje Guzmán · Inmuebles en Chile">
-<meta property="og:description" content="Encuentra propiedades en arriendo y venta, proyectos inmobiliarios y parcelas. Asesoría inmobiliaria de Corretaje Guzmán en Chile.">
-<meta property="og:image" content="https://corretajeguzman.com/og/og-home.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://corretajeguzman.com/">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Corretaje Guzmán · Inmuebles en Chile">
-<meta name="twitter:description" content="Encuentra propiedades en arriendo y venta, proyectos inmobiliarios y parcelas. Asesoría inmobiliaria de Corretaje Guzmán en Chile.">
-<meta name="twitter:image" content="https://corretajeguzman.com/og/og-home.jpg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Corretaje Guzmán · Inmuebles en Chile</title>
-<meta name="description" content="Encuentra propiedades en arriendo y venta, proyectos inmobiliarios y parcelas. Asesoría inmobiliaria de Corretaje Guzmán en Chile.">
-<link rel="canonical" href="https://corretajeguzman.com/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateAgent","@id":"https://corretajeguzman.com/#organization","name":"Corretaje Guzmán","url":"https://corretajeguzman.com/","telephone":"+56944637680","email":"contacto@corretajeguzman.com","address":{"@type":"PostalAddress","streetAddress":"Av. Manquehue Sur 350, of. 201","addressLocality":"Las Condes","addressCountry":"CL"}}</script>
+<title>Corretaje Guzmán · Arriendos, proyectos nuevos y parcelas</title>
+<meta name="description" content="Arriendos disponibles hoy, proyectos nuevos con pie financiado, parcelas con crédito directo y administración de propiedades.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Corretaje Guzmán">
+<meta property="og:title" content="Corretaje Guzmán · Tu propiedad, nuestra prioridad">
+<meta property="og:description" content="Arriendos disponibles hoy, proyectos nuevos y parcelas en Chile.">
+<meta property="og:image" content="https://corretajeguzman.com/assets/home-v2/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://corretajeguzman.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://corretajeguzman.com/assets/home-v2/og-home.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f3f0f8;--surface:#ffffff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;
-  --line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;
-  --violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--dark-2:#1d1630;--wa:#1faf54;
-  --radius:16px;--radius-sm:11px;
-  --shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);
-  --shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);
-  --shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1260px;
-}
+:root{--bg:#f3f0f8;--surface:#fff;--ink:#16121f;--ink-2:#574f6b;--ink-3:#938caa;--line:#e7e1f1;--line-2:#efeaf7;--violet:#7c3aed;--violet-d:#6b27d6;--violet-dd:#4c1d95;--violet-tint:#f1eafe;--violet-tint-2:#e7dcfc;--dark:#140f1e;--green:#1f8a5b;--green-tint:#e7f5ed;--amber:#c98a12;--amber-tint:#fdf3e0;--shadow-sm:0 1px 2px rgba(22,18,31,.05),0 2px 8px rgba(22,18,31,.05);--shadow-md:0 6px 18px rgba(76,29,149,.10),0 16px 44px rgba(22,18,31,.09);--shadow-violet:0 10px 26px rgba(124,58,237,.30);--maxw:1240px;--navh:76px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
-img{display:block;max-width:100%}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer;border:none;background:none}
-h1,h2,h3,.disp{font-family:'Sora',sans-serif;letter-spacing:-.02em}
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--surface);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:16px}
+img{display:block;max-width:100%}a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-.02em}
 .ico{width:20px;height:20px;stroke-width:1.85}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;white-space:nowrap}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:600;border-radius:12px;transition:transform .12s,background .15s}
 .btn:active{transform:translateY(1px)}
 .btn-violet{background:var(--violet);color:#fff;padding:13px 22px;font-size:14.5px;box-shadow:var(--shadow-violet)}
 .btn-violet:hover{background:var(--violet-d)}
-.btn-wa{background:var(--wa);color:#fff;padding:12px 18px;font-size:14.5px}
-.btn-wa:hover{filter:brightness(.95)}
-.btn-ghost{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:12px 18px;font-size:14.5px}
-.btn-ghost:hover{border-color:var(--violet);color:var(--violet-d)}
-.btn-light{background:#fff;color:var(--violet-dd);padding:13px 22px;font-size:14.5px;font-weight:700}
+.btn-soft{background:var(--violet-tint);color:var(--violet-dd);padding:13px 22px;font-size:14.5px;font-weight:700}
+.btn-soft:hover{background:var(--violet-tint-2)}
+.btn-light{background:#fff;color:var(--violet-dd);padding:14px 24px;font-size:15px;font-weight:700}
 .btn-light:hover{background:var(--violet-tint)}
-.btn-outline{background:var(--surface);border:1px solid var(--violet);color:var(--violet-d);padding:13px 18px;font-size:14.5px}
-.btn-outline:hover{background:var(--violet-tint)}
-.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
 
-/* NAV */
-header.nav{position:sticky;top:0;z-index:60;background:rgba(20,15,30,.86);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
-.nav-inner{display:flex;align-items:center;gap:30px;height:76px}
-.nav-inner .logo{height:34px;width:auto}
-.nav-links{display:flex;gap:28px;margin-left:6px}
+header.nav{position:sticky;top:0;z-index:70;background:rgba(20,15,30,.92);backdrop-filter:saturate(150%) blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-inner{display:flex;align-items:center;gap:26px;height:var(--navh);max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.nav-inner .logo{height:32px;width:auto}
+.nav-links{display:flex;gap:24px;margin-left:6px}
 .nav-links a{font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);transition:color .15s}
 .nav-links a:hover,.nav-links a.active{color:#fff}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
-.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
-.nav-right .tel .ico{color:var(--violet)}
-.nav-burger{display:none;color:#fff;width:44px;height:44px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center;flex:none}
 .nav-wa-full{display:inline-flex}
-.mobile-menu{display:none;position:fixed;top:76px;left:0;right:0;z-index:59;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
-.mobile-menu.open{display:block}
+.nav-burger{display:none;color:#fff;width:44px;height:44px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center;flex:none}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;z-index:69;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu.open{display:block;z-index:120}
 .mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
 .mobile-menu a .ico{width:18px;height:18px;color:var(--violet)}
 .mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
 
-/* HERO */
-.hero{position:relative;background:var(--dark);color:#fff;overflow:hidden}
-.hero .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:1;background-image:url('assets/home-apartamento.jpg')}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(20,15,30,.82) 0%,rgba(60,28,120,.6) 50%,rgba(124,58,237,.4) 100%)}
-.hero-inner{position:relative;z-index:2;padding:120px 0 128px;text-align:center}
-.hero .eyebrow{color:#c9b8f5;margin-bottom:18px;display:block}
-.hero h1{font-size:60px;font-weight:800;line-height:1.05;max-width:18ch;margin:0 auto;text-wrap:balance;text-shadow:0 2px 24px rgba(20,15,30,.4)}
-.hero h1 .hl{color:#c9b8f5}
-.hero p{font-size:20px;color:rgba(255,255,255,.82);margin-top:18px;font-weight:400}
+.navdd{position:relative}
+.navdd>button{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);background:none;border:0;cursor:pointer;padding:0;transition:color .15s}
+.navdd>button:hover,.navdd.open>button{color:#fff}
+.navdd>button svg{width:14px;height:14px;transition:transform .2s}
+.navdd.open>button svg{transform:rotate(180deg)}
+.navdd-menu{position:absolute;top:calc(100% + 14px);left:-14px;min-width:268px;background:#fff;border-radius:14px;box-shadow:0 18px 44px rgba(20,15,30,.28);padding:8px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .18s;z-index:90}
+.navdd.open .navdd-menu{opacity:1;visibility:visible;transform:none}
+.navdd-menu a{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;color:#16121f;font-size:14.5px;font-weight:600;transition:background .14s}
+.navdd-menu a:hover{background:#f1eafe;color:#4c1d95}
+.navdd-menu a i{width:34px;height:34px;border-radius:9px;background:#f1eafe;color:#6b27d6;display:grid;place-items:center;flex:none}
+.navdd-menu a i svg{width:17px;height:17px}
+.navdd-menu a b{display:block;font-family:'Sora',sans-serif;font-size:14.5px}
+.navdd-menu a span span{display:block;font-size:12px;color:#938caa;font-weight:500;margin-top:2px}
+footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px}
+.foot-grid{max-width:var(--maxw);margin:0 auto;padding:0 26px 40px;display:grid;grid-template-columns:1.35fr .9fr .9fr 1.25fr;gap:40px}
+@media(max-width:980px){.foot-grid{grid-template-columns:1fr 1fr;gap:32px 28px}.foot-grid>div:first-child{grid-column:1/-1}}
+@media(max-width:560px){.foot-grid{grid-template-columns:1fr 1fr;gap:28px 20px}.foot-grid>div:last-child{grid-column:1/-1}}
+.foot-grid .logo{height:34px;margin-bottom:18px}
+.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
+.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
+.foot-links{display:flex;flex-direction:column;gap:11px}
+.foot-links a{font-size:15px;color:rgba(255,255,255,.78)}.foot-links a:hover{color:#fff}
+.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
+.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
+.socials{display:flex;gap:10px;margin-top:18px}
+.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
+.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
+.foot-base{max-width:var(--maxw);margin:0 auto;padding:24px 26px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
+
+.h2t{font-family:'Sora';font-weight:800;font-size:clamp(25px,3.2vw,36px);letter-spacing:-.02em;line-height:1.08}
+.kick{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--violet-d)}
+.kick .ico{width:14px;height:14px}
+.w{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+.sh p{color:var(--ink-2);margin-top:8px;max-width:58ch;font-size:15.5px}
+.more{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:var(--violet-d);border-bottom:2px solid var(--violet-tint-2);padding-bottom:3px;white-space:nowrap}
+.more:hover{border-color:var(--violet)}.more .ico{width:16px;height:16px}
+
+/* HERO (igual al original) */
+.hh{position:relative;background:var(--dark);color:#fff;overflow:hidden}
+.hh-bg{position:absolute;inset:0;background:url('/assets/home-v2/hero.jpg') center/cover no-repeat}
+.hh::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(20,15,30,.82) 0%,rgba(60,28,120,.6) 50%,rgba(124,58,237,.4) 100%)}
+.hh-in{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:120px 26px 70px;text-align:center}
+.eyebrow-o{display:inline-block;margin-bottom:16px;font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#c9b8f5}
+.hh h1{font-family:'Sora';font-size:60px;font-weight:800;line-height:1.05;letter-spacing:-1.2px;max-width:18ch;margin:0 auto;text-wrap:balance;text-shadow:0 2px 24px rgba(20,15,30,.4)}
 .search{margin:42px auto 0;max-width:980px;background:rgba(255,255,255,.97);border-radius:18px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:10px;box-shadow:0 24px 60px rgba(20,15,30,.4);text-align:left}
 .sf{display:flex;flex-direction:column;gap:5px;padding:8px 12px;border-radius:11px}
 .sf+.sf{border-left:1px solid var(--line)}
 .sf label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .sf .ctl{display:flex;align-items:center;gap:8px}
 .sf .ctl .ico{width:17px;height:17px;color:var(--violet);flex:none}
-.sf select,.sf input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15.5px;font-weight:600;color:var(--ink);width:100%;cursor:pointer}
+.sf select,.sf input{border:none;outline:none;background:transparent;font-family:inherit;font-size:15.5px;font-weight:600;color:var(--ink);width:100%;cursor:pointer;appearance:none}
 .sf input{cursor:text}
 .search-btns{display:flex;gap:8px;align-items:stretch}
 .search-btns .btn{padding:0 20px;font-size:14.5px}
-.hero-stats{position:relative;z-index:2;display:flex;justify-content:center;gap:54px;padding:0;margin:10px auto 0;flex-wrap:wrap;max-width:1240px}
+.btn-outline{border:1px solid var(--line);color:var(--ink);background:#fff;border-radius:12px;display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.btn-outline:hover{border-color:var(--violet);color:var(--violet-d)}
+.hero-stats{display:flex;justify-content:center;gap:54px;margin:40px auto 0;flex-wrap:wrap}
 .hstat{text-align:center}
 .hstat b{font-family:'Sora';font-size:32px;font-weight:700;display:block}
 .hstat span{font-size:13.5px;color:rgba(255,255,255,.7);font-weight:500}
 
-/* WA BAND */
-.waband{background:var(--violet);color:#fff}
-.waband .in{display:flex;align-items:center;justify-content:center;gap:18px;padding:18px 0;flex-wrap:wrap}
-.waband .in .ico{width:24px;height:24px}
-.waband .in p{font-size:17px;font-weight:500}
-.waband .in b{font-weight:700}
+/* ARRIENDOS */
+.sec{padding:70px 0}
+.arr-head{display:grid;grid-template-columns:1fr auto;gap:18px 30px;align-items:end;margin-bottom:24px}
+.arr-head p{color:var(--ink-2);margin-top:8px;max-width:56ch;font-size:15.5px}
+.arr-bar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
+.arr-tools{display:flex;gap:8px;flex-wrap:wrap}
+.arr-count{font-size:13.5px;color:var(--ink-3);font-weight:600}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:8px 15px;font-weight:600;font-size:13px;color:var(--ink-2)}
+.chip:hover{border-color:var(--violet)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ac{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.ac:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.ac .ph{position:relative;aspect-ratio:16/10;background:var(--line-2);overflow:hidden}
+.ac .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.ac:hover .ph img{transform:scale(1.04)}
+.ac .promo{position:absolute;top:10px;left:10px;background:#1f8a5b;color:#fff;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:5px 10px;border-radius:50px}
+.ac .bd{padding:14px 15px 15px;display:flex;flex-direction:column;gap:3px;flex:1}
+.ac .pr{font-family:'Sora';font-weight:800;font-size:19px}
+.ac .pr small{font-family:'Hanken Grotesk';font-size:12px;color:var(--ink-3);font-weight:600}
+.ac h3{font-family:'Sora';font-weight:700;font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ac .cm{font-size:12.5px;color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:5px}
+.ac .cm .ico{width:13px;height:13px}
+.ac .sp{display:flex;gap:12px;margin-top:auto;padding-top:10px;border-top:1px solid var(--line-2);font-size:12.5px;color:var(--ink-2);font-weight:600;flex-wrap:wrap}
+.ac .sp span{display:inline-flex;align-items:center;gap:5px}
+.ac .sp .ico{width:14px;height:14px;color:var(--ink-3)}
+.ac.ft{grid-column:span 2;grid-row:span 2}
+.ac.ft .ph{aspect-ratio:auto;flex:1;min-height:340px}
+.ac.ft .bd{position:absolute;left:0;right:0;bottom:0;padding:60px 22px 20px;background:linear-gradient(transparent,rgba(20,15,30,.9) 45%);color:#fff;gap:4px}
+.ac.ft .pr{font-size:28px}
+.ac.ft .pr small,.ac.ft .cm{color:rgba(255,255,255,.8)}
+.ac.ft h3{font-size:18px}
+.ac.ft .sp{border-top-color:rgba(255,255,255,.2);color:#fff}
+.ac.ft .sp .ico{color:#c9b8f5}
+.ac.ft .lbl{position:absolute;top:14px;right:14px;z-index:2;background:rgba(255,255,255,.94);color:var(--violet-dd);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:6px 12px;border-radius:50px}
+.arr-cta{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;background:var(--bg);border-radius:18px;padding:20px 24px}
+.arr-cta .tx{display:flex;align-items:center;gap:14px}
+.arr-cta .tx .ic{width:44px;height:44px;border-radius:12px;background:var(--surface);color:var(--violet-d);display:grid;place-items:center;flex:none}
+.arr-cta .tx .ic .ico{width:21px;height:21px}
+.arr-cta b{font-family:'Sora';font-weight:700;font-size:16.5px;display:block}
+.arr-cta span{font-size:14px;color:var(--ink-2)}
+.arr-cta .btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn-line{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:13px 18px;border-radius:12px;font-weight:700;font-size:14.5px}
+.btn-line:hover{border-color:var(--violet);color:var(--violet-d)}
+.btn-line .ico{width:16px;height:16px}
 
-/* SECTION */
-section.sec{padding:80px 0}
-.sec-head{text-align:center;max-width:660px;margin:0 auto 38px}
-.sec-head .eyebrow{display:block;margin-bottom:10px}
-.sec-head h2{font-size:36px;font-weight:700}
-.sec-head p{font-size:17px;color:var(--ink-2);margin-top:12px}
+/* SERVICIOS */
+.svc{background:var(--bg)}
+.svc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.svc-head p{color:var(--ink-2);margin-top:8px;max-width:54ch;font-size:15.5px}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:290px 250px;gap:16px}
+.sc{position:relative;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;color:#fff;background:#140f1e}
+.sc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.85) contrast(1.02);transition:transform .6s}
+.sc::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,18,86,.06) 0%,rgba(40,18,86,.32) 42%,rgba(20,15,30,.92) 100%)}
+.sc:hover img{transform:scale(1.05)}
+.sc>*:not(img){position:relative;z-index:2}
+.sc .lb{display:inline-flex;align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);padding:5px 11px;border-radius:50px}
+.sc h3{font-family:'Sora';font-weight:800;font-size:21px;margin-top:10px;line-height:1.15}
+.sc p{font-size:13.5px;color:rgba(255,255,255,.84);margin-top:6px;line-height:1.5;max-width:44ch}
+.sc .ar{margin-top:14px;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px;align-self:flex-start;border-bottom:1.5px solid rgba(255,255,255,.4);padding-bottom:2px}
+.sc .ar .ico{width:15px;height:15px;transition:transform .15s}
+.sc:hover .ar .ico{transform:translateX(3px)}
+.sc.wide{grid-column:span 2}
+.sc.wide h3{font-size:27px}
+.sc-team{background:linear-gradient(150deg,#3a1a78,#7c3aed)}
+.sc-team img{inset:auto 0 0 auto;width:62%;height:auto;max-height:100%;object-fit:contain;object-position:bottom right;filter:none}
+.sc-team::after{background:linear-gradient(90deg,rgba(40,18,86,.92) 0%,rgba(40,18,86,.55) 55%,transparent 100%)}
+.sc-team>*:not(img){max-width:58%}
 
-/* TABS */
-.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px;flex-wrap:wrap}
-.ftabs,.vtabs{display:flex;gap:10px;flex-wrap:wrap}
-.ftab{border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:10px 22px;font-weight:600;font-size:14.5px;color:var(--ink-2);transition:all .15s}
-.ftab:hover{border-color:var(--violet)}
-.ftab.on{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:var(--shadow-violet)}
-.vtabs{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
-.vtab{padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:7px}
-.vtab .ico{width:16px;height:16px}
-.vtab.on{background:var(--violet);color:#fff}
+/* PROYECTOS */
+.pgrid{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 8px;scrollbar-width:none;cursor:grab;-webkit-overflow-scrolling:touch}
+.pgrid.drag{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+.pgrid .pc img{pointer-events:none}
+.pgrid::-webkit-scrollbar{display:none}
+.pc{flex:0 0 calc((100% - 48px)/4);scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.pc .ph{position:relative;aspect-ratio:16/11;overflow:hidden;background:var(--line-2)}
+.pc .ph img{width:100%;height:100%;object-fit:cover}
+.pc .bdg{position:absolute;top:10px;left:10px;color:#fff;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:5px 10px;border-radius:50px}
+.pc .bd{padding:14px 15px}
+.pc h3{font-family:'Sora';font-weight:700;font-size:15.5px}
+.pc .cm{font-size:12.5px;color:var(--ink-3);font-weight:600}
+.pc .uf{font-family:'Sora';font-weight:800;font-size:17px;color:var(--violet-d);margin-top:8px}
+.calc{margin-top:26px;display:grid;grid-template-columns:1.2fr .8fr;gap:0;border-radius:20px;overflow:hidden;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff}
+.calc .tx{padding:34px 34px}
+.calc h3{font-family:'Sora';font-weight:800;font-size:clamp(22px,2.6vw,28px);line-height:1.15}
+.calc p{color:rgba(255,255,255,.86);margin-top:10px;line-height:1.55;max-width:48ch}
+.calc .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn-w{background:#fff;color:var(--violet-dd);padding:13px 20px;border-radius:12px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px}
+.btn-o{border:1px solid rgba(255,255,255,.45);color:#fff;padding:13px 20px;border-radius:12px;font-weight:700;font-size:14.5px;display:inline-flex;align-items:center;gap:8px}
+.btn-w .ico,.btn-o .ico{width:16px;height:16px}
+.calc .nums{background:rgba(255,255,255,.08);padding:30px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+.calc .nums div b{font-family:'Sora';font-weight:800;font-size:24px;display:block}
+.calc .nums div span{font-size:13px;color:rgba(255,255,255,.76)}
 
-/* GRID */
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.pcardm{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--surface);transition:transform .18s,box-shadow .18s;display:block}
-.pcardm:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
-.pcardm .ph{height:218px;position:relative;overflow:hidden;background:var(--line-2)}
-.pcardm .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.pcardm:hover .ph img{transform:scale(1.05)}
-.pcardm .ph .tag{position:absolute;top:14px;left:14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 13px;border-radius:50px;color:#fff;background:var(--violet)}
-.pcardm .ph .fav{position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--ink)}
-.pcardm .ph .fav:hover{color:var(--violet-d)}
-.pcardm .bd{padding:20px}
-.pcardm .pr{font-size:23px;font-weight:700;font-family:'Sora'}
-.pcardm .pr .per{font-size:13px;color:var(--ink-3);font-family:'Hanken Grotesk';font-weight:600}
-.uf-approx{font-size:13px;color:var(--ink-3);font-family:'Hanken Grotesk';font-weight:600}
-.pcardm .ti{font-size:15.5px;font-weight:600;margin-top:6px;line-height:1.3}
-.pcardm .ad{font-size:13px;color:var(--ink-3);margin-top:6px;display:flex;align-items:center;gap:5px}
-.pcardm .ad .ico{width:14px;height:14px;flex:none}
-.pcardm .ft{display:flex;gap:18px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
-.pcardm .ft .f{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-2);font-weight:500}
-.pcardm .ft .f .ico{width:16px;height:16px;color:var(--violet)}
-.empty{grid-column:1/-1;text-align:center;color:var(--ink-3);padding:50px;font-size:16px}
-.sec-cta{text-align:center;margin-top:42px}
+/* DIVISOR + PARCELAS */
+.sep{padding:6px 0}
+.sep .w{display:flex;align-items:center;gap:16px}
+.sep-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,#b9d9c6 30%,#b9d9c6 70%,transparent)}
+.sep-ic{width:46px;height:46px;border-radius:50%;background:#e7f3ec;color:#1f6a45;display:grid;place-items:center;flex:none}
+.sep-ic .ico{width:22px;height:22px}
+.parc-sec{background:linear-gradient(180deg,#f2f8f4 0%,#fff 100%)}
+.kick-g{color:#1f6a45}
+.more-g{color:#1f6a45;border-bottom-color:#c6e3d2}
+.more-g:hover{border-color:#1f6a45}
+.pnav{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px}
+.pdots{display:flex;gap:7px;flex-wrap:wrap}
+.pdots i{width:8px;height:8px;border-radius:50%;background:var(--violet-tint-2);display:block;cursor:pointer;transition:all .2s}
+.pdots i.on{width:26px;border-radius:50px;background:var(--violet)}
+.parr{display:flex;gap:8px}
+.parr button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink);transition:all .15s}
+.parr button:hover:not(:disabled){border-color:var(--violet);color:var(--violet-d)}
+.parr button:disabled{opacity:.35;cursor:default}
+.parr .ico{width:18px;height:18px}
+/* PARCELA */
+.parc{display:grid;grid-template-columns:1.1fr .9fr;gap:0;border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.parc .im{position:relative;min-height:380px}
+.parc .im img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.parc .tx{padding:36px;display:flex;flex-direction:column;justify-content:center;background:#123a28;color:#fff}
+.parc .lb{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#bfe6cf}
+.parc h3{font-family:'Sora';font-weight:800;font-size:clamp(23px,2.8vw,30px);margin-top:8px;line-height:1.12}
+.parc p{color:rgba(255,255,255,.84);margin-top:12px;line-height:1.55}
+.parc ul{list-style:none;padding:0;margin:18px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.parc li{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.parc li .ico{width:16px;height:16px;color:#7ee0a8;flex:none}
+.parc .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.parc .btn-w{color:#123a28}
 
-/* MAP VIEW */
-.mapview{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;height:640px}
-#map{border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--line-2);height:100%}
-.map-side{display:flex;flex-direction:column;min-height:0}
-.map-side .mh{font-size:13px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
-.map-list{overflow-y:auto;display:flex;flex-direction:column;gap:14px;padding-right:6px}
-.map-list .pcardm .ph{height:150px}
-.map-ph{position:relative;width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(125deg,#ece8f6,#e3e0f2)}
-.map-ph-grid{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.55) 1px,transparent 1px) 0 0/100% 42px,linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px) 0 0/56px 100%}
-.map-ph-card{position:relative;z-index:2;background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;max-width:340px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;box-shadow:var(--shadow-md);color:var(--violet-d)}
-.map-ph-card b{font-family:'Sora';font-size:18px;color:var(--ink)}
-.map-ph-card span{font-size:14px;color:var(--ink-2);line-height:1.6}
+/* PROPIETARIOS */
+.own{background:var(--dark);color:#fff}
+.own .sh p{color:rgba(255,255,255,.72)}
+.own .kick{color:#c9b8f5}
+.ogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.oc{border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:26px;background:rgba(255,255,255,.04);display:flex;flex-direction:column}
+.oc.hl{background:linear-gradient(160deg,rgba(124,58,237,.34),rgba(124,58,237,.08));border-color:rgba(168,120,255,.45)}
+.oc .ic{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+.oc .ic .ico{width:22px;height:22px;color:#c9b8f5}
+.oc h3{font-family:'Sora';font-weight:800;font-size:20px;margin-top:16px}
+.oc .pr{font-family:'Sora';font-weight:800;font-size:28px;margin-top:10px}
+.oc .pr small{font-family:'Hanken Grotesk';font-size:13px;font-weight:600;color:rgba(255,255,255,.7)}
+.oc p{font-size:14px;color:rgba(255,255,255,.78);margin-top:8px;line-height:1.55;flex:1}
+.oc a{margin-top:18px;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:#fff}
+.oc a .ico{width:15px;height:15px}
 
-/* CATEGORIES */
-.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.cat{position:relative;border-radius:18px;overflow:hidden;min-height:210px;display:flex;align-items:flex-end;padding:24px;color:#fff;background:var(--dark);transition:transform .18s,box-shadow .18s}
-.cat:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(76,29,149,.28)}
-.cat .cbg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.66;transition:transform .5s,opacity .3s}
-.cat:hover .cbg{transform:scale(1.06);opacity:.78}
-.cat::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,15,30,.05) 30%,rgba(40,18,86,.6) 65%,rgba(76,29,149,.92))}
-.cat .ct{position:relative;z-index:2}
-.cat .ct .ic{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;margin-bottom:14px;backdrop-filter:blur(4px)}
-.cat .ct h3{font-size:21px;font-weight:700}
-.cat .ct span{font-size:13.5px;color:rgba(255,255,255,.82);display:flex;align-items:center;gap:6px;margin-top:6px}
-.cat .ct span .ico{width:15px;height:15px}
-
-/* VALUE */
-.valsec{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.vals{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
-.val{text-align:center;padding:14px}
-.val .ic{width:62px;height:62px;border-radius:18px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin:0 auto 20px}
-.val .ic .ico{width:28px;height:28px}
-.val h3{font-size:20px;font-weight:700}
-.val p{font-size:15.5px;color:var(--ink-2);margin-top:10px;line-height:1.6}
-
-/* REVIEWS — carrusel estilo TocToc */
-.reviews-grid{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:6px 2px 10px;scrollbar-width:none}
-.reviews-grid::-webkit-scrollbar{display:none}
-.review{flex:0 0 360px;max-width:360px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
-.review .rv-quote{width:34px;height:34px;border-radius:10px;background:var(--violet-tint);color:var(--violet-d);display:grid;place-items:center;margin-bottom:14px}
-.review .rv-quote .ico{width:19px;height:19px}
-.review p{font-size:15.5px;color:var(--ink);line-height:1.6;flex:1}
-.review .rv-top{display:flex;align-items:center;gap:13px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
-.review .rv-top img{width:50px;height:50px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--violet-tint-2)}
-.review .rv-top b{font-size:15.5px;display:block}
-.review .stars{display:inline-flex;gap:2px;color:var(--violet);margin-top:3px}
-.review .rv-src{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink-3)}
-.reviews-dots{display:flex;justify-content:center;gap:8px;margin-top:22px}
-.reviews-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--violet-tint-2);transition:all .2s;cursor:pointer}
-.reviews-dots .dot.on{width:26px;border-radius:50px;background:var(--violet)}
-
-/* SELL BAND */
-.sellband{background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;border-radius:24px;padding:56px;display:flex;align-items:center;gap:40px;justify-content:space-between;flex-wrap:wrap}
-.sellband .l{max-width:560px}
-.sellband .eyebrow{color:#d8c9fa;display:block;margin-bottom:12px}
-.sellband h2{font-size:34px;font-weight:700}
-.sellband p{font-size:17px;color:rgba(255,255,255,.85);margin-top:12px}
-.sellband .r{display:flex;gap:14px;flex-wrap:wrap}
-
-/* FOOTER */
-footer{background:var(--dark);color:#cfc9da;padding:64px 0 34px}
-.foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1.4fr;gap:48px;padding-bottom:42px}
-.foot-grid .logo{height:36px;margin-bottom:18px}
-.foot-grid p{font-size:14.5px;line-height:1.7;color:rgba(255,255,255,.55);max-width:330px}
-.foot-grid h4{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:17px}
-.foot-links{display:flex;flex-direction:column;gap:11px}
-.foot-links a{font-size:15px;color:rgba(255,255,255,.78);transition:color .15s}
-.foot-links a:hover{color:#fff}
-.foot-contact{display:flex;flex-direction:column;gap:13px;font-size:14.5px}
-.foot-contact .c{display:flex;align-items:center;gap:11px;color:rgba(255,255,255,.78)}
-.foot-contact .c .ico{width:18px;height:18px;color:var(--violet);flex:none}
-.socials{display:flex;gap:10px;margin-top:18px}
-.socials a{width:40px;height:40px;border-radius:11px;border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:rgba(255,255,255,.8);transition:all .15s}
-.socials a:hover{background:var(--violet);border-color:var(--violet);color:#fff}
-.foot-base{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:16px;font-size:13px;color:rgba(255,255,255,.42);flex-wrap:wrap}
-
-.dbanner{display:flex;align-items:center;gap:10px;justify-content:center;font-size:13px;font-weight:600;padding:9px 16px;background:var(--violet-tint);color:var(--violet-dd);border-bottom:1px solid var(--violet-tint-2)}
-.dbanner .ico{width:16px;height:16px}
-.dbanner.live{background:#e7f7ee;color:#10733c;border-color:#cdeedb}
-
-@media(min-width:981px){
-  .hero-inner{max-width:1240px;margin-left:auto;margin-right:auto;padding-left:64px;padding-right:64px;padding-top:84px;padding-bottom:44px}
-  .search{width:min(980px,100%);max-width:980px;margin:36px auto 0}
-  .hero-stats{margin:8px auto 0;gap:64px;align-items:flex-start}
-  .hstat{min-width:150px;text-align:center}
-}
+/* RESEÑAS */
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}
+.rc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;min-width:0}
+.rc .st{color:#e3a008;font-size:15px;letter-spacing:2px}
+.rc p{font-size:14.5px;color:var(--ink-2);line-height:1.6;margin-top:10px;flex:1}
+.rc .who{display:flex;align-items:center;gap:11px;margin-top:16px}
+.rc .who img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--violet-tint-2)}
+.rc .who b{font-family:'Sora';font-weight:700;font-size:14px}
 
 @media(max-width:980px){
-  .nav-links,.nav-right .tel,.nav-wa-full{display:none}.nav-burger{display:grid}
-  .hero h1{font-size:42px}.search{grid-template-columns:1fr 1fr}.search-btns{grid-column:1/-1}.sf+.sf{border-left:none}
-  .pgrid{grid-template-columns:1fr 1fr}.cats{grid-template-columns:1fr 1fr}.vals{grid-template-columns:1fr}
-  .reviews-grid{grid-template-columns:1fr 1fr}
-  .foot-grid{grid-template-columns:1fr;gap:34px}.sellband{padding:40px}
-  .mapview{grid-template-columns:1fr;height:auto}#map{height:380px}.map-list{max-height:520px}
+  .hh h1{font-size:42px}.search{grid-template-columns:1fr 1fr}.search-btns{grid-column:1/-1}.sf+.sf{border-left:none}.search-btns .btn{padding:13px 20px;flex:1;justify-content:center}
+  .agrid{grid-template-columns:1fr 1fr}
+  .pc{flex:0 0 calc((100% - 16px)/2)}
+  .sgrid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.sc{min-height:240px}.sc.wide{grid-column:1/-1}
+  .calc,.parc{grid-template-columns:1fr}.parc .im{min-height:240px}
+  .ogrid{grid-template-columns:1fr}
+  .rgrid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px}
+  .rgrid::-webkit-scrollbar{display:none}
+  .rc{flex:0 0 min(82%,340px);scroll-snap-align:start}
 }
 @media(max-width:620px){
-  .nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}
-  .mobile-menu{top:64px}
-  .wrap{padding:0 18px}.hero h1{font-size:34px}.hero p{font-size:17px}
-  .hero-inner{padding:96px 4px 18px}
-  .hero .eyebrow{font-size:10.5px;letter-spacing:.12em;margin-bottom:13px;line-height:1.5}
-  .search{grid-template-columns:1fr;gap:7px;padding:18px 16px;border-radius:20px;margin:28px auto 0;width:calc(100% - 32px);max-width:430px;box-sizing:border-box}
-  .sf{padding:15px 16px}
-  .sf+.sf{border-top:1px solid var(--line);border-left:none}
-  .sf label{font-size:12px;margin-bottom:2px}
-  .sf select,.sf input{font-size:16.5px}
-  .search-btns{flex-direction:column;gap:8px;margin-top:8px}
-  .search-btns .btn{padding:15px 20px;font-size:16px}
-  .hero-stats{gap:18px;justify-content:center;width:100%;margin:-8px auto 0;padding:0}
-  .hstat{flex:1;min-width:0;text-align:center}
-  .hstat b{font-size:26px}
-  .hstat span{font-size:12px}
-  .pgrid{grid-template-columns:1fr}.cats{grid-template-columns:1fr}
-  .reviews-grid{grid-template-columns:1fr}
-  .sec-head h2{font-size:28px}.sellband h2{font-size:26px}.bar{justify-content:center}
-  .waband .in{flex-direction:column;text-align:center;gap:14px;padding:26px 0}
-  .waband .in p{font-size:16px;padding:0 8px}
+  .w{padding:0 18px}.hh-in{padding:52px 18px 46px}.sec{padding:52px 0}
+  .hh-in{padding:96px 18px 44px}.hh h1{font-size:34px}.search{grid-template-columns:1fr;padding:14px}.hero-stats{gap:26px}.hstat b{font-size:26px}
+  .arr-head{grid-template-columns:1fr}
+  .agrid{grid-template-columns:1fr 1fr;gap:10px}
+  .ac .bd{padding:11px 11px 12px}.ac .pr{font-size:16px}.ac h3{font-size:13px}.ac .sp{gap:8px;font-size:11.5px}
+  .sgrid{grid-template-columns:1fr}.sc{min-height:220px}
+  .arr-cta .btns{width:100%}.arr-cta .btns a{flex:1;justify-content:center}
+  .hh-stats{gap:22px}
+  .parc ul{grid-template-columns:1fr}
+  .calc .tx,.parc .tx{padding:26px 22px}
 }
 
-/* CTA ¿No encuentras arriendo? */
-.cta-arriendo{background:var(--bg);padding:8px 0 56px}
-.cta-arriendo-inner{max-width:var(--maxw,1260px);margin:0 auto;padding:40px 44px;border-radius:22px;background:linear-gradient(120deg,var(--violet-dd),var(--violet));color:#fff;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;box-shadow:var(--shadow-md)}
-.cta-arriendo-inner::after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
-.cta-arriendo-inner::before{content:"";position:absolute;left:-70px;bottom:-130px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.05)}
-.cta-arriendo .cta-tx{position:relative;z-index:2;min-width:260px;flex:1 1 380px}
-.cta-arriendo .cta-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#ede6fc}
-.cta-arriendo .cta-eyebrow .ico{width:14px;height:14px}
-.cta-arriendo h2{font-family:'Sora',sans-serif;letter-spacing:-.02em;font-size:30px;font-weight:700;margin-top:14px;line-height:1.1}
-.cta-arriendo p{font-size:15.5px;color:rgba(255,255,255,.86);max-width:60ch;margin-top:10px;line-height:1.55}
-.cta-arriendo .cta-btn{position:relative;z-index:2;flex:0 0 auto;display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--violet-dd);font-weight:700;font-size:15px;padding:16px 24px;border-radius:13px;transition:transform .12s,background .15s;box-shadow:0 8px 22px rgba(20,15,30,.22)}
-.cta-arriendo .cta-btn:hover{background:var(--violet-tint);transform:translateY(-1px)}
-.cta-arriendo .cta-btn:active{transform:translateY(1px)}
-.cta-arriendo .cta-btn .ico{width:19px;height:19px}
-@media(max-width:680px){.cta-arriendo{padding:0 0 40px}.cta-arriendo-inner{padding:30px 22px;border-radius:0;flex-direction:column;align-items:flex-start}.cta-arriendo h2{font-size:24px}.cta-arriendo .cta-btn{width:100%;justify-content:center}}
+/* NAV — copiado del Home original */
+.nav-inner{display:flex;align-items:center;gap:30px;height:76px}
+.nav-links{display:flex;gap:28px;margin-left:6px}
+.nav-links a:hover,.nav-links a.active{color:#fff}
+.nav-right .tel{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:14.5px}
+.nav-burger{display:none;color:#fff;width:44px;height:44px;border-radius:11px;border:1px solid rgba(255,255,255,.16);place-items:center;flex:none}
+.mobile-menu{display:none;position:fixed;top:76px;left:0;right:0;z-index:59;background:rgba(20,15,30,.98);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.1);padding:10px 0 16px}
+.mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;border-bottom:1px solid rgba(255,255,255,.07)}
+.mobile-menu .mm-wa{margin:14px 26px 0;justify-content:center;background:#25D366;border-radius:12px;border:none;gap:9px}
+.navdd>button{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14.5px;font-weight:500;color:rgba(255,255,255,.74);background:none;border:0;cursor:pointer;padding:0;transition:color .15s}
+.navdd>button svg{width:14px;height:14px;transition:transform .2s}
+.navdd-menu{position:absolute;top:calc(100% + 14px);left:-14px;min-width:268px;background:#fff;border-radius:14px;box-shadow:0 18px 44px rgba(20,15,30,.28);padding:8px;opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .18s;z-index:90}
+.navdd-menu a{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;color:#16121f;font-size:14.5px;font-weight:600;transition:background .14s}
+.navdd-menu a i{width:34px;height:34px;border-radius:9px;background:#f1eafe;color:#6b27d6;display:grid;place-items:center;flex:none}
+.navdd-menu a b{display:block;font-family:'Sora',sans-serif;font-size:14.5px}
+@media(max-width:980px){.nav-links,.nav-right .tel,.nav-wa-full{display:none}.nav-burger{display:grid}}
+@media(max-width:620px){.nav-inner{gap:14px;height:64px}.nav-inner .logo{height:26px}.mobile-menu{top:64px}}
 
+.arr-empty{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:46px 20px;border:1px dashed var(--line);border-radius:16px;color:var(--ink-2)}
+.arr-empty .ico{width:28px;height:28px;color:var(--violet)}
+.arr-empty b{font-family:'Sora';font-size:16px;color:var(--ink)}
+.arr-empty span{font-size:14px}
+.arr-empty .spin{width:26px;height:26px;border-radius:50%;border:3px solid var(--violet-tint-2);border-top-color:var(--violet);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rc .who .av{width:44px;height:44px;border-radius:50%;background:var(--violet-tint);color:var(--violet-dd);display:grid;place-items:center;font-family:'Sora';font-weight:700;font-size:15px;flex:none}
+@media(max-width:860px){}
+@media(max-width:620px){}
+
+/* menú móvil — acordeón Comprar */
+.mm-acc{border-bottom:1px solid rgba(255,255,255,.07)}
+.mm-acc-btn{width:100%;display:flex;align-items:center;justify-content:space-between;padding:15px 26px;color:#fff;font-size:16px;font-weight:600;font-family:inherit;background:none;border:0;cursor:pointer}
+.mm-acc-btn .ico{width:18px;height:18px;color:var(--violet);transition:transform .2s}
+.mm-acc.open .mm-acc-btn .ico{transform:rotate(180deg)}
+.mm-acc-panel{display:none;background:rgba(255,255,255,.04);padding:4px 0 8px}
+.mm-acc.open .mm-acc-panel{display:block}
+.mobile-menu .mm-acc-panel a{padding:12px 26px 12px 40px;border-bottom:0;font-size:15px}
+.mm-acc-panel a span{display:flex;flex-direction:column}
+.mm-acc-panel a small{font-size:12px;color:#938caa;font-weight:500;margin-top:2px}
 </style>
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260922-2">
-<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png?v=20260922-2">
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png?v=20260922-2">
+<link rel="canonical" href="https://corretajeguzman.com/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="twitter:title" content="Corretaje Guzmán · Tu propiedad, nuestra prioridad">
+<meta name="twitter:description" content="Arriendos disponibles hoy, proyectos nuevos y parcelas en Chile.">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" as="image" href="/assets/home-v2/hero.jpg" fetchpriority="high">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateAgent","@id":"https://corretajeguzman.com/#organization","name":"Corretaje Guzmán","url":"https://corretajeguzman.com/","telephone":"+56944637680","email":"contacto@corretajeguzman.com","address":{"@type":"PostalAddress","streetAddress":"Av. Manquehue Sur 350, of. 201","addressLocality":"Las Condes","addressCountry":"CL"}}</script>
+<style>
+/* Contain Home grids; horizontal scrolling belongs only to carousels. */
+.search{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.4fr) auto}
+.sf,.sf .ctl,.sf input,.sf select,.agrid,.ac,.ac .bd,.sc,.parc,.parc .tx,.foot-grid>div{min-width:0}
+.agrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pgrid,.rgrid{max-width:100%;overscroll-behavior-x:contain}
+.foot-contact .c{overflow-wrap:anywhere}
+@media(max-width:980px){.search{grid-template-columns:repeat(2,minmax(0,1fr))}.agrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.search{grid-template-columns:minmax(0,1fr)}.arr-cta .tx>div{min-width:0}.arr-cta .btns a{min-width:0;white-space:normal;text-align:center}}
+</style>
 </head>
 <body>
 
-<div class="dbanner" id="dbanner"><i data-lucide="database" class="ico"></i><span id="dbannerTxt">Cargando propiedades…</span></div>
-
-<!-- NAV -->
 <header class="nav">
   <div class="wrap nav-inner">
-    <a href="#"><img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
+    <a href="/" aria-label="Inicio Corretaje Guzmán"><img class="logo" src="/assets/guzman-logo.png" alt="Corretaje Guzmán"></a>
     <nav class="nav-links">
-      <a href="Arriendos - Corretaje Guzman.html">Arrendar</a>
-      <a href="Ventas - Corretaje Guzman.html">Comprar</a>
-      <a href="Parcelas - Corretaje Guzman.html">Parcelas</a>
-      <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a>
+      <a href="/arriendos">Arrendar</a>
+      <div class="navdd" data-navdd>
+        <button type="button">Comprar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="navdd-menu">
+          <a href="/proyectos/"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h2M9 13h2M9 17h2"/></svg></i><span><b>Proyectos nuevos</b><span>Departamentos de estreno y en verde</span></span></a>
+          <a href="/comprar"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1H4a1 1 0 01-1-1z"/><path d="M9 21v-8h6v8"/></svg></i><span><b>Propiedades en venta</b><span>Casas y departamentos disponibles</span></span></a>
+          <a href="/parcelas"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 22V9M5 22V13M19 22V13M2 9l10-6 10 6"/></svg></i><span><b>Parcelas</b><span>Terrenos y loteos urbanizados</span></span></a>
+        </div>
+      </div>
+      <a href="/parcelas">Parcelas</a>
+      <a href="/propietarios">Arrendar mi propiedad</a>
     </nav>
     <div class="nav-right">
       <a class="btn nav-wa-full" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank" style="background:#25D366;color:#fff;padding:11px 18px;font-size:14.5px;font-weight:600"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm0 21.82c-1.78 0-3.53-.48-5.06-1.38l-.36-.21-3.67.96.98-3.58-.24-.37A9.8 9.8 0 1 1 12 21.82zm5.37-7.35c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
@@ -304,212 +373,158 @@ footer{background:var(--dark);color:#cfc9da;padding:64px 0 34px}
     </div>
   </div>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="Arriendos - Corretaje Guzman.html">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
-    <a href="Ventas - Corretaje Guzman.html">Comprar <i data-lucide="chevron-right" class="ico"></i></a>
-    <a href="Parcelas - Corretaje Guzman.html">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
-    <a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/arriendos">Arrendar <i data-lucide="chevron-right" class="ico"></i></a>
+    <div class="mm-acc" id="mmComprar">
+      <button type="button" class="mm-acc-btn" aria-expanded="false">Comprar <i data-lucide="chevron-down" class="ico"></i></button>
+      <div class="mm-acc-panel">
+        <a href="/proyectos/"><span>Proyectos nuevos<small>Departamentos de estreno</small></span><i data-lucide="chevron-right" class="ico"></i></a>
+        <a href="/comprar"><span>Propiedades en venta<small>Casas y departamentos</small></span><i data-lucide="chevron-right" class="ico"></i></a>
+      </div>
+    </div>
+    <a href="/parcelas">Parcelas <i data-lucide="chevron-right" class="ico"></i></a>
+    <a href="/propietarios">Arrendar mi propiedad <i data-lucide="chevron-right" class="ico"></i></a>
     <a class="mm-wa" href="https://wa.me/56944637680?text=Hola,%20quiero%20m%C3%A1s%20informaci%C3%B3n%20de%20Corretaje%20Guzm%C3%A1n" target="_blank"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="flex:none"><path d="M12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.62A11.93 11.93 0 0 0 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0zm5.37 14.47c-.29-.15-1.74-.86-2.01-.96-.27-.1-.47-.15-.66.15-.2.29-.76.96-.93 1.16-.17.2-.34.22-.63.07-.29-.15-1.24-.46-2.36-1.46-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5l-.56-.01c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.2 2.05 3.13 4.97 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.12.56-.08 1.74-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.27-.2-.56-.34z"/></svg>Contáctanos por WhatsApp</a>
   </div>
 </header>
+<main>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="bg" id="heroBg"></div>
-  <div class="wrap hero-inner" style="padding: 120px 0px 128px">
-    <span class="eyebrow" style="display:inline-block;margin-bottom:16px;letter-spacing:.14em">Empresa de corretaje chilena de primer nivel</span>
-    <h1 style="letter-spacing: -1.2px; padding: 0px">Tu propiedad,
- nuestra prioridad.</h1>
-
-    <form class="search" id="search">
-      <div class="sf">
-        <label>Operación</label>
-        <div class="ctl"><i data-lucide="key-round" class="ico"></i>
-          <select id="fOp"><option value="">Arriendo o venta</option><option value="arriendo">Arriendo</option><option value="venta">Venta</option></select>
-        </div>
-      </div>
-      <div class="sf">
-        <label>Tipo</label>
-        <div class="ctl"><i data-lucide="building-2" class="ico"></i>
-          <select id="fTipo"><option value="">Todos los tipos</option><option>Departamento</option><option>Casa</option><option>Estudio</option><option>Parcela</option></select>
-        </div>
-      </div>
-      <div class="sf">
-        <label>Ubicación</label>
-        <div class="ctl"><i data-lucide="map-pin" class="ico"></i>
-          <input id="fComuna" type="text" placeholder="Ingresa ciudad o comuna">
-        </div>
-      </div>
-      <div class="search-btns">
-        <button class="btn btn-violet" type="submit"><i data-lucide="search" class="ico"></i>Buscar</button>
-        <button class="btn btn-outline" type="button" id="searchMap"><i data-lucide="map" class="ico"></i>Mapa</button>
-      </div>
+<section class="hh">
+  <div class="hh-bg"></div>
+  <div class="hh-in">
+    <span class="eyebrow-o">Empresa de corretaje chilena de primer nivel</span>
+    <h1>Tu propiedad,<br>nuestra prioridad.</h1>
+    <form class="search" id="srch">
+      <div class="sf"><label>Operación</label><div class="ctl"><i data-lucide="key-round" class="ico"></i><select id="fOp"><option value="">Arriendo o venta</option><option value="arriendo">Arriendo</option><option value="venta">Venta</option></select></div></div>
+      <div class="sf"><label>Tipo</label><div class="ctl"><i data-lucide="building-2" class="ico"></i><select id="fTipo"><option value="">Todos los tipos</option><option>Departamento</option><option>Casa</option><option>Estudio</option><option>Parcela</option></select></div></div>
+      <div class="sf"><label>Ubicación</label><div class="ctl"><i data-lucide="map-pin" class="ico"></i><input id="fComuna" type="text" placeholder="Ingresa ciudad o comuna"></div></div>
+      <div class="search-btns"><button class="btn btn-violet" type="submit"><i data-lucide="search" class="ico"></i>Buscar</button><button class="btn btn-outline" type="button" id="searchMap"><i data-lucide="map" class="ico"></i>Mapa</button></div>
     </form>
-  </div>
-  <div class="hero-stats" style="margin: 8px 1px 0px 61px">
-    <div class="hstat"><b id="stTotal" style="font-size: 32px; line-height: 1.5; letter-spacing: 0px; margin: 0px; height: 48px">—</b><span>Propiedades publicadas</span></div>
-    <div class="hstat"><b id="stArr" style="line-height: 1.5">—</b><span>En arriendo</span></div>
-    <div class="hstat"><b id="stVen">—</b><span>En venta</span></div>
+    <div class="hero-stats"><div class="hstat"><b id="stTotal">—</b><span>Propiedades publicadas</span></div><div class="hstat"><b id="stArr">—</b><span>En arriendo</span></div><div class="hstat"><b id="stVen">—</b><span>En venta</span></div></div>
   </div>
 </section>
 
-<!-- WA BAND -->
-<div class="waband" id="contacto">
-  <div class="wrap in">
-    <i data-lucide="message-circle" class="ico"></i>
-    <p>Contáctanos directamente por <b>WhatsApp</b> y agenda tu visita hoy</p>
-    <a class="btn btn-light" href="https://wa.me/56944637680" target="_blank">Escríbenos</a>
-  </div>
-</div>
 
-<!-- DESTACADOS -->
-<section class="sec" id="destacados">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Alternativas exclusivas para ti</span>
-      <h2>Destacados de Corretaje Guzmán</h2>
-      <p>Propiedades seleccionadas en arriendo y venta, actualizadas en tiempo real.</p>
+
+<section class="sec">
+  <div class="w">
+    <div class="arr-head">
+      <div><span class="kick"><i data-lucide="key-round" class="ico"></i>Arriendos</span><h2 class="h2t" style="margin-top:8px">Disponibles para arrendar ahora</h2><p>Propiedades revisadas, con fotos reales y visita coordinada por un ejecutivo.</p></div>
+      <a class="more" href="/arriendos">Ver todos los arriendos<i data-lucide="arrow-right" class="ico"></i></a>
+      <div class="arr-bar"><div class="arr-tools" id="arrChips"></div><span class="arr-count" id="arrCount"></span></div>
     </div>
-    <div class="bar">
-      <div class="ftabs" id="ftabs">
-        <button class="ftab on" data-f="todos">Todas</button>
-        <button class="ftab" data-f="arriendo">Arriendo</button>
-        <button class="ftab" data-f="venta">Venta</button>
-      </div>
-      <div class="vtabs" id="vtabs">
-        <button class="vtab on" data-v="lista"><i data-lucide="layout-grid" class="ico"></i>Lista</button>
-        <button class="vtab" data-v="mapa"><i data-lucide="map" class="ico"></i>Mapa</button>
-      </div>
-    </div>
-
-    <div id="listView">
-      <div class="pgrid" id="grid"></div>
-    </div>
-
-    <div id="mapView" style="display:none">
-      <div class="mapview">
-        <div id="map"></div>
-        <div class="map-side">
-          <div class="mh" id="mapCount">—</div>
-          <div class="map-list" id="mapList"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="sec-cta"><a class="btn btn-ghost" href="#">Ver todas las propiedades <i data-lucide="arrow-right" class="ico" style="width:17px;height:17px"></i></a></div>
-  </div>
-</section>
-
-<!-- CATEGORIES -->
-<section class="sec" id="categorias" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head"><span class="eyebrow">Explora por categoría</span><h2>¿Qué estás buscando?</h2></div>
-    <div class="cats">
-      <a class="cat" href="Arriendos - Corretaje Guzman.html">
-        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=900&q=80')"></div>
-        <div class="ct"><div class="ic"><i data-lucide="key-round" class="ico"></i></div><h3>Arriendos</h3><span>Ver propiedades <i data-lucide="arrow-right" class="ico"></i></span></div>
-      </a>
-      <a class="cat" href="Ventas - Corretaje Guzman.html">
-        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&q=80')"></div>
-        <div class="ct"><div class="ic"><i data-lucide="home" class="ico"></i></div><h3>En Venta</h3><span>Ver propiedades <i data-lucide="arrow-right" class="ico"></i></span></div>
-      </a>
-      <a class="cat" href="Parcelas - Corretaje Guzman.html">
-        <div class="cbg" style="background-image:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900&q=80')"></div>
-        <div class="ct"><div class="ic"><i data-lucide="trees" class="ico"></i></div><h3>Parcelas</h3><span>Ver terrenos <i data-lucide="arrow-right" class="ico"></i></span></div>
-      </a>
-      <a class="cat" href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">
-        <div class="cbg" style="background-image:url('assets/home-apartamento.jpg')"></div>
-        <div class="ct"><div class="ic"><i data-lucide="key-round" class="ico"></i></div><h3>Arrendar mi propiedad</h3><span>Publica con nosotros <i data-lucide="arrow-right" class="ico"></i></span></div>
-      </a>
+    <div class="agrid" id="arrGrid"></div>
+    <div class="arr-cta">
+      <div class="tx"><span class="ic"><i data-lucide="bell-ring" class="ico"></i></span><div><b>¿No encuentras lo que buscas?</b><span>Déjanos tu búsqueda y te avisamos apenas tengamos algo para ti.</span></div></div>
+      <div class="btns"><a class="btn-line" href="/arriendos?vista=mapa"><i data-lucide="map" class="ico"></i>Ver en el mapa</a><a class="btn btn-violet" href="/solicitud" style="padding:13px 20px;font-size:14.5px"><i data-lucide="clipboard-list" class="ico"></i>Formulario de arriendo</a></div>
     </div>
   </div>
 </section>
 
-<!-- VALUE -->
-<div class="valsec">
-  <section class="sec wrap">
-    <div class="sec-head"><span class="eyebrow">Por qué Corretaje Guzmán</span><h2>Acompañamiento de primer nivel</h2></div>
-    <div class="vals">
-      <div class="val"><div class="ic"><i data-lucide="user-check" class="ico"></i></div><h3>Asesoría personalizada</h3><p>Un ejecutivo dedicado te guía en cada paso, desde la primera visita hasta la firma.</p></div>
-      <div class="val"><div class="ic"><i data-lucide="megaphone" class="ico"></i></div><h3>Máxima difusión</h3><p>Publicamos tu propiedad en los principales portales y redes para llegar a más interesados.</p></div>
-      <div class="val"><div class="ic"><i data-lucide="shield-check" class="ico"></i></div><h3>Gestión confiable</h3><p>Coordinamos visitas, evaluamos postulantes y resguardamos cada etapa del proceso.</p></div>
+<section class="sec svc">
+  <div class="w">
+    <div class="svc-head"><div><span class="kick"><i data-lucide="sparkles" class="ico"></i>Servicios</span><h2 class="h2t" style="margin-top:8px">Todo lo que hacemos por ti</h2><p>Acompañamos a propietarios y compradores en cada paso, con un mismo equipo.</p></div></div>
+    <div class="sgrid">
+      <a class="sc wide" href="/propietarios"><img src="/assets/proy/ag-living.jpg" alt="" loading="lazy"><span class="lb">Propietarios</span><h3>Arrendamos tu propiedad</h3><p>Difusión, visitas, evaluación de arrendatarios, contrato y firma. Plan Prioridad o Plan Básico sin comisión para el dueño.</p><span class="ar">Publicar mi propiedad<i data-lucide="arrow-right" class="ico"></i></span></a>
+      <a class="sc" href="/administracion"><img src="/assets/proy/ca-living.jpg" alt="" loading="lazy"><span class="lb">Propietarios</span><h3>Administración</h3><p>Cobro, pagos y mantención. Desde $350.000 al año.</p><span class="ar">Conocer el servicio<i data-lucide="arrow-right" class="ico"></i></span></a>
+      <a class="sc" href="/proyectos/"><img src="/assets/proy/un-fachada.jpg" alt="" loading="lazy"><span class="lb">Comprar</span><h3>Proyectos nuevos</h3><p>Entrega inmediata y en verde, con pie financiado.</p><span class="ar">Ver proyectos<i data-lucide="arrow-right" class="ico"></i></span></a>
+      <a class="sc" href="/comprar"><img src="/assets/proy/ht-hero.jpg" alt="" loading="lazy"><span class="lb">Comprar</span><h3>Propiedades en venta</h3><p>Casas y departamentos disponibles.</p><span class="ar">Ver propiedades<i data-lucide="arrow-right" class="ico"></i></span></a>
+      <a class="sc sc-team" href="/corredores"><img src="/assets/home-v2/corredores.png" alt="" loading="lazy"><span class="lb">Únete</span><h3>Sé corredor</h3><p>Genera ingresos con nuestra cartera de propiedades.</p><span class="ar">Postular<i data-lucide="arrow-right" class="ico"></i></span></a>
     </div>
-  </section>
-</div>
-
-<!-- REVIEWS -->
-<section class="sec" id="resenas">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Reseñas</span>
-      <h2>Lo que piensan nuestros clientes</h2>
-      <p>Opiniones destacadas desde nuestra base de reseñas y respaldadas por Facebook.</p>
-    </div>
-    <div class="reviews-grid" id="reviews"></div>
-    <div class="reviews-dots" id="reviewsDots"></div>
-    <div class="sec-cta"><a class="btn btn-ghost" id="reviewsLink" href="#" target="_blank">Ver todas las reseñas <i data-lucide="external-link" class="ico" style="width:17px;height:17px"></i></a></div>
   </div>
 </section>
 
-<!-- SELL BAND -->
-<section class="sec" id="vender" style="padding-top:0">
-  <div class="wrap">
-    <div class="sellband">
-      <div class="l">
-        <span class="eyebrow">¿Tienes una propiedad?</span>
-        <h2>Vende o arrienda con nosotros</h2>
-        <p>Tasamos tu propiedad y la publicamos con asesoría experta. Cuéntanos qué tienes y te contactamos.</p>
-      </div>
-      <div class="r">
-        <a class="btn btn-light" href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html"><i data-lucide="key-round" class="ico"></i>Arrienda con nosotros</a>
+<section class="sec">
+  <div class="w">
+    <div class="sh">
+      <div><span class="kick"><i data-lucide="building-2" class="ico"></i>Proyectos nuevos</span><h2 class="h2t" style="margin-top:8px">Departamentos nuevos en los mejores sectores</h2><p id="projSub"></p></div>
+      <a class="more" href="/proyectos/">Ver los proyectos<i data-lucide="arrow-right" class="ico"></i></a>
+    </div>
+    <div class="pgrid" id="projGrid"></div>
+
+  </div>
+</section>
+
+<div class="sep"><div class="w"><span class="sep-line"></span><span class="sep-ic"><i data-lucide="trees" class="ico"></i></span><span class="sep-line"></span></div></div>
+
+<section class="sec parc-sec">
+  <div class="w">
+    <div class="sh"><div><span class="kick kick-g"><i data-lucide="trees" class="ico"></i>Parcelas</span><h2 class="h2t" style="margin-top:8px">Vive en el sur: parcelas con crédito directo</h2><p>Terrenos de 5.000 m² urbanizados, a minutos de la ciudad y rodeados de naturaleza.</p></div><a class="more more-g" href="/parcelas">Ver todas las parcelas<i data-lucide="arrow-right" class="ico"></i></a></div>
+    <div class="parc">
+      <div class="im"><img src="/assets/home-v2/parcelas.jpg" alt="Campo Alto Roble, Villarrica" loading="lazy"></div>
+      <div class="tx">
+        <span class="lb">Parcelas · Villarrica</span>
+        <h3>Campo Alto Roble: parcelas de 5.000 m² con crédito directo</h3>
+        <p>A 4 km de Villarrica, con vista al volcán, bosque nativo y lagunas. Paga con 40% de pie y el resto en cuotas, sin trámite bancario.</p>
+        <ul><li><i data-lucide="check" class="ico"></i>100% urbanizadas</li><li><i data-lucide="check" class="ico"></i>Agua, luz y fibra óptica</li><li><i data-lucide="check" class="ico"></i>Desde UF 2.400</li><li><i data-lucide="check" class="ico"></i>Hasta 36 cuotas</li></ul>
+        <div class="btns"><a class="btn-w" href="/parcelas/campo-alto-roble"><i data-lucide="trees" class="ico"></i>Ver parcelas</a><a class="btn-o" href="/parcelas/campo-alto-roble#credito"><i data-lucide="calculator" class="ico"></i>Simular crédito</a></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+
+
+<section class="sec">
+  <div class="w">
+    <div class="sh"><div><span class="kick"><i data-lucide="star" class="ico"></i>Clientes</span><h2 class="h2t" style="margin-top:8px">Lo que dicen de nosotros</h2></div></div>
+    <div class="rgrid" id="revGrid"></div>
+  </div>
+</section>
+
+
+
+</main>
 <footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <img class="logo" src="assets/guzman-logo.png" alt="Corretaje Guzmán">
-        <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
-      </div>
-      <div>
-        <h4>Acceso rápido</h4><a href="/nosotros/">Sobre Corretaje Guzmán</a>
-        <div class="foot-links"><a href="Arriendos - Corretaje Guzman.html">Arrendar</a><a href="Ventas - Corretaje Guzman.html">Comprar</a><a href="Parcelas - Corretaje Guzman.html">Parcelas</a><a href="Quiero Arrendar mi Propiedad - Corretaje Guzman.html">Arrendar mi propiedad</a><a href="Administracion de Propiedades - Corretaje Guzman.html">Administración de propiedades</a><a href="Se Corredor - Corretaje Guzman.html">Sé corredor</a><a href="Formulario de Arriendo - Corretaje Guzman.html">Formulario de arriendo</a></div>
-      </div>
-      <div>
-        <h4>Contacto y sucursales</h4>
-        <div class="foot-contact">
-          <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
-          <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
-          <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
-        </div>
-        <div class="socials">
-          <a href="https://www.instagram.com/corretaje_guzman/" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
-          <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
-          <a href="https://www.tiktok.com/@corretaje_guzman?_r=1&_t=ZS-97FUNwb0CKz" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
-        </div>
+  <div class="foot-grid">
+    <div>
+      <img class="logo" src="/assets/guzman-logo.png" alt="Corretaje Guzmán">
+      <p>Corretaje de inmuebles en Chile. Te acompañamos en el arriendo, venta y compra de tu próxima propiedad.</p>
+    </div>
+    <div>
+      <h4>Buscar</h4>
+      <div class="foot-links">
+        <a href="/nosotros/">Sobre Corretaje Guzmán</a>
+        <a href="/arriendos">Arrendar</a>
+        <a href="/proyectos/">Proyectos nuevos</a>
+        <a href="/comprar">Propiedades en venta</a>
+        <a href="/parcelas">Parcelas</a>
+        <a href="/simulador-capacidad/">¿Cuánto puedo comprar?</a>
       </div>
     </div>
-    <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
+    <div>
+      <h4>Propietarios</h4>
+      <div class="foot-links">
+        <a href="/propietarios">Arrendar mi propiedad</a>
+        <a href="/propietarios#planes">Planes para propietarios</a>
+        <a href="/administracion">Administración</a>
+        <a href="/corredores">Sé corredor</a>
+      </div>
+    </div>
+    <div>
+      <h4>Contacto</h4>
+      <div class="foot-contact">
+        <div class="c"><i data-lucide="phone" class="ico"></i>+56 9 4463 7680</div>
+        <div class="c"><i data-lucide="mail" class="ico"></i>contacto@corretajeguzman.com</div>
+        <div class="c"><i data-lucide="map-pin" class="ico"></i>Av. Manquehue Sur 350, of. 201, Las Condes</div>
+      </div>
+      <div class="socials">
+        <a href="https://www.instagram.com/corretaje_guzman" target="_blank" aria-label="Instagram"><i data-lucide="instagram" class="ico"></i></a>
+        <a href="https://www.facebook.com/Corretajeguzman" target="_blank" aria-label="Facebook"><i data-lucide="facebook" class="ico"></i></a>
+        <a href="https://www.tiktok.com/@corretaje_guzman" target="_blank" aria-label="TikTok"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.3 0 .59.04.88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg></a>
+      </div>
+    </div>
   </div>
+  <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span><span>Asesoría de compra · estimaciones referenciales</span></div>
 </footer>
 
 <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script src="data-propiedades.js"></script>
-<script src="/guzman-shared.js?v=20260922-calculadora-1"></script>
-<script src="/home.js?v=20260922-calculadora-3"></script>
-<script>
-(function(){
-  var b=document.getElementById('navBurger'), m=document.getElementById('mobileMenu');
-  if(b&&m){
-    b.addEventListener('click',function(e){e.stopPropagation();m.classList.toggle('open');});
-    document.addEventListener('click',function(e){if(!m.contains(e.target)&&!b.contains(e.target))m.classList.remove('open');});
-    m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');});});
-  }
-})();
-</script>
-<script src="/guzman-header.js?v=nav-wa-20260923"></script>
+
+<script src="/data-proyectos.js"></script>
+<script src="/tipologias-confirmadas.js"></script>
+<script src="/guzman-header.js"></script>
+<script type="module" src="/home-v2.js?v=20261006"></script>
+
+
+
 </body>
 </html>

@@ -15,22 +15,22 @@
 # ============================================================
 [[redirects]]
   from = "/apple-touch-icon.png"
-  to = "/assets/guzman-logo.png"
+  to = "/assets/favicon-180.png"
   status = 200
 
 [[redirects]]
   from = "/apple-touch-icon-precomposed.png"
-  to = "/assets/guzman-logo.png"
+  to = "/assets/favicon-180.png"
   status = 200
 
 [[redirects]]
   from = "/favicon.png"
-  to = "/assets/guzman-logo.png"
+  to = "/assets/favicon-512.png"
   status = 200
 
 [[redirects]]
   from = "/favicon.ico"
-  to = "/assets/guzman-logo.png"
+  to = "/assets/favicon-512.png"
   status = 200
 
 # ============================================================

@@ -10,10 +10,10 @@
 /home%20-%20corretaje%20guzman/  /  301!
 
 # Iconos oficiales: siempre usar el logo real desde assets
-/favicon.ico  /assets/guzman-logo.png  200!
-/favicon.png  /assets/guzman-logo.png  200!
-/apple-touch-icon.png  /assets/guzman-logo.png  200!
-/apple-touch-icon-precomposed.png  /assets/guzman-logo.png  200!
+/favicon.ico  /assets/favicon-512.png  200!
+/favicon.png  /assets/favicon-512.png  200!
+/apple-touch-icon.png  /assets/favicon-180.png  200!
+/apple-touch-icon-precomposed.png  /assets/favicon-180.png  200!
 
 # Ficha de proyecto Campo Alto Roble
 /parcelas/campo-alto-roble  /parcela-campo-alto-roble.html  200
