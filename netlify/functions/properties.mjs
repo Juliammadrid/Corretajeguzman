@@ -15,9 +15,11 @@
  *    AIRTABLE_SALE_TABLE_ID     (def: tblB67Zm9zxDlFwY7)
  *  Nunca se expone la API key al frontend.
  * ============================================================ */
-const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
-const RENT_TABLE = process.env.AIRTABLE_RENT_TABLE_ID || "tblOZztlu6qSLMAtc";
-const SALE_TABLE = process.env.AIRTABLE_SALE_TABLE_ID || "tblB67Zm9zxDlFwY7";
+import {summaryProperty,homeProperties} from '../../home-render.mjs';
+const env=k=>globalThis.Netlify?.env.get(k)||process.env[k];
+const BASE_ID = env('AIRTABLE_BASE_ID') || "appkG5ldIIHTVkXf6";
+const RENT_TABLE = env('AIRTABLE_RENT_TABLE_ID') || "tblOZztlu6qSLMAtc";
+const SALE_TABLE = env('AIRTABLE_SALE_TABLE_ID') || "tblB67Zm9zxDlFwY7";
 
 /* Nombres de columna esperados (con alternativas por si cambian) */
 const F = {
@@ -107,6 +109,8 @@ export function normalize(rec, operation) {
     photos: ph,
     photoDimensions: Array.isArray(g("photos")) ? g("photos").filter(a => a?.url && a.width > 0 && a.height > 0).map(a => ({ url: a.url, width: a.width, height: a.height })) : [],
     coverPhoto: ph[0] || "",
+    cardPhoto: Array.isArray(g("photos")) ? (g("photos")[0]?.thumbnails?.large?.url || ph[0] || "") : (ph[0] || ""),
+    photoKey: Array.isArray(g("photos")) ? (g("photos")[0]?.id || "") : "",
     features: list(g("features")),
     updatedAt: g("updatedAt") || "",
     status: pick(g("status")) || "Disponible",
@@ -121,7 +125,7 @@ async function fetchTable(token, table, operation) {
     const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`);
     url.searchParams.set("pageSize", "100");
     if (offset) url.searchParams.set("offset", offset);
-    const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(10000) });
     if (!r.ok) throw new Error(`${operation} ${r.status}`);
     const j = await r.json();
     out = out.concat((j.records || []).map(rec => normalize(rec, operation)));
@@ -131,7 +135,7 @@ async function fetchTable(token, table, operation) {
 }
 
 async function readProperties(event) {
-  const token = process.env.AIRTABLE_API_KEY || process.env.AIRTABLE_TOKEN;
+  const token = env('AIRTABLE_API_KEY') || env('AIRTABLE_TOKEN');
   if (!token) return { statusCode: 500, body: JSON.stringify({ error: "Falta AIRTABLE_API_KEY" }) };
   const q = (event && event.queryStringParameters) || {};
   const wantRent = q.type !== "sale";
@@ -147,9 +151,12 @@ async function readProperties(event) {
     props = props.filter(p => !/borrador|privad|ocult|inactiv|eliminad/i.test(String(p.status || "")));
     if (!props.length) { const e = settled.find(s => s.status === "rejected"); if (e) return { statusCode: 502, body: JSON.stringify({ error: String(e.reason) }) }; }
     if (q.id) props = props.filter(p => p.id === q.id);
+    if (q.summary === 'home') props = homeProperties(props).map(summaryProperty);
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=120" },
+      headers: { "Content-Type": "application/json", "Cache-Control": complete ? "public, max-age=0, must-revalidate" : "no-store",
+        "Netlify-CDN-Cache-Control": complete ? "public, durable, max-age=60, stale-while-revalidate=240" : "no-store",
+        "Netlify-Vary": "query=type|id|featured|summary" },
       body: JSON.stringify({ properties: props, complete })
     };
   } catch (e) {

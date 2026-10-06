@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
 import {SITE,esc,head,element,breadcrumbs,absolute,businessSchema,json} from '../seo-core.mjs';
 import {imageDimensions} from './image-dimensions.mjs';
+import './build-home.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const ctx={window:{}};vm.createContext(ctx);
 for(const file of ['data-proyectos.js','data-proyectos-detalle.js','tipologias-confirmadas.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx);

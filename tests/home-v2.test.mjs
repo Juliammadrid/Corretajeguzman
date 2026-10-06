@@ -7,10 +7,10 @@ test('Home mantiene ruta, metadatos únicos y catálogo confirmado',()=>{
   assert.equal((home.match(/rel="canonical"/g)||[]).length,1);
   assert.match(home,/rel="canonical" href="https:\/\/corretajeguzman.com\/"/);
   assert.equal((home.match(/property="og:image"/g)||[]).length,1);
-  assert.match(home,/tipologias-confirmadas.js/);
+  assert.match(home,/id="home-catalog-data"/);
   assert.match(home,/guzman-header.js/);
   assert.doesNotMatch(home,/data-propiedades.js|api\/lead-alerta/);
-  assert.match(js,/getJSON\('\/api\/properties'\)/);
+  assert.match(js,/getJSON\('\/api\/properties\?summary=home'\)/);
   assert.match(js,/getJSON\('\/api\/reviews'\)/);
 });
 test('Favicons públicos apuntan al ícono cuadrado, no al logo horizontal',()=>{

@@ -11,7 +11,7 @@ const GEO_CACHE = new Map();
 const STATE = { q: '', tipo: '', condicion: '', prMin: null, prMax: null, prMoneda: 'CLP', dorm: 0, banos: 0, areaMin: null, areaMax: null, eq: [], sort: 'rel' };
 
 async function init() {
-  await GZ.loadConfig();
+  const configReady = GZ.loadConfig();
   const params = new URLSearchParams(location.search);
   OP = (params.get('op') === 'venta' || window.GUZMAN_OP === 'venta') ? 'venta' : 'arriendo';
   if (params.get('comuna')) { STATE.q = params.get('comuna'); $('#qInput').value = STATE.q; }
@@ -26,6 +26,7 @@ async function init() {
   buildMobile();
   apply();
   if(params.get('vista')==='mapa') toggleMap();
+  configReady.then(()=>renderMap(sortList(ALL.filter(matches))));
   if (window.lucide) lucide.createIcons();
 }
 

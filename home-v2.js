@@ -1,10 +1,12 @@
-import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs';
+import {esc} from '/seo-core.mjs';
+import {homeProperties,rentalCard,projectCards} from '/home-render.mjs';
 /* Home v2 — Corretaje Guzmán (arriendos primero) */
 (function(){
   const $=(s,r=document)=>r.querySelector(s);
   const nf=new Intl.NumberFormat('es-CL');
-  let ARR=[];
-  const PRO=(window.PROYECTOS||[]).filter(p=>p.activa!==false);
+  let initial={};try{initial=JSON.parse(document.getElementById('home-catalog-data')?.textContent||'{}');}catch{}
+  let ARR=homeProperties(initial.properties).filter(p=>p.operation==='arriendo');
+  const PRO=(initial.projects||window.PROYECTOS||[]).filter(p=>p.activa!==false);
   let REV=[];
   async function getJSON(url){
     try{
@@ -16,42 +18,31 @@ import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs
 
 
   /* hero + arriendos (Airtable) */
-  let fc='Todas', VEN=0;
+  let fc='Todas', refreshing=true, refreshFailed=false, VEN=homeProperties(initial.properties).filter(p=>p.operation==='venta').length;
   function setupArr(){
     const comunas=[...new Set(ARR.map(p=>p.commune).filter(Boolean))].sort();
     $('#stTotal').textContent=ARR.length+VEN;
     $('#stArr').textContent=ARR.length;
     $('#stVen').textContent=VEN;
     const chips=['Todas'].concat(comunas.slice(0,6));
-    $('#arrChips').innerHTML=chips.length>1?chips.map((c,i)=>'<button class="chip'+(i===0?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>').join(''):'';
+    if(!chips.includes(fc)) fc='Todas';
+    $('#arrChips').innerHTML=chips.length>1?chips.map(c=>'<button class="chip'+(c===fc?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</button>').join(''):'';
     $('#arrChips').querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
       fc=b.dataset.c; $('#arrChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b)); renderArr();
     }));
     renderArr();
   }
   const isPromo=p=>/50\s*%/.test(p.promo||'');
-  function card(p,ft){
-    const img=(p.photos&&p.photos[0])||p.coverPhoto||'/assets/home-v2/hero.jpg';
-    const promo=isPromo(p);
-    const precio=promo?p.priceValue/2:p.priceValue;
-    const banos=p.bathrooms||0;
-    return '<a class="ac'+(ft?' ft':'')+'" href="'+esc(propertyPath(p))+'">'+
-      '<div class="ph"><img src="'+esc(img)+'" alt="'+esc(p.title)+'" loading="lazy">'+(promo?'<span class="promo">50% primer mes</span>':'')+'</div>'+
-      (ft?'<span class="lbl">Destacado</span>':'')+
-      '<div class="bd"><div class="pr">'+priceText({...p,priceValue:precio})+' <small>'+(promo?'1er mes':'/ mes')+'</small></div>'+
-      '<h3>'+esc(p.title)+'</h3><span class="cm"><i data-lucide="map-pin" class="ico"></i>' +esc(p.commune||'')+'</span>'+
-      '<div class="sp"><span><i data-lucide="bed-double" class="ico"></i>'+esc(p.bedrooms||'—')+' dorm</span><span><i data-lucide="bath" class="ico"></i>'+esc(banos||'—')+' baño'+(banos>1?'s':'')+'</span>'+(p.usableArea?'<span><i data-lucide="ruler" class="ico"></i>' +esc(p.usableArea)+' m²</span>':'')+'</div></div></a>';
-  }
   function renderArr(){
     const all=ARR.filter(p=>fc==='Todas'||p.commune===fc);
     const ordered=[...all].sort((a,b)=>(isPromo(b)?1:0)-(isPromo(a)?1:0));
-    const L=ordered.slice(0,6);
-    $('#arrGrid').innerHTML=L.length?L.map(p=>card(p,false)).join(''):'<div class="arr-empty"><i data-lucide="home" class="ico"></i><b>Estamos actualizando nuestras propiedades</b><span>Escríbenos por WhatsApp y te contamos qué tenemos disponible hoy.</span><a class="btn btn-violet" href="https://wa.me/56944637680">Consultar por WhatsApp</a></div>';
+    const L=ordered;
+    $('#arrGrid').innerHTML=L.length?L.map((p,i)=>rentalCard(p,i)).join(''):'<div class="arr-empty"><i data-lucide="home" class="ico"></i><b>Estamos actualizando nuestras propiedades</b><span>Escríbenos por WhatsApp y te contamos qué tenemos disponible hoy.</span><a class="btn btn-violet" href="https://wa.me/56944637680">Consultar por WhatsApp</a></div>';
     const cnt=$('#arrCount');
-    if(cnt) cnt.textContent=all.length+(all.length===1?' propiedad':' propiedades')+(fc==='Todas'?' disponibles':' en '+fc);
+    if(cnt) cnt.textContent=all.length+(all.length===1?' propiedad':' propiedades')+(fc==='Todas'?(refreshFailed?' del último catálogo':' disponibles'):' en '+fc)+(refreshing?' · verificando disponibilidad':refreshFailed?' · disponibilidad por confirmar':'');
     if(window.lucide) lucide.createIcons();
   }
-  $('#arrGrid').innerHTML='<div class="arr-empty"><span class="spin"></span><b>Cargando propiedades…</b></div>';
+  if(ARR.length) setupArr();
 
   /* búsqueda (igual al original) */
   function goSearch(mapa){
@@ -63,18 +54,7 @@ import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs
   $('#srch').addEventListener('submit',e=>{e.preventDefault();goSearch(false);});
   $('#searchMap').addEventListener('click',()=>goSearch(true));
 
-  /* proyectos */
-  const projectImage=p=>p.image||'/assets/opt/proyecto-'+({'best-too-santiago':'best-too','hometown-santiago':'hometown','onetown-santiago':'onetown','residential-park-santiago':'residential-park-stgo'}[p.slug]||p.slug)+'.jpg';
-  const BADGE={inmediata:['Entrega inmediata','#1f8a5b'],futura:['Entrega futura','#5b7088'],verde:['Venta en verde','#7c3aed'],ultimas:['Últimas unidades','#c0182a']};
-  const minUF=Math.min(...PRO.map(p=>p.desdeUF||Infinity));
-  $('#projSub').textContent=PRO.length+' proyectos desde UF '+nf.format(minUF)+', con pie financiado y subsidio a la tasa.';
-  const pick=[...PRO].sort((a,b)=>(a.entrega==='inmediata'?0:1)-(b.entrega==='inmediata'?0:1)||a.desdeUF-b.desdeUF).slice(0,10);
-  $('#projGrid').innerHTML=pick.map(p=>{
-    const b=BADGE[p.entrega];
-    return '<a class="pc" href="'+esc(p.detalle||'/proyectos/')+'">'+
-      '<div class="ph"><img src="'+esc(projectImage(p))+'" alt="'+esc(p.name)+'" loading="lazy">'+(b?'<span class="bdg" style="background:'+b[1]+'">'+b[0]+'</span>':'')+'</div>'+
-      '<div class="bd"><h3>'+esc(p.name)+'</h3><span class="cm">'+esc(p.commune)+'</span><div class="uf">Desde UF '+nf.format(p.desdeUF)+'</div></div></a>';
-  }).join('');
+  if(!$('#projGrid').children.length) $('#projGrid').innerHTML=projectCards(PRO);
 
   /* carrusel proyectos */
   (function(){
@@ -137,15 +117,20 @@ import {esc, propertyPath, isPublic, isAvailable, priceText} from '/seo-core.mjs
   /* carga de datos */
   (async function(){
     getJSON('/api/reviews').then(revs=>{REV=revs?(Array.isArray(revs)?revs:(revs.reviews||[])):[];renderRev();});
-    const props=await getJSON('/api/properties')||await getJSON('/api/properties');
-    if(!props){
-      $('#arrGrid').innerHTML='<div class="arr-empty"><b>No pudimos cargar las propiedades en este momento.</b><a class="btn btn-violet" href="/arriendos">Ver arriendos disponibles</a></div>';
+    const props=await getJSON('/api/properties?summary=home')||await getJSON('/api/properties?summary=home');
+    if(!props || props.complete===false || !Array.isArray(props.properties)){
+      refreshing=false; refreshFailed=true;
+      if(ARR.length) renderArr();
+      if(!ARR.length) $('#arrGrid').innerHTML='<div class="arr-empty"><b>No pudimos cargar las propiedades en este momento.</b><a class="btn btn-violet" href="/arriendos">Ver arriendos disponibles</a></div>';
       return;
     }
     const records=props?(Array.isArray(props)?props:(props.propiedades||props.properties||props.records||[])):[];
-    const P=records.filter(p=>isPublic(p)&&isAvailable(p)&&p.activa!==false&&!/rentando/i.test(p.source||''));
+    const P=homeProperties(records);
+    const cached=new Map((initial.properties||[]).map(p=>[p.id,p]));
+    for(const p of P){const old=cached.get(p.id);if(old?.photoKey && old.photoKey===p.photoKey)p.coverPhoto=old.coverPhoto;}
     ARR=P.filter(p=>String(p.operation||'').toLowerCase()==='arriendo' && p.activa!==false && !/rentando/i.test(p.source||''));
     VEN=P.filter(p=>String(p.operation||'').toLowerCase()==='venta').length;
+    refreshing=false;
     setupArr();
     if(window.lucide) lucide.createIcons();
   })();

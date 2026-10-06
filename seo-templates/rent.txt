@@ -256,7 +256,16 @@ footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px;margin-top:10px}
 .cta-arriendo .cta-btn:hover{background:var(--violet-tint);transform:translateY(-1px)}
 .cta-arriendo .cta-btn:active{transform:translateY(1px)}
 .cta-arriendo .cta-btn .ico{width:19px;height:19px}
-@media(max-width:680px){.cta-arriendo{padding:0 0 40px}.cta-arriendo-inner{padding:30px 22px;border-radius:0;flex-direction:column;align-items:flex-start}.cta-arriendo h2{font-size:24px}.cta-arriendo .cta-btn{width:100%;justify-content:center}}
+@media(max-width:680px){
+  .cta-arriendo{padding:0 16px 24px}
+  .cta-arriendo-inner{padding:22px 20px;border-radius:18px;flex-direction:column;align-items:stretch;gap:18px}
+  .cta-arriendo .cta-tx{flex:0 1 auto;min-width:0}
+  .cta-arriendo .cta-eyebrow{font-size:10px;letter-spacing:.04em;padding:6px 10px;max-width:100%}
+  .cta-arriendo h2{font-size:22px;margin-top:10px;line-height:1.2}
+  .cta-arriendo p{font-size:14px;line-height:1.5;margin-top:8px}
+  .cta-arriendo .cta-btn{width:100%;justify-content:center;text-align:center;font-size:14px;line-height:1.4;padding:13px 14px;min-width:0}
+  .cta-arriendo .cta-btn .ico{flex:none}
+}
 
 
 /* nav móvil — WhatsApp dentro del menú (igual al Home) */
@@ -543,7 +552,7 @@ footer{background:var(--dark);color:#cfc9da;padding:60px 0 32px;margin-top:10px}
   <div class="foot-base"><span>© 2026 Corretaje Guzmán. Todos los derechos reservados.</span></div>
 </footer>
 
-<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script src="/assets/vendor/lucide-0.460.0.min.js" async onload="lucide.createIcons()"></script>
 <script src="data-propiedades.js"></script>
 <script src="/guzman-shared.js?v=20260922-calculadora-1"></script>
 <script src="arriendos.js"></script>

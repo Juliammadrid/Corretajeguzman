@@ -54,6 +54,15 @@ test('catálogo SSR con imagen social propia, filtros noindex y comuna inexisten
 test('sitemap no publica un catálogo parcial como válido',async t=>{
  setupFetch(t,[p],false);const r=await sitemapHandler(new Request(SITE+'/sitemap-propiedades.xml'));assert.equal(r.status,503);
 });
+test('arriendos muestra las fotos sin introducción, conserva SEO y CTA móvil compacta',async t=>{
+ setupFetch(t);
+ const r=await catalogHandler(new Request(SITE+'/arriendos'),{}), h=await r.text();
+ assert.doesNotMatch(h,/<section class="seo-catalog-intro">/);
+ assert.match(h,/<h1 class="catalog-heading-accessible">Propiedades en arriendo<\/h1>/);
+ assert.match(h,/name="description"/);assert.match(h,/application\/ld\+json/);
+ assert.match(h,/\.cta-arriendo \.cta-tx\{flex:0 1 auto;min-width:0\}/);
+ assert.match(h,/Completa el formulario de arriendo/);
+});
 test('IndexNow protegido y restringido al dominio y fichas reales',()=>{
  assert.ok(!authorized('Bearer a',''));assert.ok(authorized('Bearer test-secret','test-secret'));assert.ok(!authorized('Bearer wrong','test-secret'));
  assert.ok(validPropertyUrl(SITE+propertyPath(p)));assert.ok(!validPropertyUrl('https://evil.example'+propertyPath(p)));
