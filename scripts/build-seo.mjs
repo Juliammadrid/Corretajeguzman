@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {SITE,esc,head,element,breadcrumbs,absolute,businessSchema,json} from '../seo-core.mjs';
 import {imageDimensions} from './image-dimensions.mjs';
 import './build-home.mjs';
+import {buildFooter} from './build-footer.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const ctx={window:{}};vm.createContext(ctx);
 for(const file of ['data-proyectos.js','data-proyectos-detalle.js','tipologias-confirmadas.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx);
@@ -82,3 +83,4 @@ const about=head(homeHead,{title:aboutTitle,description:aboutDescription,url:SIT
 if(!fs.existsSync(aboutFile)){fs.mkdirSync(path.dirname(aboutFile),{recursive:true});fs.writeFileSync(aboutFile,about);}
 if(!home.includes('href="/nosotros/"')){home=home.replace('<h4>Acceso rápido</h4>','<h4>Acceso rápido</h4><a href="/nosotros/">Sobre Corretaje Guzmán</a>');fs.writeFileSync(homeFile,home);}
 services=fs.readFileSync(servicesFile,'utf8');if(!services.includes('/nosotros/')){services=services.replace('</urlset>','<url><loc>'+SITE+'/nosotros/</loc></url>\n</urlset>');fs.writeFileSync(servicesFile,services);}
+buildFooter();

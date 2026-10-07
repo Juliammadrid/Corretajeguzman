@@ -1,11 +1,12 @@
 import {esc} from '/seo-core.mjs';
-import {homeProperties,rentalCard,projectCards} from '/home-render.mjs';
+import {homeProperties,rentalCard,projectCards,selectHomeRentals} from '/home-render.mjs';
 /* Home v2 — Corretaje Guzmán (arriendos primero) */
 (function(){
   const $=(s,r=document)=>r.querySelector(s);
   const nf=new Intl.NumberFormat('es-CL');
   let initial={};try{initial=JSON.parse(document.getElementById('home-catalog-data')?.textContent||'{}');}catch{}
   let ARR=homeProperties(initial.properties).filter(p=>p.operation==='arriendo');
+  let ufValue=Number(initial.uf?.value);
   const PRO=(initial.projects||window.PROYECTOS||[]).filter(p=>p.activa!==false);
   let REV=[];
   async function getJSON(url){
@@ -32,14 +33,12 @@ import {homeProperties,rentalCard,projectCards} from '/home-render.mjs';
     }));
     renderArr();
   }
-  const isPromo=p=>/50\s*%/.test(p.promo||'');
   function renderArr(){
     const all=ARR.filter(p=>fc==='Todas'||p.commune===fc);
-    const ordered=[...all].sort((a,b)=>(isPromo(b)?1:0)-(isPromo(a)?1:0));
-    const L=ordered;
+    const L=selectHomeRentals(all,ufValue);
     $('#arrGrid').innerHTML=L.length?L.map((p,i)=>rentalCard(p,i)).join(''):'<div class="arr-empty"><i data-lucide="home" class="ico"></i><b>Estamos actualizando nuestras propiedades</b><span>Escríbenos por WhatsApp y te contamos qué tenemos disponible hoy.</span><a class="btn btn-violet" href="https://wa.me/56944637680">Consultar por WhatsApp</a></div>';
     const cnt=$('#arrCount');
-    if(cnt) cnt.textContent=all.length+(all.length===1?' propiedad':' propiedades')+(fc==='Todas'?(refreshFailed?' del último catálogo':' disponibles'):' en '+fc)+(refreshing?' · verificando disponibilidad':refreshFailed?' · disponibilidad por confirmar':'');
+    if(cnt) cnt.textContent='Mostrando '+L.length+' de '+all.length+' arriendos'+(fc==='Todas'?'':' en '+fc)+(refreshing?' · verificando disponibilidad':refreshFailed?' · disponibilidad por confirmar':'');
     if(window.lucide) lucide.createIcons();
   }
   if(ARR.length) setupArr();
@@ -116,6 +115,7 @@ import {homeProperties,rentalCard,projectCards} from '/home-render.mjs';
 
   /* carga de datos */
   (async function(){
+    getJSON('/api/uf-actual').then(uf=>{if(Number.isFinite(Number(uf?.value))&&Number(uf.value)>0){ufValue=Number(uf.value);if(ARR.length)renderArr();}});
     getJSON('/api/reviews').then(revs=>{REV=revs?(Array.isArray(revs)?revs:(revs.reviews||[])):[];renderRev();});
     const props=await getJSON('/api/properties?summary=home')||await getJSON('/api/properties?summary=home');
     if(!props || props.complete===false || !Array.isArray(props.properties)){

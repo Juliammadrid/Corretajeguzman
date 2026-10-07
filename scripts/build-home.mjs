@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
 import {element,json,esc} from '../seo-core.mjs';
-import {homeProperties,summaryProperty,rentalCards,projectCards} from '../home-render.mjs';
+import {homeProperties,summaryProperty,rentalCards,projectCards,selectHomeRentals} from '../home-render.mjs';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const snapshotFile=path.join(root,'home-catalog.json');
 const previous=fs.existsSync(snapshotFile)?JSON.parse(fs.readFileSync(snapshotFile,'utf8')):null;
@@ -35,16 +35,23 @@ try{
  console.warn('Home: using last complete public snapshot:',error.message);snapshot=previous;
 }
 const ctx={window:{}};vm.createContext(ctx);
+try{
+ if(process.env.HOME_SNAPSHOT_ONLY==='1')throw Error('Offline preview');
+ const response=await fetch('https://corretajeguzman.com/api/uf-actual',{signal:AbortSignal.timeout(10000)});
+ const uf=await response.json();if(!response.ok||!Number.isFinite(Number(uf.value))||Number(uf.value)<=0)throw Error('UF unavailable');
+ snapshot.uf={value:Number(uf.value),date:uf.date};
+}catch{snapshot.uf=snapshot.uf||previous?.uf;}
+if(!(Number(snapshot.uf?.value)>0))throw Error('A verified UF reference is required to compare rental prices');
 for(const file of ['data-proyectos.js','tipologias-confirmadas.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),ctx);
 snapshot.projects=ctx.window.PROYECTOS.filter(p=>p.activa!==false);
 fs.writeFileSync(snapshotFile,JSON.stringify(snapshot));
 const file=path.join(root,'Home - Corretaje Guzman.html');let html=fs.readFileSync(file,'utf8');
 const rows=homeProperties(snapshot.properties),rent=rows.filter(p=>p.operation==='arriendo'),sale=rows.filter(p=>p.operation==='venta');
-for(const [id,value] of Object.entries({stTotal:rows.length,stArr:rent.length,stVen:sale.length,arrCount:rent.length+' propiedades · disponibilidad actualizándose'}))html=element(html,id,String(value));
-html=html.replace(/<!--home-rentals:start-->[\s\S]*?<!--home-rentals:end-->/,'<!--home-rentals:start--><div class="agrid" id="arrGrid">'+rentalCards(rows)+'</div><!--home-rentals:end-->');
+for(const [id,value] of Object.entries({stTotal:rows.length,stArr:rent.length,stVen:sale.length,arrCount:'Mostrando '+selectHomeRentals(rows,snapshot.uf.value).length+' de '+rent.length+' arriendos · disponibilidad actualizándose'}))html=element(html,id,String(value));
+html=html.replace(/<!--home-rentals:start-->[\s\S]*?<!--home-rentals:end-->/,'<!--home-rentals:start--><div class="agrid" id="arrGrid">'+rentalCards(rows,snapshot.uf.value)+'</div><!--home-rentals:end-->');
 html=html.replace(/<!--home-projects:start-->[\s\S]*?<!--home-projects:end-->/,'<!--home-projects:start--><div class="pgrid" id="projGrid">'+projectCards(snapshot.projects)+'</div><!--home-projects:end-->');
 html=element(html,'projSub',snapshot.projects.length+' proyectos desde UF '+new Intl.NumberFormat('es-CL').format(Math.min(...snapshot.projects.map(p=>p.desdeUF)))+', con pie financiado y subsidio a la tasa.');
 html=html.replace(/<script id="home-catalog-data"[^>]*>[\s\S]*?<\/script>\s*/g,'');
 html=html.replace('</head>','<script id="home-catalog-data" type="application/json">'+json(snapshot)+'</script>\n</head>');
 fs.writeFileSync(file,html);
-console.log('Home prerendered:',rent.length,'rentals,',sale.length,'sales; first response contains all rental cards.');
+console.log('Home prerendered:',selectHomeRentals(rows,snapshot.uf.value).length,'featured rentals of',rent.length,'available; UF reference',snapshot.uf.value);
