@@ -74,7 +74,7 @@ window.PROYECTOS = [
     "entrega": "inmediata",
     "specs": "35,66 a 52,73 m² · 1 y 2 dorm · 1 y 2 baños",
     "detalle": "/proyectos/smart-la-florida/",
-    "image": "/assets/proy/slf-portada.jpg"
+    "image": "/assets/proy/slf-diseno-2.jpg"
   },
   {
     "slug": "new-life-macul",
@@ -85,7 +85,7 @@ window.PROYECTOS = [
     "entrega": "inmediata",
     "specs": "47,4 a 86,26 m² · 2 y 3 dorm · 1 y 2 baños",
     "detalle": "/proyectos/new-life-macul/",
-    "image": "/assets/proy/nl-portada.jpg"
+    "image": "/assets/proy/nl-diseno-2.jpg"
   },
   {
     "slug": "urban-nunoa",

@@ -37,6 +37,7 @@ test('every public page and dynamic template has the same footer',()=>{
  for(const dir of ['proyectos','simulador-capacidad','nosotros'])walk(dir);
  files.push('seo-templates/property.txt','seo-templates/rent.txt','seo-templates/sale.txt');
  const expected=fs.readFileSync(path.join(root,'shared/footer.html'),'utf8').trim();
+ assert.doesNotMatch(expected,/href="\/nosotros\/"|Sobre Corretaje Guzmán/);
  for(const file of files){const h=fs.readFileSync(path.join(root,file),'utf8');assert.equal((h.match(/<footer\b/g)||[]).length,1,file);assert.ok(h.includes(expected),file);assert.match(h,/data-gz-footer/,file);}
  assert.ok(files.length>40);
 });
