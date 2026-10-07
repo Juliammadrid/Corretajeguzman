@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
+import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {SITE,esc,head,element,breadcrumbs,absolute,businessSchema,json} from '../seo-core.mjs';
 import {imageDimensions} from './image-dimensions.mjs';
@@ -82,4 +83,11 @@ const about=head(homeHead,{title:aboutTitle,description:aboutDescription,url:SIT
 // Preserve the existing About page when the Home design changes.
 if(!fs.existsSync(aboutFile)){fs.mkdirSync(path.dirname(aboutFile),{recursive:true});fs.writeFileSync(aboutFile,about);}
 services=fs.readFileSync(servicesFile,'utf8');if(!services.includes('/nosotros/')){services=services.replace('</urlset>','<url><loc>'+SITE+'/nosotros/</loc></url>\n</urlset>');fs.writeFileSync(servicesFile,services);}
-buildFooter();
+const publicPages=buildFooter();
+// Version the catalog by content so returning visitors receive updated covers.
+const catalogVersion=createHash('sha256').update(fs.readFileSync(path.join(root,'data-proyectos.js'))).digest('hex').slice(0,12);
+for(const page of publicPages){
+ const file=path.join(root,page),html=fs.readFileSync(file,'utf8');
+ const updated=html.replace(/(<script\b[^>]*\bsrc=["']\/?data-proyectos\.js)(?:\?[^"']*)?(["'])/g,`$1?v=${catalogVersion}$2`);
+ if(updated!==html)fs.writeFileSync(file,updated);
+}
