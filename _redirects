@@ -1,4 +1,7 @@
 # Corretaje Guzman - redirects rapidos de compatibilidad
+# Acceso al portal privado, sin cambiar las rutas de la web pública.
+/login  /portal/index.html  200!
+/login/  /portal/index.html  200!
 # Imagen antigua usada en la pagina de corredores movil
 /assets/corredor-hero.png  /assets/corredores.png  200!
 

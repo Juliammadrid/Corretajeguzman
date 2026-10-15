@@ -2,7 +2,8 @@
   "name": "corretaje-guzman",
   "private": true,
   "scripts": {
-    "build": "node scripts/build-seo.mjs",
+    "build": "node scripts/build-seo.mjs && node scripts/package-site.mjs",
     "test": "node --test tests/seo.test.mjs"
-  }
+  },
+  "dependencies": { "@netlify/blobs": "11.1.4" }
 }

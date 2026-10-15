@@ -1,4 +1,25 @@
 # Cache de recursos estáticos
+/login
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self'; connect-src 'self' https://aoemvstjbwvkoqjoirsx.supabase.co https://*.airtableusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://aoemvstjbwvkoqjoirsx.supabase.co https://*.googleusercontent.com https://*.airtableusercontent.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
+
+/login/
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self'; connect-src 'self' https://aoemvstjbwvkoqjoirsx.supabase.co https://*.airtableusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://aoemvstjbwvkoqjoirsx.supabase.co https://*.googleusercontent.com https://*.airtableusercontent.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
+
+/portal/*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Content-Security-Policy: default-src 'self'; script-src 'self'; connect-src 'self' https://aoemvstjbwvkoqjoirsx.supabase.co https://*.airtableusercontent.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://aoemvstjbwvkoqjoirsx.supabase.co https://*.googleusercontent.com https://*.airtableusercontent.com; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
+
 # Plantillas de transporte: no son páginas públicas indexables.
 /seo-templates/*
   X-Robots-Tag: noindex, nofollow

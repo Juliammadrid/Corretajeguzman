@@ -1,0 +1,40 @@
+/* Requested additions; original delivered design remains unchanged. */
+.project-image-unavailable{width:72px;height:72px;flex:none;display:grid;place-items:center;background:var(--line-2);border-radius:12px;color:var(--ink-3);font-size:12px}
+.hot-row{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding-bottom:14px;scrollbar-width:thin;scrollbar-color:var(--violet) transparent}
+.hot-row::-webkit-scrollbar{display:block;height:7px}.hot-row::-webkit-scrollbar-thumb{background:var(--violet);border-radius:9px}
+.hot-row .pc{flex:0 0 310px;scroll-snap-align:start;display:flex;flex-direction:column}.hot-row .pc .bd{flex:1}
+.hot-controls{display:flex;gap:8px;align-items:center;margin-top:12px}.hot-controls .btn{min-height:40px;min-width:42px}
+.property-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 12px}.property-tools .btn{white-space:normal;font-size:12px;min-height:42px;padding:8px}
+.property-tools button:disabled{opacity:.5;cursor:not-allowed}.materials-dialog{border:1px solid #e7ddfb;border-radius:20px;width:min(620px,calc(100% - 24px));max-height:88dvh;padding:24px;color:var(--ink);background:white;box-shadow:0 20px 80px #160c3033;margin:auto}
+.materials-dialog::backdrop{background:#160c3088}.materials-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.materials-head h2{font-size:21px;margin:0}.materials-body p{margin:16px 0;line-height:1.6}.materials-body label{display:block;font-size:13px;color:var(--ink-2);margin:12px 0}.materials-body textarea{width:100%;height:300px;resize:vertical;border:1px solid #ddd3ee;border-radius:12px;padding:14px;font:14px/1.6 inherit;color:inherit;background:#faf8fe}.materials-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.boot-shell{padding-top:8px}.boot-shell .boot-line{height:18px;width:180px;margin:20px 0;background:#e8e2f1;border-radius:8px}.boot-shell .boot-title{width:260px;height:34px;margin:22px 0}.boot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.boot-card{height:126px;background:#fff;border:1px solid #e7dff3;border-radius:18px;padding:22px}.boot-card .boot-line{width:65%;margin:0 0 18px}.boot-banner{height:80px;background:#eee7fc;border-radius:18px;margin-top:14px}.boot-shell{animation:boot-in .18s ease-out}@keyframes boot-in{from{opacity:.5}to{opacity:1}}
+@media(max-width:700px){.hot-row .pc{flex-basis:84%;max-width:340px}.boot-grid{grid-template-columns:1fr}.boot-grid .boot-card:nth-child(n+4){display:none}.materials-dialog{padding:18px}.materials-actions .btn{flex:1}.hot-controls{padding:0 18px}}
+@media(prefers-reduced-motion:reduce){.boot-shell{animation:none}.hot-row{scroll-behavior:auto}}
+/* Contain mobile layouts without disabling pinch zoom or vertical scrolling. */
+html,body{max-width:100%;overflow-x:clip}
+.main,.hot,.pc,.bd,.drawer,.db,.fgrid,.f,.prefix{min-width:0;max-width:100%}
+.drawer{overflow:hidden;visibility:hidden}.drawer.on{visibility:visible}
+.db{min-height:0;overflow-x:hidden;overscroll-behavior:contain;overflow-wrap:anywhere}
+.drawer .f input,.drawer .f select,.drawer .f textarea{min-width:0;max-width:100%;width:100%}
+.df,.dh{flex-shrink:0}.df .btn{min-width:0;white-space:normal}
+.hot-row .pc{scroll-snap-align:center;scroll-snap-stop:always}
+.hot-controls{justify-content:space-between}.hot-controls .btn{flex-shrink:0}.hot-controls span{min-width:0;text-align:center}
+.bank-card{padding:22px;margin-top:20px}.bank-card h2{margin-bottom:12px}.bank-card .btn{margin-top:16px}
+.finance-note{margin:12px 0;color:var(--ink-2);font-size:13px;line-height:1.6}
+.finance-error{color:var(--bad);margin:12px 0}.finance-status{font-size:12px}.finance-bank{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.finance-bank div{min-width:0;overflow-wrap:anywhere}.finance-bank dt{font-size:12px;color:var(--ink-2)}.finance-bank dd{margin:4px 0;font-weight:600}
+@media(max-width:700px){
+  .drawer{height:92dvh;left:0;right:0;width:100%;max-width:100vw}
+  .drawer input,.drawer select,.drawer textarea,.bank-card input,.bank-card select{font-size:16px!important}
+  .hot-row{padding:0 18px 14px;scroll-padding-inline:18px}
+  .hot-row .pc{flex:0 0 100%;width:100%;max-width:none}
+  .hot-controls{margin-bottom:14px}.hot-controls span{font-size:12px}
+  #prChips{display:flex;flex-wrap:wrap;overflow:visible;margin-right:0;padding-right:0}
+  #prComuna{flex:1 0 100%;width:100%;font-size:16px}
+  .tabbar{grid-template-columns:repeat(var(--nav-count,5),minmax(0,1fr))}
+  .tabbar a{min-width:0;font-size:10px;padding-inline:0}.tabbar .ico{display:block;flex-shrink:0;width:22px;height:22px}
+  .visit>div,.visit .va{min-width:0;overflow-wrap:anywhere}
+  .bank-card{padding:18px}.finance-bank{grid-template-columns:1fr}
+  .ph #newCommission{display:inline-flex}
+  #financeRows .crow .ib{grid-column:3}
+  #financeRows .cc{min-width:0;overflow-wrap:anywhere}
+}

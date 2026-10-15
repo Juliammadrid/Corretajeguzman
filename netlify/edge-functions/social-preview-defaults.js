@@ -126,7 +126,7 @@ function upsertSocialMeta(html, url) {
 export default async function handler(request, context) {
   const url = new URL(request.url);
 
-  if (url.pathname.startsWith('/propiedad/')) {
+  if (url.pathname.startsWith('/propiedad/') || url.pathname.startsWith('/portal/') || /^\/login\/?$/.test(url.pathname)) {
     return context.next();
   }
 
@@ -151,5 +151,7 @@ export default async function handler(request, context) {
 }
 
 export const config = {
-  path: '/*'
+  path: '/*',
+  // Private portal handles its own metadata and no-store policy.
+  excludedPath: ['/login', '/login/', '/portal/*']
 };
