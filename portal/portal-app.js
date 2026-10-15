@@ -461,15 +461,15 @@ import { connectDesign } from './design-data.mjs';
     const t=todayISO();
     $('#view').innerHTML=`
       <div class="ph"><div><h1>Corredores</h1><p>Cuentas autorizadas para entrar al portal con Google.</p></div><button class="btn btn-p" id="inv"><i data-lucide="user-plus" class="ico"></i>Invitar corredor</button></div>
-      <div class="card list">
-        <div class="lrow lh" style="grid-template-columns:2fr 1fr .9fr .9fr 120px"><span>Corredor</span><span>Cuenta</span><span>Prospectos</span><span>Próx. visitas</span><span style="text-align:right">Ver</span></div>
+      <div class="card list broker-list">
+        <div class="lrow lh"><span>Corredor</span><span>Cuenta</span><span>Prospectos</span><span>Próx. visitas</span><span style="text-align:right">Ver</span></div>
         ${S.brokers.map(b=>{const np=S.prospects.filter(p=>p.owner===b.id).length,nv=S.visits.filter(v=>v.owner===b.id&&v.fecha>=t).length;return `
-        <div class="lrow" style="grid-template-columns:2fr 1fr .9fr .9fr 120px">
+        <div class="lrow">
           <div class="c-name pname"><span class="av">${ini(b.nombre)}</span><div style="min-width:0"><b>${esc(b.nombre)}</b><span>${esc(b.email)}</span></div></div>
           <div class="c-tel">${b.estado==='activa'?'<span class="badge b-ok">Activa</span>':'<span class="badge b-warn">Invitación enviada</span>'}</div>
-          <div class="c-renta money">${np}</div>
-          <div class="c-dicom money">${nv}</div>
-          <div class="c-acts acts"><button class="ib" data-finance="${b.id}" title="Cuenta bancaria y comisiones" aria-label="Cuenta bancaria y comisiones"><i data-lucide="wallet" class="ico"></i></button><a class="ib" href="#/prospectos?c=${b.id}" title="Ver prospectos"><i data-lucide="users-round" class="ico"></i></a><button class="ib" data-vis="${b.id}" title="Ver visitas"><i data-lucide="calendar-days" class="ico"></i></button></div>
+          <div class="c-renta money" data-label="Prospectos">${np}</div>
+          <div class="c-dicom money" data-label="Próximas visitas">${nv}</div>
+          <div class="c-acts acts"><button class="ib" data-finance="${b.id}" title="Cuenta bancaria y comisiones" aria-label="Cuenta bancaria y comisiones"><i data-lucide="wallet" class="ico"></i><span class="broker-action-label">Comisiones</span></button><a class="ib" href="#/prospectos?c=${b.id}" title="Ver prospectos"><i data-lucide="users-round" class="ico"></i><span class="broker-action-label">Prospectos</span></a><button class="ib" data-vis="${b.id}" title="Ver visitas"><i data-lucide="calendar-days" class="ico"></i><span class="broker-action-label">Visitas</span></button></div>
         </div>`;}).join('')}
       </div>`;
     $$('[data-finance]').forEach(b=>b.addEventListener('click',()=>finance.broker(b.dataset.finance)));

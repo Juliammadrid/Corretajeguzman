@@ -1,4 +1,21 @@
 /* Requested additions; original delivered design remains unchanged. */
+.broker-list .lrow{grid-template-columns:minmax(0,2fr) repeat(3,minmax(70px,1fr)) 126px}
+.broker-list .pname .av{flex-shrink:0}
+.broker-list .pname>div{min-width:0;max-width:100%}
+.broker-list .pname>div>span{display:block;overflow-wrap:anywhere}
+.broker-action-label{display:none}
+@media(max-width:760px){
+  .broker-list .lrow:not(.lh){grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"n n" "t t" "m d" "a a";gap:14px 12px;padding:16px}
+  .broker-list .pname{align-items:flex-start}
+  .broker-list .pname b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.4}
+  .broker-list .pname>div>span{margin-top:4px;line-height:1.45}
+  .broker-list .lrow>.c-renta{grid-area:m;text-align:left}
+  .broker-list .lrow>.c-dicom{grid-area:d;display:block;text-align:left}
+  .broker-list [data-label]::before{content:attr(data-label);display:block;font:500 12px/1.4 'Hanken Grotesk',sans-serif;color:var(--ink-3);margin-bottom:4px}
+  .broker-list .c-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid var(--line-2);padding-top:12px}
+  .broker-list .c-acts .ib{width:100%;min-width:0;height:auto;min-height:60px;padding:8px 2px;gap:4px}
+  .broker-action-label{display:block;font:600 11px/1.3 'Hanken Grotesk',sans-serif}
+}
 .project-image-unavailable{width:72px;height:72px;flex:none;display:grid;place-items:center;background:var(--line-2);border-radius:12px;color:var(--ink-3);font-size:12px}
 .hot-row{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding-bottom:14px;scrollbar-width:thin;scrollbar-color:var(--violet) transparent}
 .hot-row::-webkit-scrollbar{display:block;height:7px}.hot-row::-webkit-scrollbar-thumb{background:var(--violet);border-radius:9px}
