@@ -6,7 +6,7 @@
 
 const BASE_ID = process.env.AIRTABLE_BASE_ID || "appkG5ldIIHTVkXf6";
 const TABLE_ID = process.env.AIRTABLE_PROPERTY_LEADS_TABLE_ID || process.env.AIRTABLE_ADMIN_TABLE_ID || "tblqGaWqSMaE42cTL";
-const LEAD_EMAIL_TO = process.env.LEAD_EMAIL_TO || "corretajeguzman@gmail.com";
+const LEAD_EMAIL_TO = process.env.LEAD_EMAIL_TO || "contacto@corretajeguzman.com";
 const LEAD_EMAIL_FROM = process.env.LEAD_EMAIL_FROM || "Corretaje Guzman <noreply@corretajeguzman.com>";
 
 const FIELD = {
