@@ -14,6 +14,23 @@
   node_bundler = "esbuild"
 [functions."portal-properties"]
   node_bundler = "esbuild"
+[functions."chilepropiedades"]
+  node_bundler = "esbuild"
+[functions."chilepropiedades-image"]
+  node_bundler = "esbuild"
+
+# Feed y fotografias persistentes de ChilePropiedades.
+[[redirects]]
+  from = "/api/chilepropiedades.xml"
+  to = "/.netlify/functions/chilepropiedades"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/chilepropiedades-images/*"
+  to = "/.netlify/functions/chilepropiedades-image/:splat"
+  status = 200
+  force = true
 
 # ============================================================
 # Iconos oficiales para navegador, iPhone y PWA
