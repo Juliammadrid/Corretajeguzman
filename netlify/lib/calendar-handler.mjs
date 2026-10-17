@@ -1,5 +1,5 @@
 import { randomBytes, createHash } from 'node:crypto';
-import { COMPANY,SCOPE,CalendarError,fail,hash,seal,unseal,canConnect,normalizeVisit,eventForVisit,verifyEvent } from './calendar-core.mjs';
+import { COMPANY,CORPORATE,SCOPE,CalendarError,fail,hash,seal,unseal,canConnect,normalizeVisit,eventForVisit,verifyEvent } from './calendar-core.mjs';
 
 const COOKIE='__Host-cg-calendar';
 const PATH='/.netlify/functions/portal-calendar';
@@ -37,22 +37,23 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
     const redirect=result=>new Response(null,{status:303,headers:{...headers,Location:origin+'/portal/app.html?calendar='+result+'#/cuenta','Set-Cookie':cookie('',0)}});
     const store=()=>storeFor('portal-calendar-'+hash(origin).slice(0,16));
     const context='calendar-credentials:'+origin;
-    async function stored(){
-      const value=await store().get('company-authorization');if(!value)return null;
+    async function stored(organizer=COMPANY){
+      const value=await store().get(organizer===CORPORATE?'corporate-authorization':'company-authorization');if(!value)return null;
       // Rotating the OAuth client secret invalidates old encrypted authorization;
       // allow the administrator to reconnect without exposing or reusing it.
-      try{return unseal(value,secret,context);}catch{return null;}
+      try{const connection=unseal(value,secret,context);return connection.email===organizer?connection:null;}catch{return null;}
     }
+    const activeConnection=async()=>await stored(CORPORATE)||await stored(COMPANY);
     async function tokenRequest(params){
       const r=await fetchTimed('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:clientId,client_secret:secret,...params})});
       if(!r.ok)fail('La autorización de Calendar venció o fue revocada. Administración debe reconectarla.',409);
       const data=await r.json();if(!data.access_token)fail('Google no entregó autorización válida.',502);return data;
     }
-    async function googleIdentity(accessToken){
+    async function googleIdentity(accessToken,organizer){
       const r=await fetchTimed('https://openidconnect.googleapis.com/v1/userinfo',{headers:{Authorization:'Bearer '+accessToken}});
       if(!r.ok)fail('No se pudo verificar la cuenta de Google.',502);
       const u=await r.json();
-      if(!u.email_verified||u.email?.toLowerCase()!==COMPANY)fail('Debes elegir la cuenta '+COMPANY+'.',403);
+      if(!u.email_verified||u.email?.toLowerCase()!==organizer)fail('Debes elegir la cuenta '+organizer+'.',403);
     }
     if(callback){
       if(!configured)fail('Falta configurar Calendar.',503);
@@ -65,14 +66,15 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       const code=url.searchParams.get('code');if(!code)fail('Google no devolvió un código.',400);
       const token=await tokenRequest({code,grant_type:'authorization_code',redirect_uri:origin+PATH+'?action=callback',code_verifier:state.verifier});
       if(!token.scope?.split(' ').includes(SCOPE)||!token.refresh_token)fail('Autoriza Calendar y el acceso sin conexión para continuar.',400);
-      await googleIdentity(token.access_token);
-      await store().set('company-authorization',seal({refreshToken:token.refresh_token,email:COMPANY,connectedAt:new Date(now()).toISOString(),connectedBy:actor.user.id},secret,context));
+      await googleIdentity(token.access_token,CORPORATE);
+      // Keep the legacy authorization: old visits must remain on their original calendar.
+      await store().set('corporate-authorization',seal({refreshToken:token.refresh_token,email:CORPORATE,connectedAt:new Date(now()).toISOString(),connectedBy:actor.user.id},secret,context));
       return redirect('connected');
     }
     const actor=await actorFor(request.headers.get('authorization'));
     if(action==='status'){
-      let connection=null;if(configured)connection=await stored();
-      return json({configured,visitConfigured:!!serviceKey,connected:!!connection,organizer:COMPANY,canConnect:canConnect(actor.user,actor.profile),connectedAt:connection?.connectedAt||null});
+      let connection=null;if(configured)connection=await activeConnection();
+      return json({configured,visitConfigured:!!serviceKey,connected:!!connection,organizer:connection?.email||CORPORATE,connectOrganizer:CORPORATE,canConnect:canConnect(actor.user,actor.profile),connectedAt:connection?.connectedAt||null});
     }
     if(!configured)fail('Falta configurar las credenciales de Google Calendar en Netlify. Administración debe completar ese paso.',503);
     if(action==='connect'){
@@ -81,7 +83,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       const payload=seal({state,verifier,expires:now()+600000,authorization:request.headers.get('authorization')},secret,'calendar-state:'+origin);
       if(payload.length>3700)fail('La sesión es demasiado grande. Contacta a administración.',400);
       const auth=new URL('https://accounts.google.com/o/oauth2/v2/auth');
-      auth.search=new URLSearchParams({client_id:clientId,redirect_uri:origin+PATH+'?action=callback',response_type:'code',scope:'openid email '+SCOPE,access_type:'offline',prompt:'consent select_account',state,login_hint:COMPANY,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'}).toString();
+      auth.search=new URLSearchParams({client_id:clientId,redirect_uri:origin+PATH+'?action=callback',response_type:'code',scope:'openid email '+SCOPE,access_type:'offline',prompt:'consent select_account',state,login_hint:CORPORATE,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'}).toString();
       return json({url:auth.href},200,{'Set-Cookie':cookie(payload)});
     }
     if(action!=='visit')fail('Acción no disponible.',404);
@@ -90,7 +92,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
     // verified identity/active profile, fixed ownership and field allowlisting.
     // Do not grant clients write access to gcal_event_id or a chosen record ID.
     const writeHeaders={apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json',Prefer:'return=representation'};
-    const connection=await stored();if(!connection)fail('Administración debe conectar el calendario de Corretaje Guzmán primero.',409);
+    const active=await activeConnection();if(!active)fail('Administración debe conectar el calendario de Corretaje Guzmán primero.',409);
     const raw=await request.text();if(raw.length>10000)fail('Formulario demasiado grande.',413);
     let body;try{body=JSON.parse(raw);}catch{fail('Formulario inválido.');}
     if(!/^[0-9a-f-]{36}$/i.test(body.id||''))fail('Visita inválida.');
@@ -99,20 +101,28 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
     let existing=await select();if(!existing.ok)fail('No se pudo consultar Mis visitas.',502);
     let visit=(await existing.json())[0];
     // Validate before writing. On a retry the persisted row, not changed input, is authoritative.
-    const candidate=visit||normalizeVisit(body,actor,now());
+    const candidate=visit||normalizeVisit(body,actor,now(),active.email);
+    // Immutable routing is persisted BEFORE inserting the visit or contacting Calendar.
+    // Rows predating this migration have no marker and always belong to the legacy account.
+    const routeKey='visit-organizer/'+hash(actor.profile.id+'\0'+candidate.id);
+    if(!visit)await store().set(routeKey,active.email,{onlyIfNew:true});
+    const organizer=await store().get(routeKey)||COMPANY;
+    if(![COMPANY,CORPORATE].includes(organizer))fail('No se pudo verificar el calendario de esta visita.',409);
+    const connection=await stored(organizer);
+    if(!connection)fail('Falta la autorización del calendario original de esta visita. Administración debe revisarla.',409);
     const token=await tokenRequest({grant_type:'refresh_token',refresh_token:connection.refreshToken});
-    await googleIdentity(token.access_token);
+    await googleIdentity(token.access_token,organizer);
     if(!visit){
       const insert=await fetchTimed(sb+'/rest/v1/visitas',{method:'POST',headers:writeHeaders,body:JSON.stringify(candidate)});
       if(insert.status===409){existing=await select();if(!existing.ok)fail('No se pudo recuperar la visita.',502);visit=(await existing.json())[0];}
       else if(insert.ok)visit=(await insert.json())[0];
       if(!visit)fail('No se pudo guardar la visita. No se enviaron invitaciones.',502);
     }
-    const event=eventForVisit(visit,actor,origin),endpoint='https://www.googleapis.com/calendar/v3/calendars/primary/events';
+    const event=eventForVisit(visit,actor,origin,organizer),endpoint='https://www.googleapis.com/calendar/v3/calendars/primary/events';
     const googleHeaders={Authorization:'Bearer '+token.access_token,'Content-Type':'application/json'};
     // Deterministic IDs make retries safe even if Google accepted the first request but our response was lost.
     let lookup=await fetchTimed(endpoint+'/'+event.id,{headers:googleHeaders}),saved;
-    if(lookup.ok){saved=await lookup.json();verifyEvent(saved,event);}
+    if(lookup.ok){saved=await lookup.json();verifyEvent(saved,event,organizer);}
     else if(lookup.status===404){
       // Existing pending rows may be retried later. Do not issue invitations for
       // past visits; an already-created event is still recovered by the lookup above.
@@ -121,7 +131,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       if(insert.status===409){lookup=await fetchTimed(endpoint+'/'+event.id,{headers:googleHeaders});if(lookup.ok)saved=await lookup.json();}
       else if(insert.ok)saved=await insert.json();
       if(!saved)fail('Visita guardada, pero Calendar no confirmó el envío. Reintenta desde Mis visitas; no crees otra.',502);
-      verifyEvent(saved,event);
+      verifyEvent(saved,event,organizer);
     }else fail('Visita guardada, pero Calendar no respondió. Reintenta desde Mis visitas.',502);
     const update=await fetchTimed(sb+'/rest/v1/visitas?'+query,{method:'PATCH',headers:writeHeaders,body:JSON.stringify({gcal_event_id:event.id})});
     if(!update.ok)fail('Google creó la invitación, pero falta actualizar Mis visitas. Reintenta la misma visita para sincronizarla.',502);
