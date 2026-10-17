@@ -1,11 +1,13 @@
 const COMPANY='corretajeguzman@gmail.com';
+const CORPORATE='contacto@corretajeguzman.com';
 export function calendarLink(visit){
-  if(!/^[a-f0-9]{64}$/.test(visit.gcal_event_id||''))return '';
-  return 'https://calendar.google.com/calendar/event?eid='+encodeURIComponent(btoa(visit.gcal_event_id+' '+COMPANY));
+  if(!/^(?:c0)?[a-f0-9]{64}$/.test(visit.gcal_event_id||''))return '';
+  const organizer=visit.gcal_event_id.length===66?CORPORATE:COMPANY;
+  return 'https://calendar.google.com/calendar/event?eid='+encodeURIComponent(btoa(visit.gcal_event_id+' '+organizer));
 }
 export function createCalendarUI({api,me,getState,propertyById,openDrawer,closeDrawer,refresh,route,toast,esc}){
   const $=s=>document.querySelector(s);
-  const status={configured:false,connected:false,canConnect:false,checked:false};
+  const status={configured:false,connected:false,canConnect:false,checked:false,organizer:CORPORATE,connectOrganizer:CORPORATE};
   async function loadStatus(){
     Object.assign(status,await api.calendar(),{checked:true});getState().cal=status.connected;return status;
   }
@@ -13,8 +15,8 @@ export function createCalendarUI({api,me,getState,propertyById,openDrawer,closeD
   async function connect(){
     openDrawer('Calendario de Corretaje Guzmán','<p role="status">Verificando la conexión…</p>','');
     try{await loadStatus();}catch(error){openDrawer('Calendar','<p>'+esc(error.message)+'</p>','');return;}
-    const detail=status.connected?'La empresa ya autorizó su calendario. Puedes agendar desde una propiedad.':!status.configured?'Falta configurar las credenciales de Google Calendar en Netlify. La autorización todavía no está disponible.':status.canConnect?'Pulsa Autorizar y elige '+COMPANY+'. Google te pedirá permiso para gestionar eventos.':'El administrador '+COMPANY+' debe autorizar la conexión. Tú no necesitas conectar tu calendario personal.';
-    openDrawer('Calendario de Corretaje Guzmán',`<div class="gcal-box"><h3>${status.connected?'Calendario autorizado':'Conexión central'}</h3><p>${esc(detail)}</p><p>Organizador: <b>${COMPANY}</b></p><p>Las invitaciones se enviarán al correo del corredor y del candidato. Su aparición en la agenda depende de la configuración y aceptación de cada invitado.</p>${status.canConnect?'<p>Esta autorización permite gestionar eventos. El portal utiliza el acceso para las visitas; las credenciales permanecen en el servidor.</p>':''}</div>`,
+    const detail=status.connected?'La empresa ya autorizó su calendario. Puedes agendar desde una propiedad.':!status.configured?'Falta configurar las credenciales de Google Calendar en Netlify. La autorización todavía no está disponible.':status.canConnect?'Pulsa Autorizar y elige '+status.connectOrganizer+'. Google te pedirá permiso para gestionar eventos.':'Administración debe autorizar la conexión. Tú no necesitas conectar tu calendario personal.';
+    openDrawer('Calendario de Corretaje Guzmán',`<div class="gcal-box"><h3>${status.connected?'Calendario autorizado':'Conexión central'}</h3><p>${esc(detail)}</p><p>Organizador: <b>${esc(status.organizer)}</b></p><p>Las invitaciones se enviarán al correo del corredor y del candidato. Su aparición en la agenda depende de la configuración y aceptación de cada invitado.</p>${status.canConnect?'<p>Autoriza con '+esc(status.connectOrganizer)+'. Las visitas anteriores conservarán su calendario original.</p><p>Esta autorización permite gestionar eventos. El portal utiliza el acceso para las visitas; las credenciales permanecen en el servidor.</p>':''}</div>`,
       '<button class="btn btn-g" id="calendarClose">Cerrar</button>'+(status.configured&&status.canConnect?'<button class="btn btn-p" id="calendarAuthorize">'+(status.connected?'Volver a autorizar':'Autorizar con Google')+'</button>':''));
     $('#calendarClose').onclick=closeDrawer;
     if($('#calendarAuthorize'))$('#calendarAuthorize').onclick=async()=>{
@@ -39,7 +41,7 @@ export function createCalendarUI({api,me,getState,propertyById,openDrawer,closeD
     openDrawer('Agendar visita',`<div class="psum"><div><b>${esc(p.titulo)}</b><span>${esc(p.comuna)}</span></div></div>
       <p class="mnote">Candidato nuevo o prospecto existente. Duración: 30 minutos · horario de Chile (Santiago).</p>
       <form id="calendarVisit" class="fgrid">
-        <div class="f full"><label for="visitOrganizer">Organizador</label><input id="visitOrganizer" value="${COMPANY}" readonly></div>
+        <div class="f full"><label for="visitOrganizer">Organizador</label><input id="visitOrganizer" value="${esc(status.organizer)}" readonly></div>
         <div class="f full"><label for="visitBroker">Correo del corredor</label><input id="visitBroker" value="${esc(me.email)}" readonly></div>
         <div class="f full"><label for="visitCandidate">Nombre del candidato</label><input id="visitCandidate" name="cliente" required maxlength="120" list="visitProspects" value="${esc(pre?.cliente||'')}" placeholder="No necesita estar registrado"><datalist id="visitProspects">${pros.map(x=>'<option value="'+esc(x.nombre)+'">').join('')}</datalist></div>
         <div class="f full"><label for="visitEmail">Correo del candidato</label><input id="visitEmail" name="email" type="email" required maxlength="254" value="${esc(pre?.email||'')}" placeholder="Para enviarle la invitación"></div>

@@ -1,6 +1,7 @@
 import { createHash, createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 
 export const COMPANY='corretajeguzman@gmail.com';
+export const CORPORATE='contacto@corretajeguzman.com';
 export const SCOPE='https://www.googleapis.com/auth/calendar.events';
 export const ZONE='America/Santiago';
 export class CalendarError extends Error {
@@ -20,7 +21,7 @@ export function unseal(value,secret,context){
   decipher.setAuthTag(bytes.subarray(12,28));
   return JSON.parse(Buffer.concat([decipher.update(bytes.subarray(28)),decipher.final()]).toString('utf8'));
 }
-export const canConnect=(user,profile)=>profile.rol==='admin'&&profile.estado==='activa'&&user.email?.toLowerCase()===COMPANY&&!!user.email_confirmed_at;
+export const canConnect=(user,profile)=>profile.rol==='admin'&&profile.estado==='activa'&&[COMPANY,CORPORATE].includes(user.email?.toLowerCase())&&!!user.email_confirmed_at;
 export function email(value){
   const text=String(value||'').trim().toLowerCase();
   if(text.length>254||! /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(text))fail('Ingresa un correo válido para el candidato.');
@@ -50,12 +51,12 @@ export function visitInstant(date,time){
   if(matches.length!==1)fail('Esa hora no existe o se repite por el cambio de horario de Chile. Elige otra.');
   return matches[0];
 }
-export function normalizeVisit(body,actor,now=Date.now()){
+export function normalizeVisit(body,actor,now=Date.now(),organizer=COMPANY){
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.id||''))fail('Identificador de visita inválido.');
   const fecha=text(body.fecha,10,true),hora=text(body.hora,5,true),start=visitInstant(fecha,hora);
   if(start<=now||start>now+366*86400000)fail('Elige una fecha futura dentro de los próximos 12 meses.');
   const candidate=email(body.email);
-  if(candidate===COMPANY||candidate===actor.user.email.toLowerCase())fail('El correo del candidato debe ser distinto del organizador y del corredor.');
+  if(candidate===organizer||candidate===actor.user.email.toLowerCase())fail('El correo del candidato debe ser distinto del organizador y del corredor.');
   const propiedad_id=text(body.propiedad_id,80,true);
   if(!/^rec[a-zA-Z0-9]+$/.test(propiedad_id))fail('Selecciona una propiedad del catálogo.');
   return {id:body.id.toLowerCase(),corredor_id:actor.profile.id,propiedad_id,
@@ -63,10 +64,10 @@ export function normalizeVisit(body,actor,now=Date.now()){
     cliente:text(body.cliente,120,true),telefono:text(body.telefono,40),email:candidate,
     fecha,hora,notas:text(body.notas,2000)};
 }
-export function eventForVisit(v,actor,origin){
+export function eventForVisit(v,actor,origin,organizer=COMPANY){
   const start=visitInstant(v.fecha,v.hora.slice(0,5));
-  const id=hash(origin+'\0'+actor.profile.id+'\0'+v.id);
-  const attendees=[...new Set([actor.user.email.toLowerCase(),email(v.email)])].filter(x=>x!==COMPANY).map(email=>({email}));
+  const id=(organizer===CORPORATE?'c0':'')+hash(origin+'\0'+actor.profile.id+'\0'+v.id);
+  const attendees=[...new Set([actor.user.email.toLowerCase(),email(v.email)])].filter(x=>x!==organizer).map(email=>({email}));
   const plain=value=>String(value||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
   const event={id,summary:'Visita · '+v.propiedad_titulo,location:v.propiedad_direccion,
     description:'Visita coordinada por Corretaje Guzmán.\nCorredor: '+plain(actor.profile.nombre)+'\nCandidato: '+plain(v.cliente),
@@ -77,7 +78,7 @@ export function eventForVisit(v,actor,origin){
   event.extendedProperties={private:{portalVisit:v.id,portalOwner:actor.profile.id,portalFingerprint:fingerprint}};
   return event;
 }
-export function verifyEvent(existing,expected){
-  if(existing.status==='cancelled'||existing.organizer?.email?.toLowerCase()!==COMPANY||existing.extendedProperties?.private?.portalFingerprint!==expected.extendedProperties.private.portalFingerprint)
+export function verifyEvent(existing,expected,organizer=COMPANY){
+  if(existing.status==='cancelled'||existing.organizer?.email?.toLowerCase()!==organizer||existing.extendedProperties?.private?.portalFingerprint!==expected.extendedProperties.private.portalFingerprint)
     fail('La visita ya existe en Calendar con cambios. Revísala con administración antes de reintentar.',409);
 }
