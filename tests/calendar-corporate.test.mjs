@@ -28,7 +28,7 @@ function fixture({legacy=true,corporate=true,existing=null,marker=null,upstreamF
     }
     if(url==='https://oauth2.googleapis.com/token'){
       if(upstreamFailure)throw new Error('private upstream failure');
-      return Response.json({access_token:opts.body.get('refresh_token')||CORPORATE,refresh_token:CORPORATE,scope:SCOPE});
+      return Response.json({access_token:opts.body.get('refresh_token')||COMPANY,refresh_token:COMPANY,scope:SCOPE});
     }
     if(url.includes('/userinfo'))return Response.json({email:wrongIdentity?'unrelated@example.com':opts.headers.Authorization.slice(7),email_verified:true});
     if(url.includes('/calendar/v3/')){
@@ -61,24 +61,24 @@ test('corporate organizer is not invited as a guest and cannot be the candidate'
   const event=eventForVisit(row(),actor,origin,CORPORATE);
   assert.throws(()=>verifyEvent({...event,organizer:{email:COMPANY}},event,CORPORATE));
 });
-test('legacy stays active until corporate consent succeeds',async()=>{
+test('Gmail is the organizer and OAuth target',async()=>{
   const f=fixture({corporate:false});const data=await (await f.request('status')).json();
-  assert.equal(data.organizer,COMPANY);assert.equal(data.connectOrganizer,CORPORATE);assert.equal(data.connected,true);
+  assert.equal(data.organizer,COMPANY);assert.equal(data.connectOrganizer,COMPANY);assert.equal(data.connected,true);
   const auth=new URL((await (await f.request('connect')).json()).url);
-  assert.equal(auth.searchParams.get('login_hint'),CORPORATE);
+  assert.equal(auth.searchParams.get('login_hint'),COMPANY);
 });
-test('new visits use corporate authorization and route before creating event',async()=>{
+test('new visits use Gmail even when corporate authorization exists',async()=>{
   const f=fixture();const response=await f.request();assert.equal(response.status,200);
   const result=await response.json();assert.equal(result.calendarConfirmed,true);
-  assert.equal(result.visit.gcal_event_id.length,66);assert.equal(f.values.get(f.routeKey),CORPORATE);
-  assert.equal([...f.events.values()][0].organizer.email,CORPORATE);
+  assert.equal(result.visit.gcal_event_id.length,64);assert.equal(f.values.get(f.routeKey),COMPANY);
+  assert.equal([...f.events.values()][0].organizer.email,COMPANY);
 });
 test('legacy pending visits remain on original calendar after corporate connection',async()=>{
   const f=fixture({existing:row()});assert.equal((await f.request('visit',{id:input.id})).status,200);
   assert.equal([...f.events.values()][0].organizer.email,COMPANY);
 });
 test('corporate retry recovers accepted event without a second invitation',async()=>{
-  const f=fixture({patchFailure:true});assert.equal((await f.request()).status,502);
+  const f=fixture({existing:row(),marker:CORPORATE,patchFailure:true});assert.equal((await f.request()).status,502);
   assert.equal((await f.request('visit',{id:input.id})).status,200);
   assert.equal(f.calls.filter(c=>c.url.includes('sendUpdates=all')).length,1);
 });
@@ -97,16 +97,36 @@ test('external failures and mismatched Google identity send no invitations',asyn
     assert.equal(f.events.size,0);assert.doesNotMatch(await response.text(),/private upstream failure|refresh_token/);
   }
 });
-test('OAuth callback preserves legacy credential and stores only verified corporate authorization',async()=>{
-  const f=fixture({corporate:false}),legacy=f.values.get('company-authorization');
+test('OAuth callback saves verified Gmail and preserves corporate credentials',async()=>{
+  const f=fixture({legacy:false}),corporate=f.values.get('corporate-authorization');
   const state=seal({state:'nonce',expires:now+60000,authorization:'Bearer session',verifier:'verifier'},'secret','calendar-state:'+origin);
   const r=await f.handler(new Request(origin+'/.netlify/functions/portal-calendar?action=callback&state=nonce&code=test',{headers:{Cookie:'__Host-cg-calendar='+state}}));
-  assert.equal(r.status,303);assert.equal(f.values.get('company-authorization'),legacy);
-  assert.equal(unseal(f.values.get('corporate-authorization'),'secret','calendar-credentials:'+origin).email,CORPORATE);
+  assert.equal(r.status,303);assert.equal(f.values.get('corporate-authorization'),corporate);
+  assert.equal(unseal(f.values.get('company-authorization'),'secret','calendar-credentials:'+origin).email,COMPANY);
 });
 test('wrong OAuth account does not replace either authorization',async()=>{
   const f=fixture({corporate:false,wrongIdentity:true}),legacy=f.values.get('company-authorization');
   const state=seal({state:'nonce',expires:now+60000,authorization:'Bearer session',verifier:'verifier'},'secret','calendar-state:'+origin);
   const r=await f.handler(new Request(origin+'/.netlify/functions/portal-calendar?action=callback&state=nonce&code=test',{headers:{Cookie:'__Host-cg-calendar='+state}}));
   assert.equal(r.status,403);assert.equal(f.values.get('company-authorization'),legacy);assert.equal(f.values.has('corporate-authorization'),false);
+});
+
+test('corporate-only connection cannot silently organize new visits',async()=>{
+  const f=fixture({legacy:false});
+  const status=await (await f.request('status')).json();
+  assert.equal(status.connected,false);assert.equal(status.organizer,COMPANY);
+  const response=await f.request();assert.equal(response.status,409);
+  assert.match(await response.text(),/corretajeguzman@gmail.com/);assert.equal(f.events.size,0);
+});
+
+test('existing corporate visit can be recovered even before Gmail is reconnected',async()=>{
+  const f=fixture({legacy:false,existing:row(),marker:CORPORATE});
+  assert.equal((await f.request('visit',{id:input.id})).status,200);
+  assert.equal([...f.events.values()][0].organizer.email,CORPORATE);
+});
+
+test('missing corporate credential never moves an old visit to Gmail',async()=>{
+  const f=fixture({corporate:false,existing:row(),marker:CORPORATE});
+  assert.equal((await f.request('visit',{id:input.id})).status,409);
+  assert.equal(f.events.size,0);
 });

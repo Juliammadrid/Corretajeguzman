@@ -43,7 +43,8 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       // allow the administrator to reconnect without exposing or reusing it.
       try{const connection=unseal(value,secret,context);return connection.email===organizer?connection:null;}catch{return null;}
     }
-    const activeConnection=async()=>await stored(CORPORATE)||await stored(COMPANY);
+    // New visits always use Gmail. Keep corporate credentials only for existing visits.
+    const activeConnection=async()=>await stored(COMPANY);
     async function tokenRequest(params){
       const r=await fetchTimed('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:clientId,client_secret:secret,...params})});
       if(!r.ok)fail('La autorización de Calendar venció o fue revocada. Administración debe reconectarla.',409);
@@ -66,15 +67,15 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       const code=url.searchParams.get('code');if(!code)fail('Google no devolvió un código.',400);
       const token=await tokenRequest({code,grant_type:'authorization_code',redirect_uri:origin+PATH+'?action=callback',code_verifier:state.verifier});
       if(!token.scope?.split(' ').includes(SCOPE)||!token.refresh_token)fail('Autoriza Calendar y el acceso sin conexión para continuar.',400);
-      await googleIdentity(token.access_token,CORPORATE);
-      // Keep the legacy authorization: old visits must remain on their original calendar.
-      await store().set('corporate-authorization',seal({refreshToken:token.refresh_token,email:CORPORATE,connectedAt:new Date(now()).toISOString(),connectedBy:actor.user.id},secret,context));
+      await googleIdentity(token.access_token,COMPANY);
+      // Preserve corporate authorization and routing for visits already created there.
+      await store().set('company-authorization',seal({refreshToken:token.refresh_token,email:COMPANY,connectedAt:new Date(now()).toISOString(),connectedBy:actor.user.id},secret,context));
       return redirect('connected');
     }
     const actor=await actorFor(request.headers.get('authorization'));
     if(action==='status'){
       let connection=null;if(configured)connection=await activeConnection();
-      return json({configured,visitConfigured:!!serviceKey,connected:!!connection,organizer:connection?.email||CORPORATE,connectOrganizer:CORPORATE,canConnect:canConnect(actor.user,actor.profile),connectedAt:connection?.connectedAt||null});
+      return json({configured,visitConfigured:!!serviceKey,connected:!!connection,organizer:COMPANY,connectOrganizer:COMPANY,canConnect:canConnect(actor.user,actor.profile),connectedAt:connection?.connectedAt||null});
     }
     if(!configured)fail('Falta configurar las credenciales de Google Calendar en Netlify. Administración debe completar ese paso.',503);
     if(action==='connect'){
@@ -83,7 +84,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
       const payload=seal({state,verifier,expires:now()+600000,authorization:request.headers.get('authorization')},secret,'calendar-state:'+origin);
       if(payload.length>3700)fail('La sesión es demasiado grande. Contacta a administración.',400);
       const auth=new URL('https://accounts.google.com/o/oauth2/v2/auth');
-      auth.search=new URLSearchParams({client_id:clientId,redirect_uri:origin+PATH+'?action=callback',response_type:'code',scope:'openid email '+SCOPE,access_type:'offline',prompt:'consent select_account',state,login_hint:CORPORATE,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'}).toString();
+      auth.search=new URLSearchParams({client_id:clientId,redirect_uri:origin+PATH+'?action=callback',response_type:'code',scope:'openid email '+SCOPE,access_type:'offline',prompt:'consent select_account',state,login_hint:COMPANY,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'}).toString();
       return json({url:auth.href},200,{'Set-Cookie':cookie(payload)});
     }
     if(action!=='visit')fail('Acción no disponible.',404);
@@ -92,7 +93,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
     // verified identity/active profile, fixed ownership and field allowlisting.
     // Do not grant clients write access to gcal_event_id or a chosen record ID.
     const writeHeaders={apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json',Prefer:'return=representation'};
-    const active=await activeConnection();if(!active)fail('Administración debe conectar el calendario de Corretaje Guzmán primero.',409);
+    const active=await activeConnection();
     const raw=await request.text();if(raw.length>10000)fail('Formulario demasiado grande.',413);
     let body;try{body=JSON.parse(raw);}catch{fail('Formulario inválido.');}
     if(!/^[0-9a-f-]{36}$/i.test(body.id||''))fail('Visita inválida.');
@@ -100,6 +101,7 @@ export function makeCalendarHandler({getEnv,storeFor,fetcher=fetch,now=()=>Date.
     const select=()=>fetchTimed(sb+'/rest/v1/visitas?select=*&'+query,{headers:actor.dbHeaders});
     let existing=await select();if(!existing.ok)fail('No se pudo consultar Mis visitas.',502);
     let visit=(await existing.json())[0];
+    if(!visit&&!active)fail('Administración debe autorizar el calendario de '+COMPANY+' antes de agendar nuevas visitas.',409);
     // Validate before writing. On a retry the persisted row, not changed input, is authoritative.
     const candidate=visit||normalizeVisit(body,actor,now(),active.email);
     // Immutable routing is persisted BEFORE inserting the visit or contacting Calendar.

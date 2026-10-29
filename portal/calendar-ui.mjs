@@ -7,7 +7,7 @@ export function calendarLink(visit){
 }
 export function createCalendarUI({api,me,getState,propertyById,openDrawer,closeDrawer,refresh,route,toast,esc}){
   const $=s=>document.querySelector(s);
-  const status={configured:false,connected:false,canConnect:false,checked:false,organizer:CORPORATE,connectOrganizer:CORPORATE};
+  const status={configured:false,connected:false,canConnect:false,checked:false,organizer:COMPANY,connectOrganizer:COMPANY};
   async function loadStatus(){
     Object.assign(status,await api.calendar(),{checked:true});getState().cal=status.connected;return status;
   }

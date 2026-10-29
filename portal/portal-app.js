@@ -1,7 +1,7 @@
 import { projectImage, installProjectImageFallback } from './project-images.mjs';
 import { moveCarousel, lockPage, unlockPage } from './mobile-ui.mjs';
 import { createFinanceUI } from './finance-ui.mjs';
-import { createCalendarUI, calendarLink } from './calendar-ui.mjs';
+import { createCalendarUI, calendarLink } from './calendar-ui.mjs?v=20261029-gmail';
 import { brokerCommission } from './property-display.mjs';
 import { materialButtons, installPropertyTools } from './property-tools.mjs';
 import { prepareAvatar } from './avatars.mjs';
