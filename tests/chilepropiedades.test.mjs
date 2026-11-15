@@ -92,6 +92,26 @@ test('unknown optional counts are omitted, zero is preserved, numbers are never 
   }
 });
 
+test('optional and covered parking do not take the complete rent/sale feed offline', async () => {
+  for (const source of ['rent', 'sale']) {
+    const records = [record({ Estacionamiento: 'Opcional' }), record({ Estacionamiento: '1 techado' }, 'rec00000000000002')];
+    const s = setup({ rent: [], sale: [], [source]: records });
+    const response = await s.handler(request(), context);
+    assert.equal(response.status, 200);
+    const xml = await response.text();
+    assert.equal((xml.match(/<listing>/g) || []).length, 2);
+    const listings = xml.split('<listing>').slice(1);
+    assert.ok(!listings[0].includes('<parkingLots>'));
+    assert.ok(listings[1].includes('<parkingLots><![CDATA[1]]></parkingLots>'));
+    assert.ok(listings.every(p => p.includes('<pictures><picture>')));
+  }
+  assert.equal(mapListing(record({ Estacionamiento: '  OPCIONAL  ' }), 'rent').parking, null);
+  assert.equal(mapListing(record({ Estacionamiento: '2 techados' }), 'sale').parking, 2);
+  for (const value of ['1 o 2', 'opcional por 50000', '1 techado o 2 descubiertos', '-1 techado']) {
+    assert.throws(() => mapListing(record({ Estacionamiento: value }), 'rent'));
+  }
+});
+
 test('no fallback to internal address, private description, or alternative misspelled fees', () => {
   const p = mapListing(record({ 'Direccion publica': '', 'Descripción pública': undefined, Descripción: 'PRIVATE', 'Valor gasto comun': undefined, 'Valor gasto común': 999 }), 'rent');
   assert.equal(p.address, ''); assert.equal(p.description, ''); assert.equal(p.fees, null);

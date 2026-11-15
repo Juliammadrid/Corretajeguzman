@@ -36,9 +36,10 @@ function number(value, { required = false, integer = false } = {}) {
 
 function parking(value) {
   const text = str(value).toLowerCase();
-  if (['no informado', 'sin información', ''].includes(text) && typeof value !== 'number') return null;
+  // Optional parking does not establish how many spaces are included.
+  if (['no informado', 'sin información', 'opcional', ''].includes(text) && typeof value !== 'number') return null;
   if (['no', 'sin estacionamiento'].includes(text)) return 0;
-  const match = text.match(/^(\d+)(?:\s+(?:subterráneo|subterraneo|cubierto|descubierto)s?)?$/);
+  const match = text.match(/^(\d+)(?:\s+(?:subterráneo|subterraneo|cubierto|descubierto|techado)s?)?$/);
   return number(match ? match[1] : value, { integer: true });
 }
 
