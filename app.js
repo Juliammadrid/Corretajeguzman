@@ -146,7 +146,14 @@ function renderFicha(p) {
   const sel = $('#broker'); sel.innerHTML = '';
   sel.appendChild(el('option', null, 'Vi la empresa en internet')); sel.firstChild.value = '';
   (window.GUZMAN_BROKERS || []).filter(brokerAllowed).forEach(b => { const o = el('option', null, b); o.value = b; sel.appendChild(o); });
-  const updateWa = () => { const link = GZ.waLink(p, sel.value); $('#waBtn').href = link; $('#mWa').href = link; };
+  const updateWa = () => {
+    const direct = GZ.waLink(p, sel.value);
+    // Allocate only when the visitor opens WhatsApp, never on page load.
+    const link = ['arriendo', 'venta'].includes(p.operation)
+      ? '/.netlify/functions/property-whatsapp?text=' + encodeURIComponent(new URL(direct).searchParams.get('text'))
+      : direct;
+    $('#waBtn').href = link; $('#mWa').href = link;
+  };
   sel.addEventListener('change', updateWa); updateWa();
 
   $('#agentAv').textContent = 'CG';
