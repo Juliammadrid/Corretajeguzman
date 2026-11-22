@@ -137,3 +137,41 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
+
+// The frame isolates Zumi's styles from the public site and its listing pages.
+(() => {
+  function mountZumi() {
+    if (window.top !== window || document.getElementById('cg-zumi') ||
+        /^\/(?:login|portal|zumi)(?:\/|$)/.test(location.pathname)) return;
+    const frame = document.createElement('iframe');
+    frame.id = 'cg-zumi';
+    frame.title = 'Zumi, asistente de Corretaje Guzmán';
+    const property = location.pathname.match(/rec[A-Za-z0-9]{14}(?=\/|$)/);
+    frame.src = '/zumi/index.html' + (property ? '?zumi_property_id=' + property[0] : '');
+    frame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;z-index:1100;clip-path:inset(100%);';
+    frame.addEventListener('load', () => {
+      const doc = frame.contentDocument;
+      const controls = ['webFigure','openChat','webHint','chatPanel','zumiWelcomePopup']
+        .map(id => doc?.getElementById(id)).filter(Boolean);
+      if (!controls.length) return;
+      function fitControls() {
+        const outline = controls.filter(el => !el.hidden && el.getClientRects().length).map(el => {
+          const {left,top,right,bottom} = el.getBoundingClientRect();
+          return 'M' + left + ' ' + top + 'H' + right + 'V' + bottom + 'H' + left + 'Z';
+        }).join(' ');
+        frame.style.clipPath = outline ? 'path("' + outline + '")' : 'inset(100%)';
+      }
+      const visibility = new MutationObserver(fitControls);
+      const sizes = new ResizeObserver(fitControls);
+      controls.forEach(el => {
+        visibility.observe(el, {attributes:true, attributeFilter:['hidden']});
+        sizes.observe(el);
+      });
+      frame.contentWindow.addEventListener('resize', fitControls);
+      fitControls();
+    });
+    document.body.append(frame);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountZumi, {once:true});
+  else mountZumi();
+})();
