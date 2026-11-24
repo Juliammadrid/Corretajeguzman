@@ -12,6 +12,13 @@ export function withFooter(html){
   let first=true;
   html=html.replace(/<footer\b[^>]*>[\s\S]*?<\/footer>/gi,()=>{if(!first)return '';first=false;return footer;});
  }else html=html.replace('</body>',footer+'\n</body>');
+ // Load the widget-enabled header even when visitors cached an older release.
+ html=html.replace(/(src=["'])\/guzman-header\.js(?:\?[^"']*)?(["'])/gi,'$1/guzman-header.js?v=zumi-5-3-2$2');
+ if(html.includes('/guzman-header.js')&&!html.includes('id="gz-zumi-entry"')){
+  const entry='<a id="gz-zumi-entry" href="/zumi/" style="position:fixed;right:16px;bottom:12px;z-index:1099;background:#743ca0;color:white;padding:10px 16px;border-radius:22px;text-decoration:none;font:600 14px system-ui">Conversa con Zumi</a>';
+  html=html.replace('</head>','<style>body:has(#cg-zumi[style*="path("]) #gz-zumi-entry{display:none}</style></head>');
+  html=html.replace('</body>',entry+'</body>');
+ }
  return html;
 }
 export function buildFooter(){
