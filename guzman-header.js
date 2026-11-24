@@ -148,7 +148,6 @@
     function wasDismissed() {
       try { return sessionStorage.getItem(preference) === '1'; } catch { return false; }
     }
-    if (wasDismissed()) { fallback?.remove(); return; }
     const frame = document.createElement('iframe');
     frame.id = 'cg-zumi';
     frame.title = 'Zumi, asistente de Corretaje Guzmán';
@@ -164,14 +163,6 @@
     const barSize = actionBar ? new ResizeObserver(reserveActionBar) : null;
     if (actionBar) barSize.observe(actionBar);
     reserveActionBar();
-    let release = () => {};
-    function hideWidget() {
-      release();
-      barSize?.disconnect();
-      fallback?.remove();
-      frame.remove();
-    }
-    window.addEventListener('pageshow', () => { if (wasDismissed()) hideWidget(); });
     frame.addEventListener('load', () => {
       const doc = frame.contentDocument;
       const dock = doc?.getElementById('zumiFloatingDock');
@@ -179,7 +170,7 @@
       const dismiss = document.createElement('button');
       dismiss.type = 'button';
       dismiss.id = 'dismissZumi';
-      dismiss.title = 'Ocultar Zumi en esta pestaña';
+      dismiss.title = 'Ocultar el peluche en esta pestaña';
       dismiss.setAttribute('aria-label', dismiss.title);
       dismiss.style.cssText = 'position:fixed;z-index:1101;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;pointer-events:auto;width:44px;height:44px;display:grid;place-items:center;border:0;padding:0;background:transparent;color:#512368;cursor:pointer';
       const badge = document.createElement('span');
@@ -191,21 +182,28 @@
       dismiss.addEventListener('click', event => {
         event.preventDefault();event.stopPropagation();
         try { sessionStorage.setItem(preference, '1'); } catch {}
-        doc.getElementById('closeChat')?.click();
-        hideWidget();
+        hidePlush();
+        doc.getElementById('openChat')?.focus({preventScroll:true});
       });
-      const controls = ['chatPanel','zumiWelcomePopup']
+      const controls = ['chatPanel','zumiWelcomePopup','openChat']
         .map(id => doc?.getElementById(id)).filter(Boolean);
       if (!controls.length) return;
       const figure = doc.getElementById('webFigure');
       const sprite = doc.getElementById('zumiCanvas');
+      let plushHidden = false;
+      function hidePlush() {
+        plushHidden = true;
+        figure.style.setProperty('display','none','important');
+        dismiss.remove();
+        fitControls();
+      }
       // Trace visible pixels on a small copy, leaving the underlying page touchable
       // around the character as its arms move.
       const mask = document.createElement('canvas');
       mask.width = 48; mask.height = 38;
       const ctx = mask.getContext('2d', {willReadFrequently:true});
       function plushOutline() {
-        if (!ctx || !sprite || !figure || doc.hidden) return '';
+        if (plushHidden || !ctx || !sprite || !figure || doc.hidden) return '';
         const box = sprite.getBoundingClientRect();
         const scale = Math.min(box.width / sprite.width, box.height / sprite.height);
         const width = scale * sprite.width, height = scale * sprite.height;
@@ -244,8 +242,9 @@
         sizes.observe(el);
       });
       frame.contentWindow.addEventListener('resize', fitControls);
-      const timer = window.setInterval(()=>{if(!document.hidden)fitControls();},160);
-      release = () => {clearInterval(timer);visibility.disconnect();sizes.disconnect();dismiss.remove();};
+      window.setInterval(()=>{if(!document.hidden)fitControls();},160);
+      if (wasDismissed()) hidePlush();
+      window.addEventListener('pageshow', () => { if (wasDismissed()) hidePlush(); });
       fitControls();
     });
     document.body.append(frame);
