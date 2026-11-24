@@ -230,10 +230,11 @@ function welcome(){
 }
 function otherServices(){bubble('También puedo ayudarte con parcelas, postulación de corredores o una asesoría.');choice(['🌿 Parcelas','🤝 Ser corredor','💬 Hablar con asesor','↩ Volver al inicio'],v=>{
  if(v.startsWith('↩'))welcome();else if(v.includes('Parcelas')){begin('parcel');}
- else if(v.includes('corredor')){bubble('Conoce cómo trabajar con Corretaje Guzmán.');externalLinks([['Ver programa de corredores',ROOT+'/se-corredor']]);}
+ else if(v.includes('corredor')){bubble('Puedes sumarte aunque estés empezando. Con el plan Gratis ganas por mostrar propiedades en visitas. Premium agrega el catálogo completo y comisiones por cierres de arriendo y venta. ¿Quieres comparar los planes o postular?');brokerLinks();}
  else externalLinks([['WhatsApp Corretaje Guzmán',U.wa]]);
  });}
 function choice(labels,cb){clearChoice();const c=node('div','chips');for(const label of labels){const b=btn(label,()=>{if(responding)return;c.remove();if(dialog.steps.length&&!dialog.done){cb(label);}else{deliverAfterPause(()=>cb(label));}});c.appendChild(b)}chat.appendChild(c);scrollBottom();}
+function brokerLinks(){externalLinks([['Ver programa de corredores',ROOT+'/corredores'],['Comparar planes',ROOT+'/corredores#planes'],['Postular como corredor',ROOT+'/corredores#unirme']]);}
 function externalLinks(rows){const r=node('div','mini-actions');for(const [txt,href] of rows){const a=node('a','zchoice',txt+' ↗');a.href=href;a.target='_blank';a.rel='noopener noreferrer';r.appendChild(a);}chat.appendChild(r);scrollBottom();}
 function begin(intent){queued++;dialog={intent,step:0,answers:{},steps:[],done:false};
  if(intent==='buy'){bubble('¿Qué tipo de propiedad quieres comprar?');choice(['Propiedad usada','Proyecto nuevo','Parcela en el sur'],v=>{bubble(v,'user');begin(v==='Proyecto nuevo'?'projects':v==='Parcela en el sur'?'parcel':'used')});return;}
@@ -674,7 +675,7 @@ $('chatForm').addEventListener('submit',e=>{
 });
 document.querySelectorAll('[data-start-intent]').forEach(b=>b.addEventListener('click',()=>{if(mode!=='web')setMode('web');if(!chatOpen)toggleChat(true);else clearChoice();deliverAfterPause(()=>begin(b.dataset.startIntent==='buy'?'buy':b.dataset.startIntent==='finance'?'projects':b.dataset.startIntent));}));
 sceneCanvas.width=1185;sceneCanvas.height=931;setMode('web');setState('greeting');initWelcomePopup();raf=requestAnimationFrame(render);
-window.ZumiPelucheLab={renderPropertyIds(ids,restore=false){
+window.ZumiPelucheLab={brokerLinks,renderPropertyIds(ids,restore=false){
  const rows=[...catalog.rent,...catalog.buy,...catalog.projects];
  renderCards(ids.map(id=>rows.find(p=>(p.id||p.url)===id)).filter(Boolean),{restore});
 },offerVisit(text){

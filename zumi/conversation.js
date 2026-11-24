@@ -50,7 +50,8 @@
       const result=await request(JSON.stringify({message:text,history:previous,propertyId}),'application/json');
       if(turn!==generation)return;
       message(String(result.reply).replace(/\*\*(.+?)\*\*/g,'$1'));
-      window.ZumiPelucheLab.renderPropertyIds(result.ids||[]);
+      if(result.brokerProgram)window.ZumiPelucheLab.brokerLinks();
+      else window.ZumiPelucheLab.renderPropertyIds(result.ids||[]);
     } catch(error) {if(turn===generation){message(error.message); if(!input.value)input.value=text;}}
     finally {pending.remove();setBusy(false);history.scrollTop=history.scrollHeight;}
   }
