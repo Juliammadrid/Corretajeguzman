@@ -164,7 +164,9 @@
     const barSize = actionBar ? new ResizeObserver(reserveActionBar) : null;
     if (actionBar) barSize.observe(actionBar);
     reserveActionBar();
+    let release = () => {};
     function hideWidget() {
+      release();
       barSize?.disconnect();
       fallback?.remove();
       frame.remove();
@@ -174,31 +176,65 @@
       const doc = frame.contentDocument;
       const dock = doc?.getElementById('zumiFloatingDock');
       if (!dock) return;
-      const dismiss = doc.createElement('button');
+      const dismiss = document.createElement('button');
       dismiss.type = 'button';
       dismiss.id = 'dismissZumi';
-      dismiss.textContent = '×';
       dismiss.title = 'Ocultar Zumi en esta pestaña';
       dismiss.setAttribute('aria-label', dismiss.title);
-      dismiss.style.cssText = 'position:absolute;right:0;top:-8px;z-index:2;pointer-events:auto;width:44px;height:44px;display:grid;place-items:center;border:0;padding:0;background:transparent;color:#512368;cursor:pointer';
-      const badge = doc.createElement('span');
+      dismiss.style.cssText = 'position:fixed;z-index:1101;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;pointer-events:auto;width:44px;height:44px;display:grid;place-items:center;border:0;padding:0;background:transparent;color:#512368;cursor:pointer';
+      const badge = document.createElement('span');
       badge.textContent = '×';
-      badge.style.cssText = 'display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:white;border:1px solid #986aad;box-shadow:0 2px 5px #38134638;font:600 23px/1 system-ui';
+      badge.style.cssText = 'display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fffffff0;color:#563961;font:400 17px/18px system-ui';
       dismiss.replaceChildren(badge);
-      dock.append(dismiss);
-      dismiss.addEventListener('click', () => {
+      document.body.append(dismiss);
+      if (fallback) fallback.hidden = true;
+      dismiss.addEventListener('click', event => {
+        event.preventDefault();event.stopPropagation();
         try { sessionStorage.setItem(preference, '1'); } catch {}
         doc.getElementById('closeChat')?.click();
         hideWidget();
       });
-      const controls = ['dismissZumi','webFigure','openChat','webHint','chatPanel','zumiWelcomePopup']
+      const controls = ['chatPanel','zumiWelcomePopup']
         .map(id => doc?.getElementById(id)).filter(Boolean);
       if (!controls.length) return;
+      const figure = doc.getElementById('webFigure');
+      const sprite = doc.getElementById('zumiCanvas');
+      // Trace visible pixels on a small copy, leaving the underlying page touchable
+      // around the character as its arms move.
+      const mask = document.createElement('canvas');
+      mask.width = 48; mask.height = 38;
+      const ctx = mask.getContext('2d', {willReadFrequently:true});
+      function plushOutline() {
+        if (!ctx || !sprite || !figure || doc.hidden) return '';
+        const box = sprite.getBoundingClientRect();
+        const scale = Math.min(box.width / sprite.width, box.height / sprite.height);
+        const width = scale * sprite.width, height = scale * sprite.height;
+        const x = box.left + (box.width - width)/2, y = box.top + (box.height - height)/2;
+        dismiss.style.left = Math.max(0, Math.min(frame.clientWidth-44, x+width-30))+'px';
+        dismiss.style.top = Math.max(0, y-36)+'px';
+        ctx.clearRect(0,0,48,38);
+        ctx.drawImage(sprite,0,0,48,38);
+        const pixels = ctx.getImageData(0,0,48,38).data;
+        const runs = [];
+        for (let row=0; row<38; row++) {
+          let start=-1;
+          for (let col=0; col<=48; col++) {
+            const solid=col<48 && pixels[(row*48+col)*4+3]>24;
+            if(solid && start<0) start=col;
+            if(!solid && start>=0){
+              runs.push('M'+(x+start*width/48)+' '+(y+row*height/38)+'H'+(x+col*width/48)+'V'+(y+(row+1)*height/38)+'H'+(x+start*width/48)+'Z');
+              start=-1;
+            }
+          }
+        }
+        return runs.join(' ');
+      }
       function fitControls() {
-        const outline = controls.filter(el => !el.hidden && el.getClientRects().length).map(el => {
+        const panels = controls.filter(el => !el.hidden && el.getClientRects().length).map(el => {
           const {left,top,right,bottom} = el.getBoundingClientRect();
           return 'M' + left + ' ' + top + 'H' + right + 'V' + bottom + 'H' + left + 'Z';
         }).join(' ');
+        const outline = [panels,plushOutline()].filter(Boolean).join(' ');
         frame.style.clipPath = outline ? 'path("' + outline + '")' : 'inset(100%)';
       }
       const visibility = new MutationObserver(fitControls);
@@ -208,6 +244,8 @@
         sizes.observe(el);
       });
       frame.contentWindow.addEventListener('resize', fitControls);
+      const timer = window.setInterval(()=>{if(!document.hidden)fitControls();},160);
+      release = () => {clearInterval(timer);visibility.disconnect();sizes.disconnect();dismiss.remove();};
       fitControls();
     });
     document.body.append(frame);

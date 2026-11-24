@@ -12,3 +12,11 @@
   .official-site #chatForm .zumi-ai-mic { min-width:34px;height:38px }
   .official-site #chatHistory { min-width:0;overflow-x:hidden }
 }
+
+.official-site #zumiFloatingDock #openChat,
+.official-site #zumiFloatingDock #webHint { display:none!important }
+.official-site #zumiFloatingDock #webFigure {
+  bottom:0!important; background:transparent!important; border:0; box-shadow:none;
+  -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
+}
+.official-site #zumiFloatingDock canvas { display:block; background:transparent; }
