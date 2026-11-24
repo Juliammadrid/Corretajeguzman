@@ -143,15 +143,55 @@
   function mountZumi() {
     if (window.top !== window || document.getElementById('cg-zumi') ||
         /^\/(?:login|portal|zumi)(?:\/|$)/.test(location.pathname)) return;
+    const preference = 'gz-zumi-dismissed';
+    const fallback = document.getElementById('gz-zumi-entry');
+    function wasDismissed() {
+      try { return sessionStorage.getItem(preference) === '1'; } catch { return false; }
+    }
+    if (wasDismissed()) { fallback?.remove(); return; }
     const frame = document.createElement('iframe');
     frame.id = 'cg-zumi';
     frame.title = 'Zumi, asistente de Corretaje Guzmán';
     const property = location.pathname.match(/rec[A-Za-z0-9]{14}(?=\/|$)/);
     frame.src = '/zumi/index.html' + (property ? '?zumi_property_id=' + property[0] : '');
     frame.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;z-index:1100;clip-path:inset(100%);';
+    const actionBar = document.getElementById('mWa')?.closest('.mbar');
+    function reserveActionBar() {
+      const barHeight = actionBar?.getBoundingClientRect().height || 0;
+      frame.style.height = barHeight ? 'calc(100% - ' + Math.ceil(barHeight) + 'px)' : '100%';
+      if (fallback) fallback.style.bottom = (barHeight + 12) + 'px';
+    }
+    const barSize = actionBar ? new ResizeObserver(reserveActionBar) : null;
+    if (actionBar) barSize.observe(actionBar);
+    reserveActionBar();
+    function hideWidget() {
+      barSize?.disconnect();
+      fallback?.remove();
+      frame.remove();
+    }
+    window.addEventListener('pageshow', () => { if (wasDismissed()) hideWidget(); });
     frame.addEventListener('load', () => {
       const doc = frame.contentDocument;
-      const controls = ['webFigure','openChat','webHint','chatPanel','zumiWelcomePopup']
+      const dock = doc?.getElementById('zumiFloatingDock');
+      if (!dock) return;
+      const dismiss = doc.createElement('button');
+      dismiss.type = 'button';
+      dismiss.id = 'dismissZumi';
+      dismiss.textContent = '×';
+      dismiss.title = 'Ocultar Zumi en esta pestaña';
+      dismiss.setAttribute('aria-label', dismiss.title);
+      dismiss.style.cssText = 'position:absolute;right:0;top:-8px;z-index:2;pointer-events:auto;width:44px;height:44px;display:grid;place-items:center;border:0;padding:0;background:transparent;color:#512368;cursor:pointer';
+      const badge = doc.createElement('span');
+      badge.textContent = '×';
+      badge.style.cssText = 'display:grid;place-items:center;width:27px;height:27px;border-radius:50%;background:white;border:1px solid #986aad;box-shadow:0 2px 5px #38134638;font:600 23px/1 system-ui';
+      dismiss.replaceChildren(badge);
+      dock.append(dismiss);
+      dismiss.addEventListener('click', () => {
+        try { sessionStorage.setItem(preference, '1'); } catch {}
+        doc.getElementById('closeChat')?.click();
+        hideWidget();
+      });
+      const controls = ['dismissZumi','webFigure','openChat','webHint','chatPanel','zumiWelcomePopup']
         .map(id => doc?.getElementById(id)).filter(Boolean);
       if (!controls.length) return;
       function fitControls() {
