@@ -1,4 +1,4 @@
-// Free-form chat and editable voice notes. The browser only calls the site's own endpoint.
+// Free-form chat and automatically submitted voice notes. The browser only calls the site's own endpoint.
 (() => {
   const form = document.getElementById('chatForm');
   const input = document.getElementById('answer');
@@ -34,26 +34,37 @@
         (guided?.steps?.length && !guided.done && text.split(/\s+/).length <= 4)) return;
     e.preventDefault(); e.stopImmediatePropagation();
     if (busy || recorder) return;
+    input.value='';
+    await sendMessage(text);
+  }, true);
+  async function sendMessage(text) {
     const previous = Array.from(history.querySelectorAll('.message')).slice(-8).map(el=>({
       role:el.classList.contains('from-user')?'user':'assistant',content:el.textContent.slice(0,750)
     }));
     const turn = generation;
-    input.value=''; message(text,'user'); setBusy(true);
+    message(text,'user'); setBusy(true);
     const pending=message('Zumi está escribiendo…');
     try {
       const propertyId=new URLSearchParams(location.search).get('zumi_property_id');
       const result=await request(JSON.stringify({message:text,history:previous,propertyId}),'application/json');
       if(turn!==generation)return;
-      message(result.reply);
+      message(String(result.reply).replace(/\*\*(.+?)\*\*/g,'$1'));
+      const cards=document.createElement('div');cards.className='zumi-results';
       const catalog=window.ZUMI_CATALOG;
       for(const id of result.ids||[]){
         const p=[...catalog.rent,...catalog.buy].find(p=>p.id===id);
         if(!p || !p.url.startsWith('https://corretajeguzman.com/propiedad/'))continue;
-        const a=document.createElement('a');a.href=p.url;a.target='_blank';a.rel='noopener';a.className='recommend-primary';a.textContent=p.name;history.append(a);
+        const a=document.createElement('a');a.href=p.url;a.target='_blank';a.rel='noopener';a.className='zumi-result';
+        const name=document.createElement('strong');name.textContent=p.name;
+        const detail=document.createElement('span');
+        const value=Number(p.price).toLocaleString('es-CL');
+        detail.textContent=[p.commune,p.currency==='UF'?'UF '+value:'$'+value,'Ver ficha ›'].filter(Boolean).join(' · ');
+        a.append(name,detail);cards.append(a);
       }
+      if(cards.childElementCount)history.append(cards);
     } catch(error) {if(turn===generation){message(error.message); if(!input.value)input.value=text;}}
     finally {pending.remove();setBusy(false);history.scrollTop=history.scrollHeight;}
-  }, true);
+  }
   async function transcribe(blob,type) {
     if(!blob.size || blob.size>3000000){message('Elige un audio de hasta 3 MB.');return;}
     const turn=generation;
@@ -62,8 +73,8 @@
       const result=await request(blob,type);
       if(turn!==generation)return;
       if(!result.text?.trim())throw Error('No se escuchó una frase. Puedes grabarla otra vez.');
-      input.value=[input.value.trim(),result.text.trim()].filter(Boolean).join(' ').slice(0,1000);
-      input.focus();
+      pending.remove();
+      await sendMessage(result.text.trim().slice(0,1000));
     } catch(error){if(turn===generation)message(error.message);}
     finally {pending.remove();setBusy(false);}
   }
@@ -89,10 +100,10 @@
       recorder=r;const chunks=[];
       r.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
       r.onstop=()=>{clearTimeout(timer);stream.getTracks().forEach(t=>t.stop());recorder=null;
-        record.textContent='🎙';record.setAttribute('aria-label','Grabar audio');fileButton.disabled=submit.disabled=false;
+        record.classList.remove('recording');record.setAttribute('aria-label','Grabar audio');fileButton.disabled=submit.disabled=false;
         if(turn===generation && chunks.length)void transcribe(new Blob(chunks,{type:r.mimeType}),r.mimeType);
       };
-      r.start();record.textContent='⏹';record.setAttribute('aria-label','Detener y transcribir');fileButton.disabled=submit.disabled=true;
+      r.start();record.classList.add('recording');record.setAttribute('aria-label','Detener y enviar audio');fileButton.disabled=submit.disabled=true;
       timer=setTimeout(()=>stop(),45000);
     } catch {stream?.getTracks().forEach(t=>t.stop());recorder=null;message('Para grabar, permite usar el micrófono o adjunta un audio con el clip.');}
     finally{record.disabled=false;}

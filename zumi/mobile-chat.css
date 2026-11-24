@@ -1,0 +1,14 @@
+#zumi-record .stop-shape, #zumi-record.recording .mic-shape { display:none }
+#zumi-record.recording .stop-shape { display:block }
+#chatForm .zumi-ai-mic { display:grid;place-items:center }
+#chatHistory .message { white-space:pre-line;overflow-wrap:anywhere }
+.zumi-results { display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:10px 0 14px; }
+.zumi-result { display:grid;gap:4px;padding:12px 14px;border:1px solid #e3d4ea;border-radius:12px;background:#faf6fc;color:#58306f;text-decoration:none;overflow-wrap:anywhere;line-height:1.35 }
+.zumi-result span { font-size:13px;color:#74488b }
+@media (max-width:768px), (pointer:coarse) {
+  .official-site #chatPanel input:not([type=checkbox]), .official-site #chatPanel select, .official-site #chatPanel textarea { font-size:16px!important;min-width:0 }
+  .official-site #chatForm { display:flex;align-items:center;gap:4px }
+  .official-site #answer { flex:1 1 0;width:0;box-sizing:border-box }
+  .official-site #chatForm .zumi-ai-mic { min-width:34px;height:38px }
+  .official-site #chatHistory { min-width:0;overflow-x:hidden }
+}
