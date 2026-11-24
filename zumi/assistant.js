@@ -128,7 +128,8 @@ function contextualFromURL(){const qp=new URLSearchParams(location.search);const
  setPageContext({propertyId:guessedId,url:u});
 }
 function showContextualIntro(){if(!contextualProperty)return false;const p=contextualProperty;
- bubble('💜 Veo que estás mirando '+p.name+'. ¿Qué te gustaría saber?');
+ bubble('Estás viendo '+p.name+'. ¿Te gustaría coordinar una visita?');
+ chat.dataset.visitContext=p.id;
  const pic=node('div','zumi51-context-card');
   const photoLink=()=>{const link=node('a','zumi51-photo-link','📷 Ver fotos en ficha ↗');link.href=validPublicURL(p.url)?p.url:U.rent;link.target='_blank';link.rel='noopener noreferrer';return link;};
   if(zumi53Photos(p).length){pic.appendChild(zumi53PhotoBlock(p));}else{pic.appendChild(photoLink());}
@@ -245,9 +246,9 @@ function begin(intent){queued++;dialog={intent,step:0,answers:{},steps:[],done:f
  if(intent==='parcel')showParcelIntro();
  goState('listening');ask();
 }
-function ask(){const step=dialog.steps[dialog.step];if(!step){finish();return;}
+function ask(resuming=false){const step=dialog.steps[dialog.step];if(!step){finish();return;}
  const p=node('div','stepHint',`${dialog.step+1} de ${dialog.steps.length} · Puedes escribir tu respuesta`);chat.appendChild(p);
- bubble(step.q);choice(step.opts,v=>handle(v));goState('listening');}
+ if(!resuming || [...chat.querySelectorAll('.message')].at(-1)?.textContent!==step.q)bubble(step.q);choice(step.opts,v=>handle(v));goState('listening');}
 function numberFrom(s){const raw=String(s||'').replace(/[^\d]/g,'');return raw?Number(raw):0;}
 function handle(input){const s=dialog.steps[dialog.step];if(!s)return;const value=String(input).trim().slice(0,160);if(!value)return;
  if(/^(otra comuna|otro monto|otro presupuesto|otra zona)$/i.test(value)){clearChoice();bubble(s.key==='commune'?'¡Por supuesto! Escribe el nombre de la comuna en el campo inferior.':'Claro, escribe tu monto exacto en el campo inferior.');$('answer').placeholder=s.key==='commune'?'Escribe la comuna…':'Ejemplo: $625.000 o 3.500 UF';$('answer').focus();return;}
@@ -262,18 +263,14 @@ function validCardLink(x){return x.url&&(/\/propiedad\//.test(x.url)&&x.url.incl
 function zumi53Photos(x){const urls=Array.isArray(x.images)?x.images.filter(u=>typeof u==='string' && (u.startsWith('https://corretajeguzman.com/assets/')||/^\/\.netlify\/functions\/zumi-photo\?/.test(u))).slice(0,4):[];
  if(!urls.length&&typeof x.image==='string'&&(x.image.startsWith('https://corretajeguzman.com/assets/')||/^\/\.netlify\/functions\/zumi-photo\?/.test(x.image)))urls.push(x.image);
  return urls;}
-function zumi53PhotoBlock(x){const photos=zumi53Photos(x);const wrap=node('div','zumi-photo-gallery');
- const fallback=()=>{wrap.replaceChildren();const ph=node('a','recommend-placeholder','📷 Ver fotos en ficha ↗');ph.href=validCardLink(x)?x.url:U[x.kind==='buy'?'buy':'rent'];ph.target='_blank';ph.rel='noopener noreferrer';wrap.append(ph);};
- if(!photos.length){fallback();return wrap;}
- let index=0;const img=node('img','recommend-img');img.loading='lazy';img.decoding='async';
- const control=node('div','zumi-photo-controls');const prev=node('button','','‹');prev.type='button';prev.setAttribute('aria-label','Foto anterior');const next=node('button','','›');next.type='button';next.setAttribute('aria-label','Foto siguiente');const count=node('span');
- const render=()=>{img.src=photos[index];img.alt=`Foto ${index+1} de ${photos.length} de ${x.name}`;count.textContent=`${index+1}/${photos.length}`;};
- let failed=0;img.onerror=()=>{if(++failed<photos.length){index=(index+1)%photos.length;render();}else fallback();};
- prev.addEventListener('click',()=>{failed=0;index=(index+photos.length-1)%photos.length;render();});next.addEventListener('click',()=>{failed=0;index=(index+1)%photos.length;render();});
- wrap.append(img);if(photos.length>1){control.append(prev,count,next);wrap.append(control);}render();return wrap;}
+function zumi53PhotoBlock(x){
+ const wrap=node('div','zumi-photo-gallery'),url=zumi53Photos(x)[0];
+ if(url){const img=node('img','recommend-img');img.loading='lazy';img.alt=x.name;img.src=url;img.onerror=()=>wrap.remove();wrap.append(img);}
+ return wrap;
+}
 function renderCards(list,opts={}){if(!list.length)return;trackMetric('results');
  const results=node('div','cards-stack');
- for(const x of list){const card=node('article','recommend-card');
+ for(const x of list){const card=node('article','recommend-card');card.dataset.propertyKey=x.id||x.url;
   const top=node('div','recommend-top');
   top.appendChild(zumi53PhotoBlock(x));
   const intro=node('div','recommend-intro');intro.append(node('small','recommend-label',(x.kind==='projects'?'Proyecto nuevo':'Propiedad')+' · '+x.commune),node('strong','recommend-name',x.name),node('b','recommend-price',(x.kind==='projects'?'Desde ':'')+formatMoney(x.price,x.currency)));
@@ -283,14 +280,14 @@ function renderCards(list,opts={}){if(!list.length)return;trackMetric('results')
   else {meta.append(node('span','',x.beds?`${x.beds} dorm.`:'Dorm.: consultar'),node('span','',x.baths?`${x.baths} baños`:'Baños: consultar'),node('span','','🚘 Est.: '+(x.parking==='—'?'consultar':x.parking)));}
   card.appendChild(meta);
   const links=node('div','recommend-actions');
-  if(validCardLink(x)){const a=node('a','recommend-primary','Ver '+(x.kind==='projects'?'proyecto':'propiedad')+' ↗');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';links.appendChild(a);}else{links.append(node('span','broken-link','Ficha individual pendiente de corregir'));}
+  if(validCardLink(x)){const a=node('a','recommend-primary','Ver '+(x.kind==='projects'?'proyecto':'propiedad')+' ↗');a.href=x.url;a.target='_top';a.rel='noopener noreferrer';links.appendChild(a);}else{links.append(node('span','broken-link','Ficha individual pendiente de corregir'));}
   if(x.kind==='projects'){const a=node('a','recommend-secondary','Cotizar ↗');a.href=x.quote;a.target='_blank';a.rel='noopener noreferrer';links.appendChild(a);}
-  else links.append(btn('Me interesa',()=>{bubble('Me interesa: '+x.name,'user');deliverAfterPause(()=>showPropertyInterest(x));}));
+  else links.append(btn('Coordinar visita',()=>{bubble('Me interesa: '+x.name,'user');deliverAfterPause(()=>showPropertyInterest(x));}));
   card.appendChild(links);
   if(x.status==='por confirmar')card.appendChild(node('div','confirmation','Disponibilidad por confirmar con un ejecutivo'));
   results.appendChild(card);
  }
- chat.appendChild(results);scrollBottom();setTimeout(()=>{const c=chat.getBoundingClientRect(),r=results.getBoundingClientRect();chat.scrollTo({top:chat.scrollTop+r.top-c.top-8,behavior:'smooth'});},320);goState('pointing');setTimeout(()=>{if(chatOpen&&state==='pointing')goState('idle');},3200);
+ chat.appendChild(results);if(opts.restore)return;scrollBottom();setTimeout(()=>{const c=chat.getBoundingClientRect(),r=results.getBoundingClientRect();chat.scrollTo({top:chat.scrollTop+r.top-c.top-8,behavior:'smooth'});},320);goState('pointing');setTimeout(()=>{if(chatOpen&&state==='pointing')goState('idle');},3200);
 }
 function matches(source,commune,budget,beds){return source.filter(p=>p.status!=='Reservada').filter(p=>p.currency===budget.currency&&p.price<=budget.value).filter(p=>!beds||!p.beds||p.beds>=beds).filter(p=>normCommune(p.commune)===normCommune(commune)).sort((a,b)=>a.price-b.price);}
 function showNearby(source,commune,budget,beds){const adjacent=nearMap[normCommune(commune)]||[];
@@ -306,7 +303,7 @@ function showPropertyInterest(property){
  const panel=node('section','interest-detail');
  panel.append(node('small','interest-eyebrow',renting?'ARRENDAR ESTA PROPIEDAD':'CONSULTAR POR ESTA PROPIEDAD'),node('strong','interest-address',property.name),node('span','interest-place',property.commune+' · '+formatMoney(property.price,property.currency)));
  chat.append(panel);
- const form=node('form','interest-panel');form.setAttribute('novalidate','');
+ const form=node('form','interest-panel');form.dataset.visitId=property.id;form.setAttribute('novalidate','');
  form.innerHTML=`<h4>¿Cómo te llamas?</h4><p>Prepararé un WhatsApp para Corretaje Guzmán con esta propiedad y los datos de tu búsqueda.</p>
   <label>Tu nombre <input name="name" required maxlength="70" autocomplete="name" placeholder="Tu nombre y apellido"></label>
   <label>Teléfono (opcional) <input name="phone" type="tel" maxlength="22" autocomplete="tel" inputmode="tel" placeholder="9 1234 5678"></label>
@@ -326,7 +323,8 @@ function showPropertyInterest(property){
    if(!data.get('consent')){error.textContent='Marca la casilla para abrir WhatsApp.';return;}
    error.textContent='';
    const lines=[
-     'Hola, soy '+name+'. Me interesa '+(renting?'arrendar':'comprar')+' esta propiedad de Corretaje Guzmán:',
+     'Hola, quiero más información sobre esta propiedad: '+property.name,
+     'Soy '+name+' y quiero coordinar una visita para '+(renting?'arriendo':'compra')+'.',
      '🏡 '+property.name,
      '📍 Comuna: '+property.commune,
      '💰 Precio publicado: '+formatMoney(property.price,property.currency),
@@ -341,12 +339,9 @@ function showPropertyInterest(property){
    if(validCardLink(property))lines.push('🔗 Ficha: '+property.url);
    else lines.push('Ficha individual: pendiente de verificar');
    lines.push('¿Me pueden confirmar disponibilidad y ayudar a coordinar una visita?');
-   const href='https://wa.me/56944637680?text='+encodeURIComponent(lines.join('\n'));trackMetric('visit');trackMetric('whatsapp');
-   const slot=form.querySelector('.interest-link-slot');slot.replaceChildren();
-   const a=node('a','interest-direct-link','Continuar a WhatsApp ↗');a.href=href;a.target='_blank';a.rel='noopener noreferrer';slot.append(a);
-   // Directly follow the user-initiated submission, without a timer or backend write.
-   const popup=window.open(href,'_blank','noopener,noreferrer');
-   if(!popup){error.textContent='Si tu navegador bloqueó la ventana, utiliza el enlace «Continuar a WhatsApp».';}
+   const href='/.netlify/functions/property-whatsapp?text='+encodeURIComponent(lines.join('\n'));
+   trackMetric('visit');trackMetric('whatsapp');
+   window.open(href,'_top');
    goState('happy');
  });
  chat.append(form);scrollBottom();
@@ -499,7 +494,7 @@ function parseIntent(txt){const s=normalize(txt);
  if(/administr/.test(s))return 'admin';return null;
 }
 function toggleChat(open){if(open)trackMetric('open');if(open)dismissWelcomePopup();cancelResponse();chatOpen=open;$('chatPanel').hidden=!open;$('openChat').setAttribute('aria-expanded',String(open));$('webHint').hidden=open;
- if(open){if(!chat.children.length)welcome();else{chat.scrollTop=chat.scrollHeight;goState('listening');}}else{goState('idle');}}
+ if(open){if(!chat.children.length)welcome();else if(contextualProperty && chat.dataset.visitContext!==contextualProperty.id){showContextualIntro();}else{chat.scrollTop=chat.scrollHeight;goState('listening');}}else{goState('idle');}}
 
 // Use an exact reference image; independent soft limbs rotate over the unchanged original fur.
 function drawRotated(img,pivotX,pivotY,angle,shorten=1){
@@ -608,7 +603,7 @@ if($('zumi51Remember'))$('zumi51Remember').checked=rememberCriteria;
 $('zumi51Remember')?.addEventListener('change',e=>setRemember(e.target.checked));
 $('zumi51Forget')?.addEventListener('click',()=>{forgetSearchPrefs();bubble('Olvidé tus filtros de esta pestaña.');});
 $('zumi51ContextOpen')?.addEventListener('click',()=>{if(!chatOpen)toggleChat(true);else welcome();});
-paintMetrics();contextualFromURL();refreshPublicCatalog();
+paintMetrics();contextualFromURL();const catalogReady=refreshPublicCatalog();
 // For integration with the real website, its page code may set
 // window.ZUMI_PAGE_CONTEXT={propertyId:'rec...',url:'https://...'} before loading the widget,
 // or call window.ZumiPelucheLab.setPageContext(...) after page navigation.
@@ -641,6 +636,19 @@ function initWelcomePopup(){
   $('zumiWelcomeClose').addEventListener('click',dismissWelcomePopup);
   document.querySelectorAll('[data-zumi-quick]').forEach(b=>b.addEventListener('click',()=>openQuickIntent(b.dataset.zumiQuick)));
   $('zumiWelcomeProjects').addEventListener('click',()=>openQuickIntent('projects'));
+  const propertyId=new URLSearchParams(location.search).get('zumi_property_id');
+  if(propertyId){
+    const popup=$('zumiWelcomePopup');
+    const offer=btn('Coordinar visita',()=>{if(!contextualProperty)return;toggleChat(true);showPropertyInterest(contextualProperty);},true);
+    catalogReady.then(()=>{
+      if(!contextualProperty || chatOpen)return;
+      popup.querySelector('p').textContent='¿Te gustaría coordinar una visita a '+contextualProperty.name+'?';
+      popup.querySelector('.zumi-welcome-options').replaceChildren(offer);
+      $('zumiWelcomeProjects').hidden=true;
+      popup.hidden=false;$('webHint').hidden=true;
+    });
+    return;
+  }
   if(!hasSeenWelcome()){
     setTimeout(()=>{
       if(hasSeenWelcome()||chatOpen||mode!=='web'||document.hidden)return;
@@ -666,11 +674,72 @@ $('chatForm').addEventListener('submit',e=>{
 });
 document.querySelectorAll('[data-start-intent]').forEach(b=>b.addEventListener('click',()=>{if(mode!=='web')setMode('web');if(!chatOpen)toggleChat(true);else clearChoice();deliverAfterPause(()=>begin(b.dataset.startIntent==='buy'?'buy':b.dataset.startIntent==='finance'?'projects':b.dataset.startIntent));}));
 sceneCanvas.width=1185;sceneCanvas.height=931;setMode('web');setState('greeting');initWelcomePopup();raf=requestAnimationFrame(render);
-window.ZumiPelucheLab={version:'5.2-saludo-y-motor-hibrido',renderer:'Canvas2D',catalogSnapshot:true,connected:false,noWrites:true,mode:()=>mode,state:()=>state,setState,setMode,playDemo,getDialog:()=>({...dialog}),getAnimation:()=>({left:{...arms.left},right:{...arms.right}}),getMotionTuning:()=>({...fineMotion}),
+window.ZumiPelucheLab={renderPropertyIds(ids,restore=false){
+ const rows=[...catalog.rent,...catalog.buy,...catalog.projects];
+ renderCards(ids.map(id=>rows.find(p=>(p.id||p.url)===id)).filter(Boolean),{restore});
+},offerVisit(text){
+ if(contextualProperty && /(?:visitar|agendar|coordinar.*visita|organizar.*visita|^s[ií](?:[,.! ]|$))/.test(normalize(text))){
+ bubble(text,'user');showPropertyInterest(contextualProperty);return true;
+ }return false;
+},version:'5.2-saludo-y-motor-hibrido',renderer:'Canvas2D',catalogSnapshot:true,connected:false,noWrites:true,mode:()=>mode,state:()=>state,setState,setMode,playDemo,getDialog:()=>({...dialog}),getAnimation:()=>({left:{...arms.left},right:{...arms.right}}),getMotionTuning:()=>({...fineMotion}),
  replayGreeting:()=>setState('greeting'),
  setSpeechActive:(active)=>{speakerOn=Boolean(active);if(active){replyPulseUntil=0;if(state==='idle'||state==='listening')setState('speaking',{silent:true});}else if(state==='speaking'){setState('idle',{silent:true});}},
  shouldUseGuided:(text)=>{const n=normalize(text);return Boolean(parseIntent(text)||/^(volver|inicio|ir al inicio|reiniciar|partamos de nuevo|menu principal|volver al inicio)/.test(n)||(dialog.steps.length&&!dialog.done)||(dialog.done&&['rent','used'].includes(dialog.intent)&&/(otra comuna|en |mas barato|dormitorios?|presupuesto|hasta )/.test(n)));},
  setPageContext:(obj)=>{const ok=setPageContext(obj);if(ok&&chatOpen)welcome();return ok},getCatalogSource:()=>catalogOrigin,forgetSearchPrefs};
+
+// Store structured conversation entries only; form fields and audio stay on the page.
+const threadKey='zumi-thread-v1';
+const pageProperty=new URLSearchParams(location.search).get('zumi_property_id')||'';
+function readThread(){
+ try{return JSON.parse(sessionStorage.getItem(threadKey)||'null');}catch{return null;}
+}
+function saveThread(){
+ if(!chat.children.length)return;
+ const entries=[];
+ for(const el of chat.children){
+  if(el.matches('.message') && !el.dataset.transient)entries.push({text:el.textContent.slice(0,2000),user:el.classList.contains('from-user')});
+  if(el.matches('.cards-stack'))entries.push({cards:Array.from(el.querySelectorAll('[data-property-key]'),c=>c.dataset.propertyKey)});
+ }
+ const last=chat.lastElementChild;
+ const state={entries:entries.slice(-100),open:chatOpen,pageProperty,visit:last?.dataset.visitId,dialog};
+ try{sessionStorage.setItem(threadKey,JSON.stringify(state));}catch{}
+}
+function restoreThread(saved){
+ if(!saved?.entries?.length)return false;
+ cancelResponse();chat.replaceChildren();
+ for(const entry of saved.entries){
+  if(typeof entry.text==='string')bubble(entry.text,entry.user?'user':'zumi');
+  else if(Array.isArray(entry.cards))window.ZumiPelucheLab.renderPropertyIds(entry.cards,true);
+ }
+ if(saved.dialog && Array.isArray(saved.dialog.steps))dialog=saved.dialog;
+ if(contextualProperty)chat.dataset.visitContext=contextualProperty.id;
+ if(saved.open)toggleChat(true);else toggleChat(false);
+ if(contextualProperty && pageProperty!==saved.pageProperty){
+  dialog={intent:null,step:0,answers:{},steps:[],done:false};showContextualIntro();
+ }else if(saved.visit){
+  const p=[...catalog.rent,...catalog.buy].find(x=>x.id===saved.visit);if(p)showPropertyInterest(p);
+ }else if(dialog.steps.length && !dialog.done && dialog.step<dialog.steps.length){
+  ask(true);
+ }else if(contextualProperty){
+  const p=contextualProperty;chat.append(btn('Coordinar visita',()=>showPropertyInterest(p)));
+ }else if(!chat.querySelector('.cards-stack') && saved.entries.length===1){welcome();}
+ scrollBottom();return true;
+}
+const initialThread=readThread();
+const restored=restoreThread(initialThread);
+catalogReady.then(()=>{
+ if(contextualProperty && pageProperty!==initialThread?.pageProperty && chat.dataset.visitContext!==pageProperty && chatOpen)showContextualIntro();
+ if(restored && initialThread.entries.some(e=>e.cards) && !chat.querySelector('.cards-stack'))restoreThread(initialThread);
+});
+new MutationObserver(saveThread).observe(chat,{childList:true,subtree:true});
+new MutationObserver(saveThread).observe($('chatPanel'),{attributes:true,attributeFilter:['hidden']});
+window.addEventListener('pagehide',saveThread);
+window.addEventListener('pageshow',e=>{if(e.persisted)restoreThread(readThread());});
+document.addEventListener('click',e=>{
+ const link=e.target.closest?.('a[href]');if(!link)return;
+ const url=new URL(link.href);
+ if(url.origin===location.origin || url.origin===ROOT){link.target='_top';saveThread();}
+},true);
 
 })();
 

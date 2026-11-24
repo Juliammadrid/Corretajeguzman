@@ -38,37 +38,26 @@
     await sendMessage(text);
   }, true);
   async function sendMessage(text) {
+    if(window.ZumiPelucheLab.offerVisit(text))return;
     const previous = Array.from(history.querySelectorAll('.message')).slice(-8).map(el=>({
       role:el.classList.contains('from-user')?'user':'assistant',content:el.textContent.slice(0,750)
     }));
     const turn = generation;
     message(text,'user'); setBusy(true);
-    const pending=message('Zumi está escribiendo…');
+    const pending=message('Zumi está escribiendo…');pending.dataset.transient='1';
     try {
       const propertyId=new URLSearchParams(location.search).get('zumi_property_id');
       const result=await request(JSON.stringify({message:text,history:previous,propertyId}),'application/json');
       if(turn!==generation)return;
       message(String(result.reply).replace(/\*\*(.+?)\*\*/g,'$1'));
-      const cards=document.createElement('div');cards.className='zumi-results';
-      const catalog=window.ZUMI_CATALOG;
-      for(const id of result.ids||[]){
-        const p=[...catalog.rent,...catalog.buy].find(p=>p.id===id);
-        if(!p || !p.url.startsWith('https://corretajeguzman.com/propiedad/'))continue;
-        const a=document.createElement('a');a.href=p.url;a.target='_blank';a.rel='noopener';a.className='zumi-result';
-        const name=document.createElement('strong');name.textContent=p.name;
-        const detail=document.createElement('span');
-        const value=Number(p.price).toLocaleString('es-CL');
-        detail.textContent=[p.commune,p.currency==='UF'?'UF '+value:'$'+value,'Ver ficha ›'].filter(Boolean).join(' · ');
-        a.append(name,detail);cards.append(a);
-      }
-      if(cards.childElementCount)history.append(cards);
+      window.ZumiPelucheLab.renderPropertyIds(result.ids||[]);
     } catch(error) {if(turn===generation){message(error.message); if(!input.value)input.value=text;}}
     finally {pending.remove();setBusy(false);history.scrollTop=history.scrollHeight;}
   }
   async function transcribe(blob,type) {
     if(!blob.size || blob.size>3000000){message('Elige un audio de hasta 3 MB.');return;}
     const turn=generation;
-    setBusy(true);const pending=message('Transcribiendo audio…');
+    setBusy(true);const pending=message('Transcribiendo audio…');pending.dataset.transient='1';
     try {
       const result=await request(blob,type);
       if(turn!==generation)return;
