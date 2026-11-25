@@ -19,3 +19,8 @@
   -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none;
 }
 .official-site #zumiFloatingDock canvas { display:block; background:transparent; }
+
+.voice-controls { display:flex; align-items:center; gap:8px; padding:0 0 6px; }
+#liveVoice { background:#f4e9fa; color:#593376; border:1px solid #dcc8e6; border-radius:16px; padding:7px 12px; font:600 13px system-ui; cursor:pointer; }
+#liveVoice[aria-pressed=true] { background:#593376; color:white; }
+#voiceStatus { flex:1; color:#62496b; font-size:11px; }

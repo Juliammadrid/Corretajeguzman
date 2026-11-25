@@ -675,7 +675,16 @@ $('chatForm').addEventListener('submit',e=>{
 });
 document.querySelectorAll('[data-start-intent]').forEach(b=>b.addEventListener('click',()=>{if(mode!=='web')setMode('web');if(!chatOpen)toggleChat(true);else clearChoice();deliverAfterPause(()=>begin(b.dataset.startIntent==='buy'?'buy':b.dataset.startIntent==='finance'?'projects':b.dataset.startIntent));}));
 sceneCanvas.width=1185;sceneCanvas.height=931;setMode('web');setState('greeting');initWelcomePopup();raf=requestAnimationFrame(render);
-window.ZumiPelucheLab={brokerLinks,renderPropertyIds(ids,restore=false){
+window.ZumiPelucheLab={brokerLinks,voiceMessage:bubble,
+ async voiceCatalog(){
+   if(!await refreshPublicCatalog())throw Error('Catálogo temporalmente indisponible');
+   return [...catalog.rent,...catalog.buy];
+ },
+ voiceVisit(id){
+   const p=[...catalog.rent,...catalog.buy].find(row=>row.id===id);
+   if(p)showPropertyInterest(p);
+   return Boolean(p);
+ },renderPropertyIds(ids,restore=false){
  const rows=[...catalog.rent,...catalog.buy,...catalog.projects];
  renderCards(ids.map(id=>rows.find(p=>(p.id||p.url)===id)).filter(Boolean),{restore});
 },offerVisit(text){
