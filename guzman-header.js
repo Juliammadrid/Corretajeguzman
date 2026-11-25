@@ -228,6 +228,8 @@
         return runs.join(' ');
       }
       function fitControls() {
+        const panel = doc.getElementById('chatPanel');
+        dismiss.style.display = panel && !panel.hidden ? 'none' : 'grid';
         const panels = controls.filter(el => !el.hidden && el.getClientRects().length).map(el => {
           const {left,top,right,bottom} = el.getBoundingClientRect();
           return 'M' + left + ' ' + top + 'H' + right + 'V' + bottom + 'H' + left + 'Z';

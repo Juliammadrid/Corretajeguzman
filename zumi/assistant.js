@@ -658,7 +658,7 @@ function initWelcomePopup(){
       mini.hidden=false;
       $('webHint').hidden=true;
       markWelcomeSeen();
-    },3000);
+    },2000);
   }
 }
 $('openChat').addEventListener('click',()=>toggleChat(!chatOpen));$('closeChat').addEventListener('click',()=>toggleChat(false));

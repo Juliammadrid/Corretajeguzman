@@ -3,7 +3,30 @@
   const button = document.getElementById('liveVoice');
   const status = document.getElementById('voiceStatus');
   const form = document.getElementById('chatForm');
+  const interrupt = document.createElement('button');
+  interrupt.type = 'button';
+  interrupt.textContent = 'Interrumpir';
+  interrupt.hidden = true;
+  button.after(interrupt);
   let current;
+  function microphone(s, enabled) {
+    for (const track of s.stream.getTracks()) track.enabled = enabled;
+    interrupt.hidden = enabled;
+    status.textContent = enabled ? 'Te escucho' : 'Zumi está hablando';
+  }
+  function listenAfterPlayback(s) {
+    clearTimeout(s.listenTimer);
+    s.listenTimer = setTimeout(() => {
+      if (current === s) microphone(s, true);
+    }, 250);
+  }
+  interrupt.onclick = () => {
+    const s = current;
+    if (s?.channel?.readyState !== 'open') return;
+    if (s.generating) s.send({type:'response.cancel'});
+    s.send({type:'output_audio_buffer.clear'});
+    listenAfterPlayback(s);
+  };
   const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
   function selectRows(rows, f) {
     const type = normalize(f.tipo).replace(/^depto\.?$/, 'departamento');
@@ -54,6 +77,8 @@
     current = null;
     s.viewer?.dialog.close();
     clearTimeout(s.timeout);
+    clearTimeout(s.listenTimer);
+    interrupt.hidden = true;
     s.abort.abort();
     s.stream?.getTracks().forEach(track => track.stop());
     s.channel?.close();
@@ -108,9 +133,10 @@
     form.inert = true;
     s.timeout = setTimeout(() => { if(current === s) stop('Conexión agotada. Puedes volver a intentar.'); },35000);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true},video:false});
+      const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
       if (current !== s) { stream.getTracks().forEach(t=>t.stop()); return; }
       s.stream = stream;
+      for (const track of stream.getTracks()) track.enabled = false;
       s.pc = new RTCPeerConnection();
       s.audio.autoplay = true;
       document.body.append(s.audio);
@@ -123,7 +149,7 @@
         if(current!==s)return;
         clearTimeout(s.timeout);
         s.timeout = setTimeout(()=>{if(current===s)stop('Finalizaron los 5 minutos de voz.');},300000);
-        status.textContent = 'Voz en vivo · micrófono activo';
+        status.textContent = 'Preparando el saludo…';
         const cards = Array.from(document.querySelectorAll('#chatHistory [data-property-key]')).slice(-6).map(card=>{
           s.known.add(card.dataset.propertyKey);
           return {id:card.dataset.propertyKey,nombre:card.querySelector('.recommend-name')?.textContent};
@@ -131,8 +157,8 @@
         const ficha = new URLSearchParams(location.search).get('zumi_property_id');
         if(ficha)s.known.add(ficha);
         const history = Array.from(document.querySelectorAll('#chatHistory .message')).slice(-6).map(el=>el.textContent.slice(0,300));
-        s.send({type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:'Contexto previo de esta pestaña: '+JSON.stringify({history,cards,ficha})}]}});
-        s.send({type:'response.create',response:{instructions:'Saluda brevemente como Zumi, asistente de voz con IA, e invita a continuar.'}});
+        s.send({type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text:'Historial de referencia. No es una pregunta nueva. Datos: '+JSON.stringify({history,cards,ficha})}]}});
+        s.send({type:'response.create',response:{tool_choice:'none',instructions:'Di solo: «Hola, soy Zumi, tu asistente virtual. ¿En qué te puedo ayudar?». Espera a la persona.'}});
       };
       channel.onclose = () => { if(current===s)stop('La conversación de voz terminó.'); };
       channel.onmessage = e => {
@@ -141,8 +167,18 @@
         if(event.type==='response.function_call_arguments.done')void runTool(s,event);
         if(event.type==='conversation.item.input_audio_transcription.completed' && event.transcript)lab.voiceMessage(event.transcript,'user');
         if(event.type==='response.output_audio_transcript.done' && event.transcript)lab.voiceMessage(event.transcript);
-        if(event.type==='output_audio_buffer.started')lab.setSpeechActive(true);
-        if(['output_audio_buffer.stopped','output_audio_buffer.cleared'].includes(event.type))lab.setSpeechActive(false);
+        if(event.type==='response.created')s.generating=true;
+        if(event.type==='response.done'){
+          s.generating=false;
+          if(event.response?.status!=='completed' && !s.playing)listenAfterPlayback(s);
+        }
+        if(event.type==='output_audio_buffer.started'){
+          s.playing=true;
+          clearTimeout(s.listenTimer);
+          microphone(s,false);
+          lab.setSpeechActive(true);
+        }
+        if(['output_audio_buffer.stopped','output_audio_buffer.cleared'].includes(event.type)){s.playing=false;lab.setSpeechActive(false);listenAfterPlayback(s);}
         if(event.type==='error')status.textContent='No se pudo completar ese turno. Puedes volver a hablar.';
       };
       const offer = await s.pc.createOffer();
