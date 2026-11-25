@@ -269,12 +269,16 @@ function zumi53PhotoBlock(x){
  if(url){const img=node('img','recommend-img');img.loading='lazy';img.alt=x.name;img.src=url;img.onerror=()=>wrap.remove();wrap.append(img);}
  return wrap;
 }
+function rentExpenses(p){
+ return Number.isFinite(p.commonExpensesCLP) && p.commonExpensesCLP>0 ? formatMoney(p.commonExpensesCLP,'CLP') : 'por confirmar';
+}
 function renderCards(list,opts={}){if(!list.length)return;trackMetric('results');
  const results=node('div','cards-stack');
  for(const [index,x] of list.entries()){const card=node('article','recommend-card');card.dataset.propertyKey=x.id||x.url;
   const top=node('div','recommend-top');
   top.appendChild(zumi53PhotoBlock(x));
   const intro=node('div','recommend-intro');intro.append(node('small','recommend-label','Opción '+(index+1)+' · '+x.commune),node('strong','recommend-name',x.name),node('b','recommend-price',(x.kind==='projects'?'Desde ':'')+formatMoney(x.price,x.currency)));
+  if(x.kind==='rent')intro.append(node('small','recommend-label','Gastos comunes: '+rentExpenses(x)));
   top.appendChild(intro);card.appendChild(top);
   const meta=node('div','recommend-meta');
   if(x.kind==='projects'){meta.append(node('span','',x.specs||'Tipologías por consultar'),node('span','','🚘 Est.: consultar tipología'));}
@@ -290,7 +294,7 @@ function renderCards(list,opts={}){if(!list.length)return;trackMetric('results')
  }
  chat.appendChild(results);if(opts.restore)return;scrollBottom();setTimeout(()=>{const c=chat.getBoundingClientRect(),r=results.getBoundingClientRect();chat.scrollTo({top:chat.scrollTop+r.top-c.top-8,behavior:'smooth'});},320);goState('pointing');setTimeout(()=>{if(chatOpen&&state==='pointing')goState('idle');},3200);
 }
-function matches(source,commune,budget,beds){return source.filter(p=>p.status!=='Reservada').filter(p=>p.currency===budget.currency&&p.price<=budget.value).filter(p=>!beds||!p.beds||p.beds>=beds).filter(p=>normCommune(p.commune)===normCommune(commune)).sort((a,b)=>a.price-b.price);}
+function matches(source,commune,budget,beds){return source.filter(p=>p.status!=='Reservada').filter(p=>p.currency===budget.currency&&p.price<=budget.value).filter(p=>!beds||p.beds>=beds).filter(p=>normCommune(p.commune)===normCommune(commune)).sort((a,b)=>a.price-b.price);}
 function showNearby(source,commune,budget,beds){const adjacent=nearMap[normCommune(commune)]||[];
  const options=source.filter(x=>x.status!=='Reservada').filter(x=>adjacent.includes(normCommune(x.commune))&&x.currency===budget.currency&&x.price<=budget.value&&(!beds||!x.beds||x.beds>=beds));
  options.sort((a,b)=>adjacent.indexOf(normCommune(a.commune))-adjacent.indexOf(normCommune(b.commune))||a.price-b.price);
@@ -337,6 +341,7 @@ function showPropertyInterest(property, horario=''){
      '🚿 Baños: '+(property.baths||'por confirmar'),
      '🚘 Estacionamiento: '+((property.parking&&property.parking!=='—')?property.parking:'por confirmar')
    ];
+   if(renting)lines.push('Gastos comunes: '+rentExpenses(property));
    if(dialog.answers.commune)lines.push('Mi comuna de búsqueda: '+dialog.answers.commune);
    if(dialog.answers.budget)lines.push('Mi presupuesto: '+dialog.answers.budget);
    if(dialog.answers.beds)lines.push('Dormitorios que busco: '+dialog.answers.beds);
@@ -383,7 +388,7 @@ function findProperties(){trackMetric('search');const type=dialog.intent==='rent
  if(type==='rent')rentalRequestForm();else offerNewProjects();
  const nearby=showNearby(catalog[type],commune,budget,beds);
  if(nearby.length){bubble('Pero encontré alternativas en comunas cercanas. ¿Quieres verlas?');choice(['Sí, muéstramelas','Buscar otra comuna','Dejar mi búsqueda'],s=>{if(s.startsWith('Sí')){renderCards(nearby.slice(0,3));choice(['Me interesa una alternativa','Buscar de nuevo'],x=>x.startsWith('Me')?showLead(type):begin(type==='rent'?'rent':'used'));}else if(s.startsWith('Buscar'))begin(type==='rent'?'rent':'used');else type==='rent'?rentFormHandoff():showLead(type);});return;}
- const more=catalog[type].filter(p=>p.status!=='Reservada'&&p.currency===budget.currency&&p.price>budget.value&&p.price<=budget.value*1.2&&(!beds||!p.beds||p.beds>=beds)).sort((a,b)=>a.price-b.price);
+ const more=catalog[type].filter(p=>p.status!=='Reservada'&&p.currency===budget.currency&&normCommune(p.commune)===normCommune(commune)&&p.price>budget.value&&p.price<=budget.value*1.2&&(!beds||p.beds>=beds)).sort((a,b)=>a.price-b.price);
  if(more.length){bubble('También hay algunas alternativas un poco por encima de tu presupuesto. Solo te las mostraré si te parece bien.');choice(['Ver hasta 20% más','Cambiar búsqueda','Dejar mis datos'],s=>{if(s.startsWith('Ver'))renderCards(more.slice(0,3));else if(s.startsWith('Cambiar'))begin(type==='rent'?'rent':'used');else type==='rent'?rentFormHandoff():showLead(type);});}
  else{bubble('Puedo ayudarte a dejar tus preferencias para que un ejecutivo te contacte cuando exista una alternativa.');choice(['Solicitar aviso','Buscar de nuevo'],s=>s==='Solicitar aviso'?(type==='rent'?rentFormHandoff():showLead(type)):begin(type==='rent'?'rent':'used'));}
 }

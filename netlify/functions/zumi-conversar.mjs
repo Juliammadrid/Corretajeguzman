@@ -4,7 +4,7 @@ async function publicListings(){
   if(cached && cached.until>Date.now())return cached.rows;
   const catalog=await readPublicCatalog();
   if(!catalog)return null;
-  const rows=[...catalog.rent,...catalog.buy].map(({id,name,commune,beds,price,currency,baths,parking,kind})=>({id,name,commune,beds,price,currency,baths,parking,kind}));
+  const rows=[...catalog.rent,...catalog.buy].map(({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind})=>({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind}));
   cached={until:Date.now()+120000,rows};return rows;
 }
 const backend = 'https://aoemvstjbwvkoqjoirsx.supabase.co/functions/v1/zumi-asistente';

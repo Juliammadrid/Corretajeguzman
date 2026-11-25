@@ -145,8 +145,8 @@
         const matches = selectRows(rows,args);
         for (const row of matches) s.known.add(row.id);
         lab.renderPropertyIds(matches.map(row => row.id));
-        result = matches.map(({id,name,price,currency,commune,beds,baths,parking,status}) =>
-          ({id,name,price,currency,commune,beds,baths,parking,status}));
+        result = matches.map(({id,name,price,currency,commune,beds,baths,parking,status,commonExpensesCLP}) =>
+          ({id,name,price,currency,commune,beds,baths,parking,status,commonExpensesCLP}));
       } else if (event.name === 'abrir_ficha') {
         result = {fichaAbierta:showProperty(s,args.id)};
       } else if (event.name === 'consultar_ficha') {
@@ -156,7 +156,7 @@
         if(!reply.ok)throw Error('Ficha indisponible');
         const p=(await reply.json()).properties?.find(row=>row.id===id);
         result=p ? {id,nombre:p.title,comuna:p.commune,precio:p.priceValue,moneda:p.currency,
-          gastosComunesCLP:p.commonExpenses || null,superficieUtil:p.usableArea,estacionamientos:p.parking,
+          gastosComunesCLP:lab.voiceProperty(id)?.commonExpensesCLP ?? (p.commonExpenses || null),superficieUtil:p.usableArea,estacionamientos:p.parking,
           dormitorios:p.bedrooms,banos:p.bathrooms,descripcion:String(p.description||'').slice(0,1200)} : {error:'Sin ficha publicada'};
       } else if (event.name === 'preparar_visita') {
         const id=args.id || s.selected;

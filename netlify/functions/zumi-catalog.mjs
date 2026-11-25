@@ -17,11 +17,12 @@ function mapRow(r,kind,link){const f=r.fields||{};const url=safeURL(f[link]);
  return {id:r.id,name:String(f['Nombre de la propiedad']||'').slice(0,150),
  commune:String(f.Comuna||'').slice(0,70),beds:number(f.Dormitorios),baths:number(f['Baños']),
  price:number(f['Precio valor']),currency:/uf/i.test(enumName(f.Moneda))?'UF':'CLP',
+ commonExpensesCLP:kind==='rent' && number(f['Valor gasto comun'])>0 ? number(f['Valor gasto comun']) : null,
  parking:enumName(f.Estacionamiento)||'Consultar',url,image,images,kind,status};
 }
 async function readTable(base,token,source){let all=[],offset='';let count=0;
  do{const u=new URL(`https://api.airtable.com/v0/${base}/${encodeURIComponent(source.name)}`);
- u.searchParams.set('pageSize','100');for(const n of [...PUBLIC_FIELDS,source.link])u.searchParams.append('fields[]',n);
+ u.searchParams.set('pageSize','100');for(const n of [...PUBLIC_FIELDS,source.link,...(source.kind==='rent'?['Valor gasto comun']:[])])u.searchParams.append('fields[]',n);
  if(offset)u.searchParams.set('offset',offset);
  const r=await fetch(u,{headers:{authorization:'Bearer '+token,accept:'application/json'},signal:AbortSignal.timeout(8500)});
  if(!r.ok)throw new Error('Airtable '+r.status);const body=await r.json();
