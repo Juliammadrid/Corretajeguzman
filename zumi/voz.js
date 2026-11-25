@@ -158,7 +158,7 @@
         if(ficha)s.known.add(ficha);
         const history = Array.from(document.querySelectorAll('#chatHistory .message')).slice(-6).map(el=>el.textContent.slice(0,300));
         s.send({type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text:'Historial de referencia. No es una pregunta nueva. Datos: '+JSON.stringify({history,cards,ficha})}]}});
-        s.send({type:'response.create',response:{tool_choice:'none',instructions:'Di solo: «Hola, soy Zumi, tu asistente virtual. ¿En qué te puedo ayudar?». Espera a la persona.'}});
+        s.send({type:'response.create',response:{tool_choice:'none',instructions:'Saluda con acento chileno de Santiago, cálido y conversado, con una pausa corta. Di solo: «Hola, soy Zumi, tu asistente virtual. Cuéntame, ¿qué andas buscando?». Espera a la persona.'}});
       };
       channel.onclose = () => { if(current===s)stop('La conversación de voz terminó.'); };
       channel.onmessage = e => {

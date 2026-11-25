@@ -24,3 +24,7 @@
 #liveVoice { background:#f4e9fa; color:#593376; border:1px solid #dcc8e6; border-radius:16px; padding:7px 12px; font:600 13px system-ui; cursor:pointer; }
 #liveVoice[aria-pressed=true] { background:#593376; color:white; }
 #voiceStatus { flex:1; color:#62496b; font-size:11px; }
+
+#chatPanel .plush-avatar { position:relative; width:42px; height:44px; flex:0 0 42px; font-size:0; background:transparent; overflow:visible; }
+#chatPanel .plush-avatar canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; }
+#chatPanel .restore-plush { margin-inline-start:6px; border:0; background:transparent; color:#663180; font:inherit; text-decoration:underline; cursor:pointer; }

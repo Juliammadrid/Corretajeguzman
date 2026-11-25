@@ -191,25 +191,42 @@
       const figure = doc.getElementById('webFigure');
       const sprite = doc.getElementById('zumiCanvas');
       let plushHidden = false;
-      function hidePlush() {
-        plushHidden = true;
-        figure.style.setProperty('display','none','important');
-        dismiss.remove();
+      const panel = doc.getElementById('chatPanel');
+      const avatar = panel?.querySelector('.chatDot');
+      const restore = doc.createElement('button');
+      restore.type = 'button';
+      restore.textContent = 'Mostrar peluche';
+      restore.className = 'restore-plush';
+      restore.hidden = true;
+      panel?.querySelector('.privacy')?.append(restore);
+      function setPlushHidden(hidden) {
+        plushHidden = hidden;
+        if (hidden) figure.style.setProperty('display','none','important');
+        else figure.style.removeProperty('display');
+        restore.hidden = !hidden;
         fitControls();
       }
+      function hidePlush() { setPlushHidden(true); }
+      restore.onclick = () => {
+        try { sessionStorage.removeItem(preference); } catch {}
+        setPlushHidden(false);
+        panel?.querySelector('#closeChat')?.focus();
+      };
       // Trace visible pixels on a small copy, leaving the underlying page touchable
       // around the character as its arms move.
       const mask = document.createElement('canvas');
       mask.width = 48; mask.height = 38;
       const ctx = mask.getContext('2d', {willReadFrequently:true});
       function plushOutline() {
-        if (plushHidden || !ctx || !sprite || !figure || doc.hidden) return '';
+        if (plushHidden || !sprite || !figure || doc.hidden) return '';
         const box = sprite.getBoundingClientRect();
         const scale = Math.min(box.width / sprite.width, box.height / sprite.height);
         const width = scale * sprite.width, height = scale * sprite.height;
         const x = box.left + (box.width - width)/2, y = box.top + (box.height - height)/2;
         dismiss.style.left = Math.max(0, Math.min(frame.clientWidth-44, x+width-30))+'px';
         dismiss.style.top = Math.max(0, y-36)+'px';
+        const fallbackOutline = 'M'+(x+width*.5)+' '+(y+height*.12)+'Q'+(x+width*.85)+' '+y+' '+(x+width*.84)+' '+(y+height*.72)+'Q'+(x+width*.5)+' '+(y+height*1.2)+' '+(x+width*.16)+' '+(y+height*.72)+'Q'+(x+width*.15)+' '+y+' '+(x+width*.5)+' '+(y+height*.12)+'Z';
+        if (!ctx) return fallbackOutline;
         ctx.clearRect(0,0,48,38);
         ctx.drawImage(sprite,0,0,48,38);
         const pixels = ctx.getImageData(0,0,48,38).data;
@@ -225,16 +242,21 @@
             }
           }
         }
-        return runs.join(' ');
+        return runs.join(' ') || fallbackOutline;
       }
       function fitControls() {
-        const panel = doc.getElementById('chatPanel');
-        dismiss.style.display = panel && !panel.hidden ? 'none' : 'grid';
+        const open = panel && !panel.hidden;
+        if (sprite && avatar) {
+          const host = open && !plushHidden ? avatar : figure;
+          if (sprite.parentElement !== host) host.prepend(sprite);
+          avatar.classList.toggle('plush-avatar',host === avatar);
+        }
+        dismiss.style.display = plushHidden || open ? 'none' : 'grid';
         const panels = controls.filter(el => !el.hidden && el.getClientRects().length).map(el => {
           const {left,top,right,bottom} = el.getBoundingClientRect();
           return 'M' + left + ' ' + top + 'H' + right + 'V' + bottom + 'H' + left + 'Z';
         }).join(' ');
-        const outline = [panels,plushOutline()].filter(Boolean).join(' ');
+        const outline = [panels,open ? '' : plushOutline()].filter(Boolean).join(' ');
         frame.style.clipPath = outline ? 'path("' + outline + '")' : 'inset(100%)';
       }
       const visibility = new MutationObserver(fitControls);
@@ -246,7 +268,7 @@
       frame.contentWindow.addEventListener('resize', fitControls);
       window.setInterval(()=>{if(!document.hidden)fitControls();},160);
       if (wasDismissed()) hidePlush();
-      window.addEventListener('pageshow', () => { if (wasDismissed()) hidePlush(); });
+      window.addEventListener('pageshow', () => { setPlushHidden(wasDismissed()); });
       fitControls();
     });
     document.body.append(frame);
