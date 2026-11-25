@@ -676,6 +676,7 @@ $('chatForm').addEventListener('submit',e=>{
 document.querySelectorAll('[data-start-intent]').forEach(b=>b.addEventListener('click',()=>{if(mode!=='web')setMode('web');if(!chatOpen)toggleChat(true);else clearChoice();deliverAfterPause(()=>begin(b.dataset.startIntent==='buy'?'buy':b.dataset.startIntent==='finance'?'projects':b.dataset.startIntent));}));
 sceneCanvas.width=1185;sceneCanvas.height=931;setMode('web');setState('greeting');initWelcomePopup();raf=requestAnimationFrame(render);
 window.ZumiPelucheLab={brokerLinks,voiceMessage:bubble,
+ voiceProperty(id){return [...catalog.rent,...catalog.buy].find(p=>p.id===id);},
  async voiceCatalog(){
    if(!await refreshPublicCatalog())throw Error('Catálogo temporalmente indisponible');
    return [...catalog.rent,...catalog.buy];
@@ -842,7 +843,7 @@ document.addEventListener('click',e=>{
 (()=>{'use strict';const sound=document.getElementById('zumiReplySoundToggle');const history=document.getElementById('chatHistory');if(!sound||!history||!('speechSynthesis' in window))return;
  const toggle=document.createElement('button');toggle.type='button';toggle.className='zumi-browser-voice';toggle.title='Leer respuestas en voz alta (voz del navegador)';toggle.setAttribute('aria-label','Activar lectura de respuestas de Zumi');toggle.setAttribute('aria-pressed','false');toggle.textContent='🗣️';sound.insertAdjacentElement('afterend',toggle);
  let enabled=false,unlocked=false;toggle.addEventListener('click',()=>{enabled=!enabled;unlocked=true;toggle.setAttribute('aria-pressed',String(enabled));toggle.title=enabled?'Desactivar lectura en voz alta':'Leer respuestas con la voz del navegador';toggle.textContent=enabled?'🗣️✓':'🗣️';if(!enabled){speechSynthesis.cancel();window.ZumiPelucheLab?.setSpeechActive?.(false);}});
- const observer=new MutationObserver(records=>{if(!enabled||!unlocked)return;for(const r of records){for(const n of r.addedNodes){if(n.nodeType!==1||!n.classList?.contains('from-zumi'))continue;
+ const observer=new MutationObserver(records=>{if(!enabled||!unlocked||document.getElementById('liveVoice')?.getAttribute('aria-pressed')==='true')return;for(const r of records){for(const n of r.addedNodes){if(n.nodeType!==1||!n.classList?.contains('from-zumi'))continue;
  const txt=String(n.textContent||'').slice(0,310);if(!txt.trim())continue;
  const u=new SpeechSynthesisUtterance(txt);u.lang='es-CL';u.rate=.94;u.pitch=1.11;u.volume=.56;
  u.onstart=()=>window.ZumiPelucheLab?.setSpeechActive?.(true);

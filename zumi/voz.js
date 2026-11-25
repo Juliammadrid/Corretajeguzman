@@ -16,10 +16,43 @@
       (!f.maximo || (p.currency === f.moneda && p.price <= f.maximo))
     ).sort((a,b) => a.currency.localeCompare(b.currency) || a.price-b.price).slice(0,3);
   }
+  function showProperty(s,id) {
+    const property = lab.voiceProperty(id);
+    if (!s.known.has(id) || !property?.url) return false;
+    const url = new URL(property.url,location.href);
+    if (url.origin !== location.origin || !url.pathname.startsWith('/propiedad/') || !url.pathname.includes(id)) return false;
+    const doc = window.parent.document;
+    if (!s.viewer) {
+      const dialog = doc.createElement('dialog');
+      dialog.setAttribute('aria-label','Ficha de propiedad');
+      dialog.style.cssText = 'position:fixed;inset:0;margin:auto;padding:0;width:100%;height:100%;max-width:100%;max-height:100%;border:0;background:white;color:#322638;';
+      const bar = doc.createElement('div');
+      bar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));background:#faf6fd;flex:none';
+      const makeButton = (label,action) => {
+        const b = doc.createElement('button');
+        b.type = 'button'; b.textContent = label;
+        b.style.cssText = 'padding:10px 14px;min-height:44px;border:1px solid #dac8de;border-radius:22px;color:#58336d;background:white;font:600 14px system-ui;cursor:pointer';
+        b.onclick = action; bar.append(b);
+      };
+      makeButton('Volver a Zumi',()=>dialog.close());
+      makeButton('Finalizar voz',()=>stop('Voz finalizada.'));
+      const frame = doc.createElement('iframe');
+      frame.style.cssText = 'width:100%;flex:1;min-height:0;border:0';
+      dialog.append(bar,frame);doc.body.append(dialog);
+      dialog.addEventListener('close',()=>{dialog.remove();if(s.viewer?.dialog===dialog)s.viewer=null;});
+      s.viewer={dialog,frame};
+      dialog.showModal();
+      dialog.style.display='flex';dialog.style.flexDirection='column';
+    }
+    s.viewer.frame.title=property.name;
+    if(s.viewer.frame.src!==url.href)s.viewer.frame.src=url.href;
+    return true;
+  }
   function stop(note = '') {
     const s = current;
     if (!s) return;
     current = null;
+    s.viewer?.dialog.close();
     clearTimeout(s.timeout);
     s.abort.abort();
     s.stream?.getTracks().forEach(track => track.stop());
@@ -48,7 +81,10 @@
         lab.renderPropertyIds(matches.map(row => row.id));
         result = matches.map(({id,name,price,currency,commune,beds,baths,parking,status}) =>
           ({id,name,price,currency,commune,beds,baths,parking,status}));
+      } else if (event.name === 'abrir_ficha') {
+        result = {fichaAbierta:showProperty(s,args.id)};
       } else if (event.name === 'preparar_visita') {
+        if(s.known.has(args.id))s.viewer?.dialog.close();
         result = {formularioAbierto:s.known.has(args.id) && lab.voiceVisit(args.id)};
       } else result = {error:'Acción desconocida'};
     } catch { result = {error:'No se pudo consultar. Pide al visitante que vuelva a intentarlo.'}; }
@@ -65,6 +101,7 @@
     }
     const s = {audio:document.createElement('audio'),abort:new AbortController(),calls:new Set(),known:new Set()};
     current = s;
+    window.speechSynthesis?.cancel();
     button.textContent = 'Finalizar voz';
     button.setAttribute('aria-pressed','true');
     status.textContent = 'Conectando micrófono…';
@@ -115,6 +152,12 @@
       await s.pc.setRemoteDescription({type:'answer',sdp:await reply.text()});
     } catch(e) { if(current===s)stop(e.name==='NotAllowedError'?'Permite el micrófono para conversar.':e.message || 'No se pudo conectar.'); }
   }
+  document.getElementById('chatHistory').addEventListener('click',event=>{
+    const link=event.target.closest('a.recommend-primary');
+    if(!current || !link)return;
+    const id=link.closest('[data-property-key]')?.dataset.propertyKey;
+    if(id && showProperty(current,id))event.preventDefault();
+  });
   button.addEventListener('click',()=>current?stop('Voz finalizada.'):void start());
   for(const id of ['closeChat','resetChat'])document.getElementById(id).addEventListener('click',()=>stop());
   new MutationObserver(()=>{if(document.getElementById('chatPanel').hidden)stop();}).observe(document.getElementById('chatPanel'),{attributes:true,attributeFilter:['hidden']});
