@@ -8,11 +8,45 @@
   interrupt.textContent = 'Interrumpir';
   interrupt.hidden = true;
   button.after(interrupt);
+  const demo=new URLSearchParams(location.search).get('muestra');
+  const sample=['A','B'].includes(demo);
+  const idleLabel = button.innerHTML;
+  const edit = document.getElementById('voiceEdit');
+  const input = edit.querySelector('input');
+  let correctButton;
   let current;
+  function addContext(s, text, role='system') {
+    s.send({type:'conversation.item.create',item:{type:'message',role,content:[{type:'input_text',text}]}});
+  }
+  function enableCorrection(s, text) {
+    correctButton?.remove();
+    edit.hidden=true;
+    const bubble=lab.voiceMessage(text,'user');
+    correctButton=document.createElement('button');
+    correctButton.type='button'; correctButton.className='voice-correct';
+    correctButton.textContent='Corregir lo que dije';
+    bubble.after(correctButton);
+    s.lastBubble=bubble;
+    correctButton.onclick=()=>{input.value=bubble.textContent;edit.hidden=false;input.focus();};
+  }
+  edit.querySelector('[type=button]').onclick=()=>{edit.hidden=true;};
+  edit.onsubmit=event=>{
+    event.preventDefault();
+    const s=current, text=input.value.trim();
+    if(!s?.lastBubble || !text || s.channel.readyState!=='open')return;
+    edit.hidden=true;
+    s.lastBubble.textContent=text;
+    s.correctAfterCancel=Boolean(s.generating);
+    if(s.generating)s.send({type:'response.cancel'});
+    if(s.playing)s.send({type:'output_audio_buffer.clear'});
+    addContext(s,'Corrección de mi última frase: '+text,'user');
+    if(!s.correctAfterCancel)s.send({type:'response.create'});
+  };
   function microphone(s, enabled) {
     for (const track of s.stream.getTracks()) track.enabled = enabled;
     interrupt.hidden = enabled;
     status.textContent = enabled ? 'Te escucho' : 'Zumi está hablando';
+    if(s.viewer){s.viewer.state.textContent=status.textContent;s.viewer.cut.hidden=enabled;}
   }
   function listenAfterPlayback(s) {
     clearTimeout(s.listenTimer);
@@ -55,18 +89,23 @@
         const b = doc.createElement('button');
         b.type = 'button'; b.textContent = label;
         b.style.cssText = 'padding:10px 14px;min-height:44px;border:1px solid #dac8de;border-radius:22px;color:#58336d;background:white;font:600 14px system-ui;cursor:pointer';
-        b.onclick = action; bar.append(b);
+        b.onclick = action; bar.append(b);return b;
       };
+      bar.style.flexWrap='wrap';
       makeButton('Volver a Zumi',()=>dialog.close());
+      const state=doc.createElement('small');state.setAttribute('role','status');state.textContent=status.textContent;bar.append(state);
+      const cut=makeButton('Interrumpir',()=>interrupt.click());cut.hidden=interrupt.hidden;
       makeButton('Finalizar voz',()=>stop('Voz finalizada.'));
       const frame = doc.createElement('iframe');
       frame.style.cssText = 'width:100%;flex:1;min-height:0;border:0';
       dialog.append(bar,frame);doc.body.append(dialog);
       dialog.addEventListener('close',()=>{dialog.remove();if(s.viewer?.dialog===dialog)s.viewer=null;});
-      s.viewer={dialog,frame};
+      s.viewer={dialog,frame,state,cut};
       dialog.showModal();
       dialog.style.display='flex';dialog.style.flexDirection='column';
     }
+    s.selected=id;
+    addContext(s,'Ficha seleccionada en pantalla: '+JSON.stringify({id,nombre:property.name}));
     s.viewer.frame.title=property.name;
     if(s.viewer.frame.src!==url.href)s.viewer.frame.src=url.href;
     return true;
@@ -87,7 +126,9 @@
     s.audio.srcObject = null;
     s.audio.remove();
     form.inert = false;
-    button.textContent = 'Hablar con Zumi';
+    edit.hidden=true;correctButton?.remove();
+    button.innerHTML = idleLabel;
+    if(sample)button.textContent='Escuchar muestra '+demo;
     button.setAttribute('aria-pressed','false');
     status.textContent = note;
     lab.setSpeechActive(false);
@@ -108,9 +149,19 @@
           ({id,name,price,currency,commune,beds,baths,parking,status}));
       } else if (event.name === 'abrir_ficha') {
         result = {fichaAbierta:showProperty(s,args.id)};
+      } else if (event.name === 'consultar_ficha') {
+        const id=args.id || s.selected;
+        if(!s.known.has(id))throw Error('Ficha desconocida');
+        const reply=await fetch('/api/properties?id='+encodeURIComponent(id),{signal:s.abort.signal});
+        if(!reply.ok)throw Error('Ficha indisponible');
+        const p=(await reply.json()).properties?.find(row=>row.id===id);
+        result=p ? {id,nombre:p.title,comuna:p.commune,precio:p.priceValue,moneda:p.currency,
+          gastosComunesCLP:p.commonExpenses || null,superficieUtil:p.usableArea,estacionamientos:p.parking,
+          dormitorios:p.bedrooms,banos:p.bathrooms,descripcion:String(p.description||'').slice(0,1200)} : {error:'Sin ficha publicada'};
       } else if (event.name === 'preparar_visita') {
-        if(s.known.has(args.id))s.viewer?.dialog.close();
-        result = {formularioAbierto:s.known.has(args.id) && lab.voiceVisit(args.id)};
+        const id=args.id || s.selected;
+        if(s.known.has(id))s.viewer?.dialog.close();
+        result = {formularioAbierto:s.known.has(id) && lab.voiceVisit(id,String(args.horario||'').trim().slice(0,120))};
       } else result = {error:'Acción desconocida'};
     } catch { result = {error:'No se pudo consultar. Pide al visitante que vuelva a intentarlo.'}; }
     if (current !== s || s.channel.readyState !== 'open') return;
@@ -121,7 +172,7 @@
     if (form.querySelector('[type=submit]').disabled || document.querySelector('#zumi-record.recording')) {
       status.textContent = 'Termina la consulta en curso para iniciar la voz.'; return;
     }
-    if (!navigator.mediaDevices?.getUserMedia || !window.RTCPeerConnection) {
+    if ((!sample && !navigator.mediaDevices?.getUserMedia) || !window.RTCPeerConnection) {
       status.textContent = 'Este navegador no admite voz en vivo.'; return;
     }
     const s = {audio:document.createElement('audio'),abort:new AbortController(),calls:new Set(),known:new Set()};
@@ -133,7 +184,7 @@
     form.inert = true;
     s.timeout = setTimeout(() => { if(current === s) stop('Conexión agotada. Puedes volver a intentar.'); },35000);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+      const stream = sample ? new MediaStream() : await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
       if (current !== s) { stream.getTracks().forEach(t=>t.stop()); return; }
       s.stream = stream;
       for (const track of stream.getTracks()) track.enabled = false;
@@ -141,6 +192,7 @@
       s.audio.autoplay = true;
       document.body.append(s.audio);
       s.pc.ontrack = e => { s.audio.srcObject = e.streams[0] || new MediaStream([e.track]); s.audio.play().catch(()=>{if(current===s)stop('El navegador bloqueó el audio. Vuelve a tocar Hablar con Zumi.');}); };
+      if(sample)s.pc.addTransceiver('audio',{direction:'recvonly'});
       stream.getTracks().forEach(track => s.pc.addTrack(track,stream));
       s.pc.onconnectionstatechange = () => { if(current===s && s.pc.connectionState==='failed') stop('Se perdió la conexión.'); };
       const channel = s.channel = s.pc.createDataChannel('oai-events');
@@ -150,12 +202,17 @@
         clearTimeout(s.timeout);
         s.timeout = setTimeout(()=>{if(current===s)stop('Finalizaron los 5 minutos de voz.');},300000);
         status.textContent = 'Preparando el saludo…';
+        if(sample){
+          const style=demo==='A'?'pausada y serena':'ágil y conversacional';
+          s.send({type:'response.create',response:{tool_choice:'none',instructions:'En español con acento chileno de Santiago y voz '+style+', di exactamente: «En Ñuñoa hay una opción por cuatrocientos mil pesos al mes. ¿Quieres que abramos la ficha?»'}});
+          return;
+        }
         const cards = Array.from(document.querySelectorAll('#chatHistory [data-property-key]')).slice(-6).map(card=>{
           s.known.add(card.dataset.propertyKey);
           return {id:card.dataset.propertyKey,nombre:card.querySelector('.recommend-name')?.textContent};
         });
         const ficha = new URLSearchParams(location.search).get('zumi_property_id');
-        if(ficha)s.known.add(ficha);
+        if(ficha){s.known.add(ficha);s.selected=ficha;}
         const history = Array.from(document.querySelectorAll('#chatHistory .message')).slice(-6).map(el=>el.textContent.slice(0,300));
         s.send({type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text:'Historial de referencia. No es una pregunta nueva. Datos: '+JSON.stringify({history,cards,ficha})}]}});
         s.send({type:'response.create',response:{tool_choice:'none',instructions:'Saluda con acento chileno de Santiago, cálido y conversado, con una pausa corta. Di solo: «Hola, soy Zumi, tu asistente virtual. Cuéntame, ¿qué andas buscando?». Espera a la persona.'}});
@@ -165,11 +222,12 @@
         if(current!==s)return;
         const event = JSON.parse(e.data);
         if(event.type==='response.function_call_arguments.done')void runTool(s,event);
-        if(event.type==='conversation.item.input_audio_transcription.completed' && event.transcript)lab.voiceMessage(event.transcript,'user');
+        if(event.type==='conversation.item.input_audio_transcription.completed' && event.transcript)enableCorrection(s,event.transcript);
         if(event.type==='response.output_audio_transcript.done' && event.transcript)lab.voiceMessage(event.transcript);
         if(event.type==='response.created')s.generating=true;
         if(event.type==='response.done'){
           s.generating=false;
+          if(s.correctAfterCancel){s.correctAfterCancel=false;s.send({type:'response.create'});}
           if(event.response?.status!=='completed' && !s.playing)listenAfterPlayback(s);
         }
         if(event.type==='output_audio_buffer.started'){
@@ -178,7 +236,7 @@
           microphone(s,false);
           lab.setSpeechActive(true);
         }
-        if(['output_audio_buffer.stopped','output_audio_buffer.cleared'].includes(event.type)){s.playing=false;lab.setSpeechActive(false);listenAfterPlayback(s);}
+        if(['output_audio_buffer.stopped','output_audio_buffer.cleared'].includes(event.type)){s.playing=false;lab.setSpeechActive(false);if(sample)stop('Fin de la muestra.');else listenAfterPlayback(s);}
         if(event.type==='error')status.textContent='No se pudo completar ese turno. Puedes volver a hablar.';
       };
       const offer = await s.pc.createOffer();
@@ -194,6 +252,11 @@
     const id=link.closest('[data-property-key]')?.dataset.propertyKey;
     if(id && showProperty(current,id))event.preventDefault();
   });
+  if(sample){
+    if(document.getElementById('chatPanel').hidden)document.getElementById('openChat').click();
+    button.textContent='Escuchar muestra '+demo;
+    status.textContent='Ejemplo de voz';
+  }
   button.addEventListener('click',()=>current?stop('Voz finalizada.'):void start());
   for(const id of ['closeChat','resetChat'])document.getElementById(id).addEventListener('click',()=>stop());
   new MutationObserver(()=>{if(document.getElementById('chatPanel').hidden)stop();}).observe(document.getElementById('chatPanel'),{attributes:true,attributeFilter:['hidden']});

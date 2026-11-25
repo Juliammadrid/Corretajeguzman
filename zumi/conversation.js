@@ -90,7 +90,7 @@
       recorder=r;const chunks=[];
       r.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
       r.onstop=()=>{clearTimeout(timer);stream.getTracks().forEach(t=>t.stop());recorder=null;
-        record.classList.remove('recording');record.setAttribute('aria-label','Grabar audio');fileButton.disabled=submit.disabled=false;
+        record.classList.remove('recording');record.setAttribute('aria-label','Enviar audio');fileButton.disabled=submit.disabled=false;
         if(turn===generation && chunks.length)void transcribe(new Blob(chunks,{type:r.mimeType}),r.mimeType);
       };
       r.start();record.classList.add('recording');record.setAttribute('aria-label','Detener y enviar audio');fileButton.disabled=submit.disabled=true;

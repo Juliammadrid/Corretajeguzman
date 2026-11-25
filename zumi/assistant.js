@@ -271,10 +271,10 @@ function zumi53PhotoBlock(x){
 }
 function renderCards(list,opts={}){if(!list.length)return;trackMetric('results');
  const results=node('div','cards-stack');
- for(const x of list){const card=node('article','recommend-card');card.dataset.propertyKey=x.id||x.url;
+ for(const [index,x] of list.entries()){const card=node('article','recommend-card');card.dataset.propertyKey=x.id||x.url;
   const top=node('div','recommend-top');
   top.appendChild(zumi53PhotoBlock(x));
-  const intro=node('div','recommend-intro');intro.append(node('small','recommend-label',(x.kind==='projects'?'Proyecto nuevo':'Propiedad')+' · '+x.commune),node('strong','recommend-name',x.name),node('b','recommend-price',(x.kind==='projects'?'Desde ':'')+formatMoney(x.price,x.currency)));
+  const intro=node('div','recommend-intro');intro.append(node('small','recommend-label','Opción '+(index+1)+' · '+x.commune),node('strong','recommend-name',x.name),node('b','recommend-price',(x.kind==='projects'?'Desde ':'')+formatMoney(x.price,x.currency)));
   top.appendChild(intro);card.appendChild(top);
   const meta=node('div','recommend-meta');
   if(x.kind==='projects'){meta.append(node('span','',x.specs||'Tipologías por consultar'),node('span','','🚘 Est.: consultar tipología'));}
@@ -297,7 +297,7 @@ function showNearby(source,commune,budget,beds){const adjacent=nearMap[normCommu
  return options;}
 // Collect interest with a short, specific form. No data is saved or transmitted by the preview;
 // WhatsApp is opened only when the visitor explicitly confirms the handoff.
-function showPropertyInterest(property){
+function showPropertyInterest(property, horario=''){
  trackMetric('property');clearChoice();goState('listening');
  const renting=property.kind==='rent';
  bubble(renting?'¡Excelente! Te ayudo a consultar por este arriendo.':'¡Buena elección! Te ayudo a consultar por esta propiedad en venta.');
@@ -310,10 +310,14 @@ function showPropertyInterest(property){
   <label>Teléfono (opcional) <input name="phone" type="tel" maxlength="22" autocomplete="tel" inputmode="tel" placeholder="9 1234 5678"></label>
   <label>¿Cuándo te gustaría visitar? <select name="visit"><option value="Por coordinar">Por coordinar</option><option value="Día de semana, mañana">Día de semana, mañana</option><option value="Día de semana, tarde">Día de semana, tarde</option><option value="Fin de semana">Fin de semana</option></select></label>
   <label class="interest-consent"><input type="checkbox" name="consent" required><span>Quiero abrir WhatsApp y compartir estos datos con Corretaje Guzmán para solicitar información.</span></label>
-  <button type="submit">Abrir WhatsApp con esta propiedad ↗</button>
+  <button type="submit">Coordinar esta visita por WhatsApp ↗</button>
   <div class="interest-error" role="status" aria-live="polite"></div>
   <div class="interest-link-slot"></div>
   <small class="interest-foot">El mensaje quedará preparado en WhatsApp; solo se enviará si tú presionas Enviar.</small>`;
+ if(horario){
+   const select=form.elements.visit;
+   select.add(new Option(horario,horario,true,true));
+ }
  form.addEventListener('submit',event=>{
    event.preventDefault();
    const data=new FormData(form),name=String(data.get('name')||'').trim().replace(/\s+/g,' ').slice(0,70);
@@ -681,9 +685,15 @@ window.ZumiPelucheLab={brokerLinks,voiceMessage:bubble,
    if(!await refreshPublicCatalog())throw Error('Catálogo temporalmente indisponible');
    return [...catalog.rent,...catalog.buy];
  },
- voiceVisit(id){
+ voiceVisit(id,horario){
    const p=[...catalog.rent,...catalog.buy].find(row=>row.id===id);
-   if(p)showPropertyInterest(p);
+   if(p){
+     const last=chat.lastElementChild;
+     if(last?.dataset.visitId===id){
+       if(horario && last.elements.visit.value!==horario)last.elements.visit.add(new Option(horario,horario,true,true));
+       last.scrollIntoView?.({block:'nearest'});
+     }else showPropertyInterest(p,horario);
+   }
    return Boolean(p);
  },renderPropertyIds(ids,restore=false){
  const rows=[...catalog.rent,...catalog.buy,...catalog.projects];
