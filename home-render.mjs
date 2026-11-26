@@ -19,7 +19,7 @@ export function selectHomeRentals(rows,ufValue){
  const seen=new Set();
  const sorted=homeProperties(rows).filter(p=>p.operation==='arriendo'&&!isDailyRental(p)&&Number.isFinite(price(p))&&price(p)>0&&!seen.has(p.id)&&seen.add(p.id))
   .sort((a,b)=>price(a)-price(b)||String(a.id).localeCompare(String(b.id)));
- return sorted.length<=8?sorted:[...sorted.slice(0,4),...sorted.slice(-4)];
+ return sorted.length<=6?sorted:[...sorted.slice(0,3),...sorted.slice(-3)];
 }
 export const rentalCards=(rows,ufValue)=>selectHomeRentals(rows,ufValue).map(rentalCard).join('');
 export function projectCards(projects){
