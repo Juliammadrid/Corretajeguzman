@@ -7,8 +7,11 @@ const style='<link rel="stylesheet" href="/shared/footer.css?v=20261007" data-gz
 export function withFooter(html){
  if(!/<body\b/i.test(html)||!/<\/body>/i.test(html))return html;
  html=html.replace(/<link\b[^>]*\bdata-gz-footer\b[^>]*>\s*/g,'');
- html=html.replace('</head>',style+'\n</head>');
- if(/<footer\b/i.test(html)){
+ const customHomeFooter=/<footer\b[^>]*\bdata-home-footer\b/i.test(html);
+ if(!customHomeFooter) html=html.replace('</head>',style+'\n</head>');
+ if(customHomeFooter){
+  // The delivered home owns its footer; still install the existing Zumi fallback below.
+ }else if(/<footer\b/i.test(html)){
   let first=true;
   html=html.replace(/<footer\b[^>]*>[\s\S]*?<\/footer>/gi,()=>{if(!first)return '';first=false;return footer;});
  }else html=html.replace('</body>',footer+'\n</body>');

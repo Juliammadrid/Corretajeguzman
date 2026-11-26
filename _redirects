@@ -1,4 +1,9 @@
 # Corretaje Guzman - redirects rapidos de compatibilidad
+# Compatibility for links in the new home, preserving the existing pages.
+/arrendar-mi-propiedad  /propietarios  301
+/se-corredor  /corredores  301
+/formulario-arriendo  /solicitud  301
+/cuanto-puedo-comprar  /simulador-capacidad/  301
 # Acceso al portal privado, sin cambiar las rutas de la web pública.
 /login  /portal/index.html  200!
 /login/  /portal/index.html  200!

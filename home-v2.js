@@ -47,7 +47,7 @@ import {homeProperties,rentalCard,projectCards,selectHomeRentals} from '/home-re
   function goSearch(mapa){
     const op=$('#fOp').value, tipo=$('#fTipo').value, com=$('#fComuna').value.trim(), q=new URLSearchParams();
     if(tipo) q.set('tipo',tipo); if(com) q.set('comuna',com); if(mapa) q.set('vista','mapa');
-    const page=mapa?'/arriendos':(tipo==='Parcela'?'/parcelas':(op==='venta'?'/comprar':'/arriendos'));
+    const page=tipo==='Parcela'?'/parcelas':(op==='venta'?'/ventas':'/arriendos');
     location.href=page+(q.toString()?'?'+q:'');
   }
   $('#srch').addEventListener('submit',e=>{e.preventDefault();goSearch(false);});
@@ -135,6 +135,23 @@ import {homeProperties,rentalCard,projectCards,selectHomeRentals} from '/home-re
     if(window.lucide) lucide.createIcons();
   })();
 
+  // Home owns its navigation; guzman-header.js continues mounting Zumi unchanged.
+  const burger=$('#navBurger'), menu=$('#mobileMenu');
+  function closeMenu(){ menu.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  if(burger&&menu){
+    burger.addEventListener('click',e=>{e.stopPropagation();const open=menu.classList.toggle('open');burger.setAttribute('aria-expanded',String(open));});
+    document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!burger.contains(e.target))closeMenu();});
+    menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();burger.focus();}});
+    window.addEventListener('resize',()=>{if(window.innerWidth>980)closeMenu();});
+  }
+  document.querySelectorAll('[data-navdd]').forEach(dd=>{
+    const button=dd.querySelector('button');button.setAttribute('aria-expanded','false');
+    const close=()=>{dd.classList.remove('open');button.setAttribute('aria-expanded','false');};
+    button.addEventListener('click',e=>{e.stopPropagation();button.setAttribute('aria-expanded',String(dd.classList.toggle('open')));});
+    document.addEventListener('click',e=>{if(!dd.contains(e.target))close();});
+    dd.addEventListener('keydown',e=>{if(e.key==='Escape'){close();button.focus();}});
+  });
   if(window.lucide) lucide.createIcons();
 })();
 
