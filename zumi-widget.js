@@ -463,7 +463,36 @@
 
   /* ---------- sonido / voz ---------- */
   function chime(){if(!S.sound)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();[[660,0],[990,.11]].forEach(([f,t])=>{const o=a.createOscillator(),gn=a.createGain();o.type='sine';o.frequency.value=f;gn.gain.setValueAtTime(.0001,a.currentTime+t);gn.gain.exponentialRampToValueAtTime(.07,a.currentTime+t+.02);gn.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.3);o.connect(gn);gn.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.32);});}catch(e){}}
-  function say(t){if(!S.sound||!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-CL';u.rate=1.04;const v=speechSynthesis.getVoices().find(v=>/es-(CL|419|US|MX)/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^es/i.test(v.lang));if(v)u.voice=v;u.onstart=()=>pose('speak');u.onend=()=>pose('wait');speechSynthesis.speak(u);}catch(e){}}
+  let kattyAudio=null, kattyURL=null, kattyAbort=null, speechEpoch=0, kattyUnavailableUntil=0;
+  function stopSpeech(){
+    speechEpoch++;kattyAbort?.abort();kattyAbort=null;
+    if(kattyAudio){kattyAudio.pause();kattyAudio.removeAttribute('src');kattyAudio.remove();kattyAudio=null;}
+    if(kattyURL){URL.revokeObjectURL(kattyURL);kattyURL=null;}
+    try{window.speechSynthesis?.cancel();}catch{}
+  }
+  function browserSay(t,epoch){
+    if(epoch!==speechEpoch||!S.sound||!S.open||call||!('speechSynthesis' in window))return;
+    try{const u=new SpeechSynthesisUtterance(t);u.lang='es-CL';u.rate=1;const voices=speechSynthesis.getVoices();const v=voices.find(v=>/^es-CL$/i.test(v.lang))||voices.find(v=>/es-(419|US|MX)/i.test(v.lang))||voices.find(v=>/^es/i.test(v.lang));if(v)u.voice=v;u.onstart=()=>pose('speak');u.onend=()=>{if(epoch===speechEpoch)pose('wait');};speechSynthesis.speak(u);}catch{}
+  }
+  async function say(t,fallback=true){
+    if(!S.sound||!S.open||call)return;
+    t=String(t||'').trim().slice(0,650);if(!t)return;
+    stopSpeech();const epoch=speechEpoch;
+    if(Date.now()<kattyUnavailableUntil){if(fallback)browserSay(t,epoch);return;}
+    const ctl=new AbortController();kattyAbort=ctl;const timer=setTimeout(()=>ctl.abort(),9000);
+    try{
+      const r=await fetch('/.netlify/functions/zumi-tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t}),signal:ctl.signal});
+      if(!r.ok){if(r.status===503||r.status===429)kattyUnavailableUntil=Date.now()+60000;throw Error('TTS '+r.status);}
+      if(!/^audio\//i.test(r.headers.get('content-type')||''))throw Error('Invalid audio');
+      const blob=await r.blob();if(epoch!==speechEpoch||!S.sound||!S.open||call)return;
+      const a=document.createElement('audio');kattyAudio=a;kattyURL=URL.createObjectURL(blob);a.src=kattyURL;a.preload='auto';document.body.append(a);
+      a.onplaying=()=>{if(epoch===speechEpoch)pose('speak');};
+      a.onended=()=>{if(epoch===speechEpoch){stopSpeech();pose('wait');}};
+      await a.play();
+    }catch(e){
+      if(epoch===speechEpoch){stopSpeech();if(fallback)browserSay(t,speechEpoch);}
+    }finally{clearTimeout(timer);if(kattyAbort===ctl)kattyAbort=null;}
+  }
 
   /* ---------- mensajes ---------- */
   const add=(html,who)=>{const d=document.createElement('div');d.className='zw-m '+(who||'bot');d.innerHTML=html;msgs.appendChild(d);scroll();save();return d;};
@@ -762,7 +791,7 @@
       clearTimeout(to);if(!r.ok)throw new Error('ai '+r.status);
       const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';j.actions=[...(Array.isArray(j.ids)?[{type:'cards',items:j.ids.filter(id=>byId(id))}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:'human'}]}];
       S.hist=(S.hist||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
-      if(j.text){pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
+      if(j.text){void say(j.text,false);pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
         stream(d,esc(j.text).replace(/\n/g,"<br>"),()=>{fbBar(d);(j.actions||[]).forEach(render);pose('wait');save();});}
       else{(j.actions||[]).forEach(render);save();}
     }catch(e){clearTimeout(to);t.remove();
@@ -794,7 +823,7 @@
     if(a==='alert')return alertFlow();
     if(a==='alertok'){S.alert=Object.assign({},S.prefs);save();return bot('Para registrar el aviso, envía tu solicitud al ejecutivo por WhatsApp.',()=>chips([{t:'Enviar solicitud por WhatsApp',act:'wa',cls:'wa'}]));}
     if(a==='proj'){add(el?el.textContent.trim():id,'me');return projects(id);}
-    if(a==='reset'){S={html:'',prefs:{},flow:null,last:[],favs:S.favs,sound:S.sound,open:true,hidden:false,started:false,hist:[]};msgs.innerHTML='';save();return menu(false);}
+    if(a==='reset'){stopSpeech();S={html:'',prefs:{},flow:null,last:[],favs:S.favs,sound:S.sound,open:true,hidden:false,started:false,hist:[]};msgs.innerHTML='';save();return menu(false);}
   }
 
   /* ---------- menú inicial ---------- */
@@ -838,13 +867,13 @@
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
-  function close(){endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}root.classList.remove('open');S.open=false;g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
+  function close(){stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}root.classList.remove('open');S.open=false;g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
   g('#zwOpen').onclick=open;
   g('#zwHit').onclick=open;g('#zwHit').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};
   g('#zwClose').onclick=close;
   g('#zwHide').onclick=e=>{e.stopPropagation();root.classList.add('gone');S.hidden=true;save();};
   g('#zwPeek').onclick=()=>{root.classList.remove('gone');S.hidden=false;save();pose('greet',2200);};
-  g('#zwSound').onclick=()=>{S.sound=!S.sound;g('#zwSound').innerHTML=I(S.sound?IC.vol:IC.mute,17);g('#zwSound').setAttribute('aria-label',S.sound?'Silenciar':'Activar sonido');if(!S.sound)try{speechSynthesis.cancel();}catch(e){}save();};
+  g('#zwSound').onclick=()=>{S.sound=!S.sound;g('#zwSound').innerHTML=I(S.sound?IC.vol:IC.mute,17);g('#zwSound').setAttribute('aria-label',S.sound?'Silenciar':'Activar sonido');if(!S.sound)stopSpeech();save();};
   g('#zwMore').onclick=e=>{e.stopPropagation();g('#zwMenu').classList.toggle('on');};
   document.addEventListener('click',e=>{if(!e.target.closest('#zwMenu,#zwMore'))g('#zwMenu').classList.remove('on');});
   g('#zwMenu').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;g('#zwMenu').classList.remove('on');act(b.dataset.act,b.dataset.id,b);});
@@ -868,14 +897,14 @@
 
   let rec=null,recStream=null,recTimer=null,recSeconds=0,recCancelled=false;
   function recCleanup(){clearInterval(recTimer);recStream?.getTracks().forEach(t=>t.stop());recStream=null;g('#zwRec').classList.remove('on');g('#zwForm').style.display='';pose('wait');}
-  g('#zwMic').onclick=async()=>{if(rec?.state==='recording')return;try{recStream=await navigator.mediaDevices.getUserMedia({audio:true});const chunks=[];rec=new MediaRecorder(recStream);recCancelled=false;rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};rec.onstop=async()=>{const cancel=recCancelled;const blob=new Blob(chunks,{type:rec.mimeType});recCleanup();if(cancel)return;try{const mime=blob.type.split(';')[0];const r=await fetch('/.netlify/functions/zumi-conversar',{method:'POST',headers:{'Content-Type':mime},body:blob});const j=await r.json();if(!r.ok||!j.text)throw Error();ask(j.text);}catch{add('No pude transcribir el audio. Intenta otra vez o escribe tu mensaje.','sys');}};rec.start();recSeconds=0;g('#zwRecT').textContent='0:00';g('#zwRec').classList.add('on');g('#zwForm').style.display='none';pose('listen');recTimer=setInterval(()=>{g('#zwRecT').textContent='0:'+String(++recSeconds).padStart(2,'0');if(recSeconds>=30&&rec.state==='recording')rec.stop();},1000);}catch{recCleanup();add('No pude acceder al micrófono. Revisa los permisos del navegador.','sys');}};
+  g('#zwMic').onclick=async()=>{if(rec?.state==='recording')return;stopSpeech();try{recStream=await navigator.mediaDevices.getUserMedia({audio:true});const chunks=[];rec=new MediaRecorder(recStream);recCancelled=false;rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};rec.onstop=async()=>{const cancel=recCancelled;const blob=new Blob(chunks,{type:rec.mimeType});recCleanup();if(cancel)return;try{const mime=blob.type.split(';')[0];const r=await fetch('/.netlify/functions/zumi-conversar',{method:'POST',headers:{'Content-Type':mime},body:blob});const j=await r.json();if(!r.ok||!j.text)throw Error();ask(j.text);}catch{add('No pude transcribir el audio. Intenta otra vez o escribe tu mensaje.','sys');}};rec.start();recSeconds=0;g('#zwRecT').textContent='0:00';g('#zwRec').classList.add('on');g('#zwForm').style.display='none';pose('listen');recTimer=setInterval(()=>{g('#zwRecT').textContent='0:'+String(++recSeconds).padStart(2,'0');if(recSeconds>=30&&rec.state==='recording')rec.stop();},1000);}catch{recCleanup();add('No pude acceder al micrófono. Revisa los permisos del navegador.','sys');}};
   g('#zwRecX').onclick=()=>{recCancelled=true;if(rec?.state==='recording')rec.stop();else recCleanup();};
   g('#zwRecOk').onclick=()=>{if(rec?.state==='recording')rec.stop();};
   let call=null;
   function endCall(msg){const c=call;call=null;if(c){clearInterval(c.timer);c.abort.abort();c.pc?.close();c.stream?.getTracks().forEach(t=>t.stop());c.audio?.remove();}g('#zwVoice').classList.remove('on');g('#zwVmute').classList.remove('on');pose('wait');if(msg)add(msg,'sys');}
-  g('#zwCall').onclick=async()=>{if(call)return;const c={abort:new AbortController(),secs:0};call=c;g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / 05:00';try{c.stream=await navigator.mediaDevices.getUserMedia({audio:true});if(call!==c){c.stream.getTracks().forEach(t=>t.stop());return;}c.pc=new RTCPeerConnection();c.audio=document.createElement('audio');c.audio.autoplay=true;document.body.append(c.audio);c.pc.ontrack=e=>{c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audio.play().catch(()=>endCall('El navegador bloqueó la reproducción de audio.'));};c.stream.getTracks().forEach(t=>c.pc.addTrack(t,c.stream));const dc=c.pc.createDataChannel('oai-events');dc.onopen=()=>{g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');dc.send(JSON.stringify({type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno y pregunta qué propiedad busca. No inventes precios ni propiedades.'}}));c.timer=setInterval(()=>{c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);};dc.onmessage=e=>{try{const j=JSON.parse(e.data);if(j.type==='conversation.item.input_audio_transcription.completed'&&j.transcript)add(esc(j.transcript),'me');if(j.type==='response.output_audio_transcript.done'&&j.transcript)add(esc(j.transcript),'bot');if(j.type==='response.created')pose('speak');if(j.type==='response.done')pose('listen');if(j.type==='response.function_call_arguments.done'){dc.send(JSON.stringify({type:'conversation.item.create',item:{type:'function_call_output',call_id:j.call_id,output:JSON.stringify({error:'Consulta el catálogo en el chat de texto para mostrar fichas verificadas.'})}}));dc.send(JSON.stringify({type:'response.create'}));}}catch{}};const offer=await c.pc.createOffer();await c.pc.setLocalDescription(offer);const r=await fetch('/.netlify/functions/zumi-voz',{method:'POST',headers:{'Content-Type':'application/sdp'},body:offer.sdp,signal:c.abort.signal});if(!r.ok)throw Error();await c.pc.setRemoteDescription({type:'answer',sdp:await r.text()});}catch{if(call===c)endCall('No pude iniciar la llamada. Puedes usar el chat de texto.');}};
+  g('#zwCall').onclick=async()=>{if(call)return;stopSpeech();const c={abort:new AbortController(),secs:0};call=c;g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / 05:00';try{c.stream=await navigator.mediaDevices.getUserMedia({audio:true});if(call!==c){c.stream.getTracks().forEach(t=>t.stop());return;}c.pc=new RTCPeerConnection();c.audio=document.createElement('audio');c.audio.autoplay=true;document.body.append(c.audio);c.pc.ontrack=e=>{c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audio.play().catch(()=>endCall('El navegador bloqueó la reproducción de audio.'));};c.stream.getTracks().forEach(t=>c.pc.addTrack(t,c.stream));const dc=c.pc.createDataChannel('oai-events');dc.onopen=()=>{g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');dc.send(JSON.stringify({type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno y pregunta qué propiedad busca. No inventes precios ni propiedades.'}}));c.timer=setInterval(()=>{c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);};dc.onmessage=e=>{try{const j=JSON.parse(e.data);if(j.type==='conversation.item.input_audio_transcription.completed'&&j.transcript)add(esc(j.transcript),'me');if(j.type==='response.output_audio_transcript.done'&&j.transcript)add(esc(j.transcript),'bot');if(j.type==='response.created')pose('speak');if(j.type==='response.done')pose('listen');if(j.type==='response.function_call_arguments.done'){dc.send(JSON.stringify({type:'conversation.item.create',item:{type:'function_call_output',call_id:j.call_id,output:JSON.stringify({error:'Consulta el catálogo en el chat de texto para mostrar fichas verificadas.'})}}));dc.send(JSON.stringify({type:'response.create'}));}}catch{}};const offer=await c.pc.createOffer();await c.pc.setLocalDescription(offer);const r=await fetch('/.netlify/functions/zumi-voz',{method:'POST',headers:{'Content-Type':'application/sdp'},body:offer.sdp,signal:c.abort.signal});if(!r.ok)throw Error();await c.pc.setRemoteDescription({type:'answer',sdp:await r.text()});}catch{if(call===c)endCall('No pude iniciar la llamada. Puedes usar el chat de texto.');}};
   g('#zwVend').onclick=()=>endCall('Llamada finalizada');g('#zwVtxt').onclick=()=>endCall('Seguimos por texto');g('#zwVmute').onclick=()=>{const t=call?.stream?.getAudioTracks()[0];if(t){t.enabled=!t.enabled;g('#zwVmute').classList.toggle('on',!t.enabled);}};
-  window.addEventListener('pagehide',()=>{endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}});
+  window.addEventListener('pagehide',()=>{stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('open'))close();});
 
   /* ---------- restaurar conversación al navegar ---------- */
