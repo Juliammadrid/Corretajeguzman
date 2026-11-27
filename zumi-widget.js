@@ -159,12 +159,12 @@
     if(call){call.viewer?.close();compactVoice();}
     const plan=ownerPlan(preferred);
     const current=msgs.querySelector('form[data-owner-form]');
-    if(current){if(plan){for(const el of current.querySelectorAll('input[name=plan]'))el.checked=el.value===plan;}current.scrollIntoView({block:'start'});return;}
+    if(current){if(plan){for(const el of current.querySelectorAll('input[name=plan]'))el.checked=el.value===plan;}scrollMessageIntoView(current,'start');return;}
     const opts=(list,optional=false)=>'<option value="">'+(optional?'Selecciona si corresponde…':'Selecciona…')+'</option>'+list.map(x=>'<option value="'+esc(x[1])+'">'+esc(x[0])+'</option>').join('');
     const plans=OWNER_PLANS.map((name,i)=>'<label class="zw-owner-plan"><input type="radio" name="plan" value="'+esc(name)+'"'+(i===0?' required':'')+(name===plan?' checked':'')+'> '+esc(name)+'</label>').join('');
     add('Perfecto. Completa tus datos y los de tu propiedad aquí mismo. Nuestro equipo recibirá tu solicitud.');
     block('<form class="zw-owner-form" data-owner-form><strong>Inscribir mi propiedad</strong><small>Completa el formulario de Corretaje Guzmán. Los campos marcados como opcionales puedes dejarlos en blanco.</small><h4>Tus datos</h4><label>Nombre y apellido<input name="nombre" autocomplete="name" maxlength="100" required placeholder="Ej: Patricio Soto"></label><label>WhatsApp (+56)<input type="tel" name="whatsapp" autocomplete="tel" maxlength="20" required placeholder="9 1234 5678"></label><label>Correo electrónico<input type="email" name="email" autocomplete="email" maxlength="150" required placeholder="tucorreo@ejemplo.cl"></label><h4>Tu propiedad</h4><label>Tipo de propiedad<select name="tipo" required>'+opts(OWNER_TYPES.map(v=>[v,v]))+'</select></label><label>Comuna<input name="comuna" maxlength="100" required placeholder="Ej: Providencia"></label><label>Dirección (opcional)<input name="direccion" maxlength="200" placeholder="Calle y número"></label><div class="zw-owner-row"><label>Dormitorios<select name="dormitorios">'+opts([['Estudio','0'],['1','1'],['2','2'],['3','3'],['4 o más','4']],true)+'</select></label><label>Baños<select name="banos">'+opts([['1','1'],['2','2'],['3 o más','3']],true)+'</select></label></div><label>Valor de arriendo estimado (opcional)<input name="valor" inputmode="numeric" maxlength="14" placeholder="$450.000"></label><h4>Plan de interés</h4><div class="zw-owner-row">'+plans+'</div><label class="zw-owner-consent"><input type="checkbox" name="acepta" required> Autorizo a Corretaje Guzmán a contactarme para gestionar el arriendo de mi propiedad.</label><small>Consulta nuestra <a href="/politica-de-privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</small><button type="submit">Enviar e inscribir mi propiedad</button><div class="zw-owner-status" role="alert"></div></form>');
-    const form=msgs.querySelector('form[data-owner-form]');requestAnimationFrame(()=>form?.scrollIntoView({block:'start',behavior:'smooth'}));
+    const form=msgs.querySelector('form[data-owner-form]');requestAnimationFrame(()=>scrollMessageIntoView(form,'start','smooth'));
   }
   function ownerPhone(value){
     let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56')&&d.length===11)d=d.slice(2);
@@ -546,6 +546,47 @@
 #zumi-root .zw-tav img{width:30px;height:auto;margin-top:6px;animation:zwTav 1.2s ease-in-out infinite}
 @keyframes zwTav{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media (max-width:640px){#zumi-root.scrolled:not(.open) .zw-bubble{opacity:0;pointer-events:none;transform:translateY(6px)}}
+
+/* Keep the conversation viewport fixed; only cards can scroll sideways. */
+#zumi-root .zw-panel{min-width:0;max-width:calc(100vw - 40px);overflow:hidden;overflow:clip;overscroll-behavior-x:none}
+#zumi-root .zw-panel>*{min-width:0;max-width:100%}
+#zumi-root .zw-msgs{width:100%;min-width:0;min-height:0;max-width:100%;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;overflow-wrap:anywhere;align-items:stretch;-webkit-overflow-scrolling:touch}
+#zumi-root .zw-msgs>*{min-width:0;max-width:100%;flex-shrink:0}
+#zumi-root .zw-msgs>div:not(.zw-m){width:100%;overflow:hidden}
+#zumi-root .zw-msgs>.zw-m{max-width:88%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+#zumi-root .zw-msgs img{max-width:100%;height:auto}
+#zumi-root .zw-owner-plans,#zumi-root .zw-owner-form,#zumi-root .zw-visit-form,#zumi-root .zw-sum,#zumi-root .zw-cmp{width:100%;max-width:100%;min-width:0;margin-inline:0;overflow-wrap:anywhere}
+#zumi-root .zw-owner-plans a,#zumi-root .zw-owner-plans img{width:100%;max-width:100%;min-width:0;height:auto;display:block}
+#zumi-root .zw-owner-form,#zumi-root .zw-visit-form{grid-template-columns:minmax(0,1fr)}
+#zumi-root .zw-owner-form label,#zumi-root .zw-visit-form label{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#zumi-root .zw-owner-form input:not([type=checkbox]):not([type=radio]),#zumi-root .zw-owner-form select,#zumi-root .zw-visit-form input:not([type=checkbox]),#zumi-root .zw-visit-form select{width:100%;max-width:100%;min-width:0;margin-inline:0;font-size:16px}
+#zumi-root .zw-owner-form button,#zumi-root .zw-visit-form button,#zumi-root .zw-chips button,#zumi-root .zw-chips a{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#zumi-root .zw-acts{grid-template-columns:repeat(2,minmax(0,1fr))}
+#zumi-root .zw-act,#zumi-root .zw-sum b,#zumi-root .zw-calc div{min-width:0;overflow-wrap:anywhere}
+#zumi-root .zw-calc{grid-template-columns:repeat(3,minmax(0,1fr))}
+#zumi-root .zw-cmp table{width:100%;max-width:100%;table-layout:fixed}
+#zumi-root .zw-cmp th,#zumi-root .zw-cmp td{min-width:0;overflow-wrap:anywhere;word-break:normal}
+#zumi-root .zw-cmp td:first-child{width:24%}
+#zumi-root .zw-cards{width:100%;max-width:100%;min-width:0;margin-inline:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x mandatory}
+#zumi-root .zw-card{min-width:0;max-width:100%}
+#zumi-root .zw-card .bt{grid-template-columns:repeat(2,minmax(0,1fr))}
+#zumi-root .zw-card .bt>*{min-width:0;white-space:normal}
+#zumi-root .zw-know{flex-wrap:wrap;overflow-x:hidden;overflow-y:auto;max-height:92px;overscroll-behavior:contain;flex:none}
+#zumi-root .zw-know .kc{max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere}
+#zumi-root .zw-hb{flex:none}
+#zumi-root .zw-foot,#zumi-root .zw-in{width:100%;min-width:0;max-width:100%}
+#zumi-root .zw-in input{min-width:0;max-width:100%;width:0}
+@media(max-width:640px){
+ #zumi-root .zw-panel{position:fixed;inset:0;width:100%;max-width:100%;height:100dvh}
+ #zumi-root .zw-owner-form,#zumi-root .zw-visit-form{padding:12px}
+}
+@media(max-width:360px){
+ #zumi-root .zw-owner-form .zw-owner-row{grid-template-columns:minmax(0,1fr)}
+ #zumi-root .zw-calc{grid-template-columns:minmax(0,1fr)}
+ #zumi-root .zw-head{gap:5px;padding-inline:8px}
+ #zumi-root .zw-hb{width:29px;height:29px}
+}
+
 `;
   /* ---------- DOM ---------- */
   const root=document.createElement('div');root.id='zumi-root';root.dataset.zs='greet';if(homePage)root.classList.add('home-mascot');
@@ -594,10 +635,10 @@
   {const st2=document.createElement('style');st2.textContent=css2;document.head.appendChild(st2);}
   /* teclado en celular: el panel sigue al viewport visible, sin encogerse raro */
   (async function(){const vv=window.visualViewport;if(!vv)return;const fit=()=>{const p=root.querySelector('.zw-panel');if(!p)return;
-    if(!matchMedia('(max-width:640px)').matches){p.style.height='';p.style.top='';root.classList.remove('kb');return;}
+    if(!matchMedia('(max-width:640px)').matches){p.style.height='';p.style.top='';p.style.bottom='';p.style.left='';p.style.right='';p.style.width='';root.classList.remove('kb');return;}
     const kb=vv.height<window.innerHeight*0.78;root.classList.toggle('kb',kb);
-    p.style.height=vv.height+'px';p.style.top=vv.offsetTop+'px';p.style.bottom='auto';
-    const m=document.getElementById('zwMsgs');if(m&&kb)m.scrollTop=m.scrollHeight;};
+    p.style.height=vv.height+'px';p.style.top=vv.offsetTop+'px';p.style.bottom='auto';p.style.left='0px';p.style.right='0px';p.style.width='100%';
+    const m=document.getElementById('zwMsgs');if(m){if(m.scrollLeft)m.scrollLeft=0;if(p.scrollLeft)p.scrollLeft=0;if(kb){const focused=document.activeElement;if(!m.contains(focused))m.scrollTop=m.scrollHeight;}}};
     vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);fit();})();
   const g=s=>$$(root,s);
   const msgs=g('#zwMsgs');
@@ -658,7 +699,24 @@
   /* ---------- mensajes ---------- */
   const add=(html,who)=>{const d=document.createElement('div');d.className='zw-m '+(who||'bot');d.innerHTML=html;msgs.appendChild(d);scroll();save();return d;};
   const block=html=>{const d=document.createElement('div');d.innerHTML=html;msgs.appendChild(d);scroll();save();return d;};
-  const scroll=()=>{msgs.scrollTop=msgs.scrollHeight;};
+  // Do not call native scrollIntoView on chat content: it may also pan
+  // horizontal ancestors in iOS when focusing a form or a long image.
+  function lockChatX(){
+    if(msgs.scrollLeft!==0)msgs.scrollLeft=0;
+    const panel=g('#zwPanel');if(panel.scrollLeft!==0)panel.scrollLeft=0;
+  }
+  function scrollMessageIntoView(el,block='nearest',behavior='auto'){
+    if(!el||!msgs.contains(el))return;
+    const outer=msgs.getBoundingClientRect(),inner=el.getBoundingClientRect();
+    const start=msgs.scrollTop+inner.top-outer.top-12;
+    const end=msgs.scrollTop+inner.bottom-outer.bottom+12;
+    const target=block==='start'||inner.top<outer.top?start:inner.bottom>outer.bottom?end:msgs.scrollTop;
+    msgs.scrollTo({left:0,top:Math.max(0,target),behavior});lockChatX();
+  }
+  const scroll=()=>{msgs.scrollTop=msgs.scrollHeight;lockChatX();};
+  msgs.addEventListener('scroll',lockChatX,{passive:true});
+  g('#zwPanel').addEventListener('scroll',lockChatX,{passive:true});
+  msgs.addEventListener('focusin',()=>requestAnimationFrame(lockChatX));
   const chips=list=>block('<div class="zw-chips">'+list.map(c=>{
     if(typeof c==='string')return '<button data-q="'+esc(c)+'">'+esc(c)+'</button>';
     const cls=c.cls?' class="'+c.cls+'"':'';
@@ -839,7 +897,7 @@
     if(call){call.viewer?.close();compactVoice();call.known.add(x.id);call.selected=x.id;}
     S.viewing=x.id;S.flow=null;
     const existing=Array.from(msgs.querySelectorAll('form[data-visit-form]')).find(el=>el.dataset.visitForm===x.id);
-    if(existing){save();existing.scrollIntoView({block:'nearest'});return;}
+    if(existing){save();scrollMessageIntoView(existing,'nearest');return;}
     msgs.querySelectorAll('form[data-visit-form]').forEach(el=>el.parentElement.remove());
     const days=nextDays().map(d=>'<option>'+esc(d)+'</option>').join('');
     const hours=['10:00','11:30','16:30','18:30','Por coordinar'];
