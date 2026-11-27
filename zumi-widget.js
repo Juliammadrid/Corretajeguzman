@@ -110,14 +110,42 @@
     return kind==='parcelas'?PROJ.filter(x=>x.parcela).concat(V.filter(x=>norm(x.type)==='parcela')):kind==='proyectos'?PROJ.filter(x=>!x.parcela):[];
   }
   function projectQuote(id){return '/cotizacion.html?slug='+encodeURIComponent(id);}
+  const PROJECT_TOPICS=[['Departamentos y precios','precios'],['Tipologías y planos','planos'],['Pie y formas de pago','financiamiento'],['Simular mi dividendo','dividendo'],['Fecha de entrega','entrega'],['Ubicación y conectividad','ubicacion'],['Equipamiento y áreas comunes','equipamiento'],['Comprar para invertir','inversion']];
   function projectActions(id=sectionFocus()){
     const p=PROJ.find(x=>!x.parcela&&x.id===id);if(!p)return;
-    chips([{t:'Cotizar '+p.t,href:projectQuote(p.id),cls:'pri'},{t:'Tipologías y planos',q:'Muéstrame las tipologías y planos de '+p.t},{t:'Pie y financiamiento',q:'¿Qué condiciones de financiamiento tiene '+p.t+'?'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);
+    chips(PROJECT_TOPICS.map(([t,key])=>({t,q:'Información del proyecto '+key+' '+id})).concat([{t:'Cotizar '+p.t,href:projectQuote(id),cls:'pri'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]));
+  }
+  async function projectTopic(v){
+    const match=String(v).match(/^Información del proyecto (\w+) ([\w-]+)$/);if(!match)return false;
+    const [,topic,id]=match;const k=await knowledgeReady;const p=k?.proyectos?.find(x=>x.id===id);
+    if(!p){add('No pude verificar la ficha del proyecto. Te puedo conectar con nuestro equipo.');sectionContact();return true;}
+    const list=p.tipologiasConfirmadas?.length?p.tipologiasConfirmadas:(p.tipologias||[]);
+    const uf=n=>Number(n).toLocaleString('es-CL')+' UF';
+    const prices=list.map(x=>Number(x.desdeUF)).filter(x=>x>0);
+    const price=prices.length?Math.min(...prices):p.desdeUF;
+    const items=a=>(a||[]).map(x=>esc(typeof x==='string'?x:x.t||x.nombre||'')).filter(Boolean).join('<br>• ');
+    const title='<b>'+esc(p.nombre)+'</b><br>';
+    const missing='Dato no publicado; podemos confirmarlo con un ejecutivo.';
+    if(topic==='precios'||topic==='planos'){
+      add(title+(price?'Desde '+uf(price)+'. ':'')+'Estas son las tipologías publicadas. Precio y stock sujetos a confirmación.');
+      list.forEach((x,i)=>{
+        const detail=[x.planta,x.m2int?'Interior: '+x.m2int:'',x.m2tot?'Total: '+x.m2tot:'',x.terraza?'Terraza: '+x.terraza:'',x.orientacion?'Orientación: '+x.orientacion:'',x.desdeUF?uf(x.desdeUF):''].filter(Boolean).map(esc).join('<br>');
+        const image=typeof x.plano==='string'&&/^\/assets\/[\w./%-]+$/.test(x.plano)?'<a href="'+esc(x.plano)+'" target="_blank" rel="noopener"><img loading="lazy" style="width:100%;max-height:210px;object-fit:contain" src="'+esc(x.plano)+'" alt="Plano"></a>':'';
+        block('<div class="zw-m bot"><b>'+esc(x.nombre||'Tipología')+'</b><br>'+detail+(topic==='planos'?image:'')+'</div>');
+      });
+      if(!list.length)add(missing);
+    }else if(topic==='entrega')add(title+'Entrega publicada: '+esc(p.entrega||missing)+'. La fecha exacta debe confirmarse.');
+    else if(topic==='ubicacion')add(title+esc(p.direccion||p.comuna||missing)+(p.cerca?.length?'<br>• '+items(p.cerca):'')+(p.lead?'<br>'+esc(p.lead):''));
+    else if(topic==='equipamiento')add(title+'<b>Terminaciones</b><br>'+ (p.caracteristicas?.length?'• '+items(p.caracteristicas):missing)+'<br><b>Áreas comunes</b><br>'+(p.comunes?.length?'• '+items(p.comunes):missing));
+    else if(topic==='financiamiento')add(title+(p.reserva?'Reserva publicada: '+esc(p.reserva)+'<br>':'')+(p.subsidioTasa===true?'La ficha menciona subsidio de tasa, sujeto a condiciones.<br>':'')+'El pie, cuotas, descuentos y crédito deben confirmarse para la unidad elegida. ¿Cuánto tienes ahorrado para el pie?');
+    else if(topic==='dividendo'){add(title+'Podemos estimar tu capacidad de compra según renta, ahorro y plazo. La simulación no es una aprobación bancaria.');chips([{t:'Abrir simulador',href:'/simulador-capacidad/',cls:'pri'}]);}
+    else if(topic==='inversion')add(title+'Para evaluar la inversión conviene comparar precio, arriendo esperado, gastos, vacancia y financiamiento. '+(price?'Precio publicado desde '+uf(price)+'. ':'')+'No tenemos una rentabilidad garantizada. ¿Buscas renta mensual o plusvalía?');
+    chips([{t:'Cotizar este proyecto',href:projectQuote(id),cls:'pri'},{t:'Ver otras características',q:'Información del proyecto equipamiento '+id},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);save();return true;
   }
   function sectionMenu(){
     const ui=SECTION_UI[section];if(!ui)return false;
     const focus=sectionRows().find(x=>x.id===sectionFocus());
-    add(focus?'Hola, estás viendo <b>'+esc(focus.t)+'</b>. ¿Quieres conocer precios, características o coordinar una visita?':esc(ui.hello));
+    add(focus&&section==='proyectos'?'¡Hola! Estás conociendo <b>'+esc(focus.t)+'</b>. Te ayudo a elegir tu departamento, revisar planos, precios y financiamiento. ¿Qué te gustaría conocer?':focus?'Hola, estás viendo <b>'+esc(focus.t)+'</b>. ¿Quieres conocer precios, características o coordinar una visita?':esc(ui.hello));
     if(section==='proyectos'&&focus){projectActions(focus.id);chips([{t:'Otros proyectos',q:'listar proyectos'},{t:'Otros servicios',act:'sectionhome'}]);}else chips(ui.options.map(([t,q])=>({t,q})).concat({t:'Otros servicios',act:'sectionhome'}));
     return true;
   }
@@ -204,6 +232,7 @@
   }
 
   async function askSpecial(v){
+    if(await projectTopic(v))return;
     const q=norm(v);
     if(/^(?:listar parcelas|listar proyectos)$/.test(q)){
       await ensureCatalog();const rows=sectionRows();
@@ -1158,7 +1187,7 @@
     setPanelOpen(true);
     pose('point',1800);chime();
     void restoreCards();
-    const sectionKey=section+':'+sectionFocus();
+    const sectionKey=section+':'+sectionFocus()+(section==='proyectos'?':advisor-v2':'');
     if(!S.started){S.started=true;if(!pagePropertyId())menu(false);}
     else if(S.sectionKey!==sectionKey&&!pagePropertyId()&&SECTION_UI[section]){S.sectionHist=[];S.flow=null;S.await=null;sectionMenu();}
     S.sectionKey=sectionKey;
