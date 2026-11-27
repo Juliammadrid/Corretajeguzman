@@ -70,3 +70,21 @@ test('database allocator is invoker-only, uncached and unavailable to browser ro
   assert.match(sql, /REVOKE ALL ON FUNCTION public.next_property_whatsapp\(\) FROM PUBLIC, anon, authenticated/);
   assert.match(sql, /GRANT EXECUTE ON FUNCTION public.next_property_whatsapp\(\) TO service_role/);
 });
+
+test('Zumi section, project and general messages use the same allocator', async () => {
+  let turn = 0;
+  const handler = makePropertyWhatsapp({ getEnv, fetcher: async () => Response.json(['56944637680', '56944717233'][turn++ % 2]) });
+  const messages = [
+    'Hola, vengo desde Zumi y quiero información sobre Campo Alto Roble.',
+    'Hola, me interesa Campo Alto Roble. ¿Me pueden enviar información y coordinar una visita?',
+    'Hola, vengo desde Zumi en corretajeguzman.com.',
+    message,
+  ];
+  for (const [i, text] of messages.entries()) {
+    const response = await handler(new Request('https://corretajeguzman.com/.netlify/functions/property-whatsapp?text=' + encodeURIComponent(text)));
+    assert.equal(response.status, 302);
+    const url = new URL(response.headers.get('location'));
+    assert.equal(url.pathname, '/' + ['56944637680', '56944717233'][i % 2]);
+    assert.equal(url.searchParams.get('text'), text);
+  }
+});
