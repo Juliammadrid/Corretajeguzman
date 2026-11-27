@@ -26,8 +26,10 @@
   const byId=id=>ALL.find(x=>x.id===id);
   const sameSite=u=>{try{const x=new URL(u,location.origin);return (x.origin===location.origin||x.hostname==='corretajeguzman.com'||x.hostname==='www.corretajeguzman.com')?x.pathname+x.search+x.hash:'';}catch{return '';}};
   const loadScript=src=>new Promise(resolve=>{const e=document.createElement('script');const timer=setTimeout(()=>{e.remove();resolve();},8000);e.src=src;e.onload=e.onerror=()=>{clearTimeout(timer);resolve();};document.head.appendChild(e);});
-  if(!window.PROYECTOS) await loadScript('/data-proyectos.js');
-  if(!window.PARCELA_PROYECTOS) await loadScript('/data-parcelas-proyectos.js');
+  await Promise.all([
+    window.PROYECTOS?Promise.resolve():loadScript('/data-proyectos.js'),
+    window.PARCELA_PROYECTOS?Promise.resolve():loadScript('/data-parcelas-proyectos.js')
+  ]);
   const PROJ=(window.PROYECTOS||[]).filter(x=>x&&x.activa!==false&&x.desdeUF&&sameSite(x.detalle)&&x.image).map(x=>({id:x.slug,t:x.name,c:x.commune,uf:x.desdeUF,ent:x.entrega,img:sameSite(x.image),href:sameSite(x.detalle)}));
   const parcel=window.PARCELA_PROYECTOS?.['campo-alto-roble'];
   if(parcel)PROJ.push({id:'car',t:parcel.name,c:parcel.sector,uf:parcel.desdeUF,ent:'parcela',img:sameSite(parcel.heroImg),href:PAGES.parcelas,parcela:true});
@@ -385,7 +387,7 @@
 @media (max-width:640px){#zumi-root.scrolled:not(.open) .zw-bubble{opacity:0;pointer-events:none;transform:translateY(6px)}}
 `;
   /* ---------- DOM ---------- */
-  const root=document.createElement('div');root.id='zumi-root';root.dataset.zs='greet';
+  const root=document.createElement('div');root.id='zumi-root';root.dataset.zs='greet';if(homePage)root.classList.add('home-mascot');
   root.innerHTML=`
   ${homePage?`  <div class="zw-dock">
     <div class="zw-bubble" id="zwBubble">

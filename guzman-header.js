@@ -142,8 +142,9 @@
 (() => {
  function mount(){
   if(window.top!==window||/^\/(?:login|portal|admin|zumi)(?:\/|$)/i.test(location.pathname)||/privacidad/i.test(location.pathname))return;
+  document.getElementById('gz-zumi-entry')?.remove(); // Retire legacy launcher even before the widget mounts.
   if(document.getElementById('zumi-root')||document.querySelector('script[data-zumi-v2]'))return;
-  const s=document.createElement('script');s.src='/zumi-widget.js?v=2-no-opening-greeting-20261126';s.dataset.zumiV2='1';
+  const s=document.createElement('script');s.src='/zumi-widget.js?v=home-mascot-20261126-2';s.dataset.zumiV2='1';
   s.onload=()=>{const remove=()=>{if(document.getElementById('zumi-root')){document.getElementById('gz-zumi-entry')?.remove();return true;}};if(!remove()){const mo=new MutationObserver(()=>{if(remove())mo.disconnect();});mo.observe(document.body,{childList:true});setTimeout(()=>mo.disconnect(),20000);}};
   document.body.append(s);
  }
