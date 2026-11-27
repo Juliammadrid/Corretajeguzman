@@ -28,11 +28,21 @@ console.log('Complete public site and portal packaged; project images verified.'
  for(const d of await readdir(path.join(output,'proyectos'),{withFileTypes:true}))if(d.isDirectory())publicPages.push('proyectos/'+d.name+'/index.html');
  for(const p of publicPages){
    const file=path.join(output,p);let h;try{h=await readFile(file,'utf8');}catch(e){if(e.code==='ENOENT')continue;throw e;}
-   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-v2-katty');
-   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=2-katty-20261126" data-zumi-v2 defer></script></body>');
+   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-v2-voice-catalog');
+   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=2-voice-catalog-20261126" data-zumi-v2 defer></script></body>');
    await writeFile(file,h);
  }
  for(const p of ['zumi-widget.js','assets/zumi.png','assets/zumi-body.png','assets/zumi-arm.png'])await access(path.join(output,p));
  new vm.Script(await readFile(path.join(output,'zumi-widget.js'),'utf8'),{filename:'zumi-widget.js'});
  new vm.Script(await readFile(path.join(output,'guzman-header.js'),'utf8'),{filename:'guzman-header.js'});
  console.log('Zumi v2 public integration packaged and syntax checked.');
+
+ // Regression checks for voice search. Extract the real functions used by the widget.
+ const widget=await readFile(path.join(output,'zumi-widget.js'),'utf8');
+ const section=widget.slice(widget.indexOf('  const communeKey='),widget.indexOf('  function voiceFilters()'));
+ const sandbox={norm:s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')};
+ vm.runInNewContext(section+';this.voiceMatches=voiceMatches;',sandbox);
+ const rows=[{id:'a',op:'arriendo',c:'Santiago',t:'Departamento',d:1,b:1,p:390000,e:0},{id:'b',op:'arriendo',c:'Santiago Centro',t:'Departamento',d:1,b:1,p:460000,e:0},{id:'c',op:'arriendo',c:'San Joaquín',t:'Departamento',d:1,b:1,p:350000,e:0},{id:'d',op:'venta',c:'Santiago',t:'Departamento',d:1,b:1,p:350000,e:0}];
+ const actual=sandbox.voiceMatches(rows,{operacion:'rent',comuna:'Santiago Centro',dormitorios:1,maximo:400000,moneda:'CLP'}).map(x=>x.id).join(',');
+ if(actual!=='a')throw Error('Zumi voice catalog filter regression: '+actual);
+ console.log('Zumi voice search regression check passed.');
