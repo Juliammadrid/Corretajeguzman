@@ -2,7 +2,7 @@
 const VOICE='rydssQ600JSAmdsCmuQu';
 const json=(status,data)=>Response.json(data,{status,headers:{'cache-control':'no-store'}});
 export default async function handler(req){
-  const key=process.env.ELEVENLABS_API_KEY;
+  const key=process.env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_api_key;
   if(req.method==='GET')return json(200,{configured:!!key,voice:'Katty'});
   if(req.method!=='POST')return json(405,{error:'method'});
   if(req.headers.get('origin')!==new URL(req.url).origin)return json(403,{error:'origin'});
