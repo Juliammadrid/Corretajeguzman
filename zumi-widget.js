@@ -32,6 +32,12 @@
   const CONFIG={planes:[['Plan Prioridad','Publicación destacada, fotos profesionales, difusión en portales y redes, evaluación del arrendatario y contrato.'],['Plan Básico','Publicación del aviso y coordinación de visitas, sin costo para el dueño.'],['Administración','Cobro mensual, pago al propietario, mantenciones y reportes. Consulta las condiciones con nuestro equipo.']]};
 
   /* ---------- contexto de la página ---------- */
+  function pagePropertyId(){
+    const p=decodeURIComponent(location.pathname);
+    if(!/\/propiedad\/|Ficha Propiedad/i.test(p))return '';
+    const id=new URLSearchParams(location.search).get('id')||p.match(/rec[A-Za-z0-9]{14}(?=\/|$)/)?.[0]||'';
+    return /^rec[A-Za-z0-9]{14}$/.test(id)?id:'';
+  }
   function pageCtx(){
     const p=decodeURIComponent(location.pathname+location.search);
     const F=window.PROYECTO_FICHAS||{}, fs=window.FICHA_SLUG||new URLSearchParams(location.search).get('slug');
@@ -40,7 +46,9 @@
     const PP=window.PARCELA_PROYECTOS||{}, ps=window.PARCELA_SLUG;
     if(ps&&PP[ps]){const x=PP[ps];return {type:'parcela',id:ps,name:x.name,c:x.sector||'Villarrica',uf:x.desdeUF};}
     if(/parcela/i.test(p))return {type:'parcela',name:'Campo Alto Roble',c:'Villarrica',uf:2400};
-    if(/Ficha Propiedad|rec[A-Za-z0-9]{14}/.test(p))return {type:'arriendo'};
+    const propertyId=pagePropertyId(), property=byId(propertyId);
+    if(propertyId)return {type:property?.op==='arriendo'?'ficha-arriendo':property?.op==='venta'?'ficha-venta':'ficha',id:propertyId,name:property?.t};
+    if(/Ficha Propiedad/.test(p))return {type:'ficha'};
     if(/simulador|cuanto-puedo/i.test(p))return {type:'simulador'};
     if(/Quiero Arrendar|arrendar-mi|propietarios/i.test(p))return {type:'propietario'};
     if(/Administracion|administracion/.test(p))return {type:'admin'};
@@ -244,6 +252,13 @@
 .zw-sum div:last-child{border-bottom:0}
 .zw-sum span{color:var(--zk3);width:78px;flex:none}
 .zw-sum b{color:var(--zk);font-weight:600}
+.zw-visit-form{display:grid;gap:10px;background:#fff;border:1px solid var(--zl);border-radius:14px;padding:14px;color:var(--zk);font-size:13px}
+.zw-visit-form strong{font-size:16px}.zw-visit-form small{color:var(--zk2);font-size:12px}
+.zw-visit-form label{display:grid;gap:5px;font-weight:600}
+.zw-visit-form input:not([type=checkbox]),.zw-visit-form select{width:100%;min-width:0;padding:10px;border:1px solid var(--zl);border-radius:9px;font:inherit;font-size:16px;background:#fff;color:var(--zk)}
+.zw-visit-form .zw-visit-consent{display:flex;align-items:flex-start;font-size:12px;font-weight:400}
+.zw-visit-form button{background:var(--zv);color:white;font-weight:700;padding:11px;border-radius:10px}
+.zw-visit-form button:disabled{opacity:.55;cursor:default}
 .zw-cmp{background:#fff;border:1px solid var(--zl);border-radius:14px;overflow:hidden;font-size:12px}
 .zw-cmp table{width:100%;border-collapse:collapse}
 .zw-cmp th,.zw-cmp td{padding:8px 9px;border-bottom:1px solid #f2eef8;text-align:left;vertical-align:top}
@@ -419,7 +434,9 @@
     const M={
       proyecto:['¿Te ayudo a cotizar'+(nm?' '+nm:' este proyecto')+'?','Te digo al tiro si te alcanza con tu renta.'],
       parcela:['¿Simulamos tu parcela?','Crédito directo con pie desde 40%.'],
-      arriendo:['¿Buscas en alguna comuna?','Dime dónde y tu presupuesto, y te muestro opciones.'],
+      'ficha-arriendo':['¿Te gustaría agendar una visita?','Coordinemos una visita a esta propiedad.'],
+      'ficha-venta':['¿Te gustaría conocer esta propiedad?','Te ayudo a coordinar una visita.'],
+      ficha:['¿Te interesa esta propiedad?','Te ayudo a coordinar una visita.'],
       arriendos:['¿Buscas en alguna comuna?','Dime dónde y tu presupuesto, y te muestro opciones.'],
       ventas:['¿Qué te gustaría comprar?','Te muestro casas y departamentos en venta.'],
       proyectos:['¿Primera vivienda o inversión?','Te recomiendo el proyecto que más te calza.'],
@@ -429,6 +446,15 @@
       corredor:['¿Quieres ser corredor?','Te explico cómo trabajar con nosotros.']
     }[X.type];
     if(M&&bt&&bs){bt.textContent=M[0];bs.textContent=M[1];}
+    if(X.id&&pagePropertyId()){
+      catalogReady.then(()=>{
+        const x=byId(pagePropertyId());if(!x)return;
+        const subject=/departamento|\bdepto\b/i.test(x.t)?'este departamento':/\bcasa\b/i.test(x.t)?'esta casa':'esta propiedad';
+        bt.textContent='¿Te gustaría agendar una visita a '+subject+'?';
+        bs.textContent='Te ayudo a coordinarla con nuestro equipo.';
+        document.getElementById('zwOpen').textContent='Agendar visita';
+      });
+    }
     if(!bub)return;
     let hideT=null;
     const hide=()=>{if(!root.classList.contains('open'))root.classList.add('bub-off');};
@@ -679,6 +705,39 @@
     }
   }
 
+  /* ---------- formulario de visita contextual ---------- */
+  function showVisitForm(x,preferred=''){
+    if(!x)return;
+    if(call){call.viewer?.close();compactVoice();call.known.add(x.id);call.selected=x.id;}
+    S.viewing=x.id;S.flow=null;
+    msgs.querySelectorAll('form[data-visit-form]').forEach(el=>el.parentElement.remove());
+    const days=nextDays().map(d=>'<option>'+esc(d)+'</option>').join('');
+    const hours=['10:00','11:30','16:30','18:30','Por coordinar'];
+    const hourOptions=hours.map(h=>'<option'+(h===preferred?' selected':'')+'>'+h+'</option>').join('');
+    add('Coordinemos una visita a <b>'+esc(x.t)+'</b>. Completa tus datos y te conectamos con un ejecutivo.');
+    block('<form class="zw-visit-form" data-visit-form="'+esc(x.id)+'"><strong>Agendar visita</strong><small>'+esc(x.t)+' · '+esc(x.c)+'</small><label>Nombre completo<input name="nombre" autocomplete="name" maxlength="100" required placeholder="Tu nombre"></label><label>Teléfono / WhatsApp<input name="tel" type="tel" autocomplete="tel" maxlength="25" required placeholder="+56 9 1234 5678"></label><label>Día preferido<select name="dia" required>'+days+'<option>Por coordinar</option></select></label><label>Horario preferido<select name="hora" required>'+hourOptions+'</select></label><label class="zw-visit-consent"><input type="checkbox" name="consent" required> Autorizo compartir estos datos para coordinar mi visita.</label><button type="submit">Continuar por WhatsApp</button><small>La visita está sujeta a confirmación. El mensaje se prepara para que tú lo envíes en WhatsApp.</small></form>');
+  }
+  function visitWhatsAppUrl(v,x){
+    const price=x.uf!=null?'UF '+nf.format(x.uf):money(x.p);
+    const lines=['Hola, quiero más información sobre esta propiedad: '+x.t,
+      'Quiero coordinar una visita.','Comuna: '+x.c,'Valor: '+price+(x.op==='arriendo'?' / mes':''),
+      'Nombre: '+v.nombre,'Teléfono: '+v.tel,'Día preferido: '+v.dia,'Horario preferido: '+v.hora,
+      'Ficha: '+new URL(x.href,location.origin).href,'¿Me pueden confirmar disponibilidad y horario?'];
+    return '/.netlify/functions/property-whatsapp?text='+encodeURIComponent(lines.join('\n'));
+  }
+  function visitWhatsAppChip(v,x){return {t:'Abrir WhatsApp para coordinar visita',href:visitWhatsAppUrl(v,x),blank:true,cls:'wa'};}
+  async function contextVisit(direct=false){
+    const id=pagePropertyId();if(!id)return;
+    if(!await ensureCatalog()){if(direct)bot('No pude verificar esta ficha. Inténtalo de nuevo o habla con un ejecutivo.',()=>chips([{t:'Reintentar',act:'pagevisit'},{t:'Hablar con un ejecutivo',act:'human'}]));return;}
+    const x=byId(id);if(!x){if(direct)bot('Esta ficha no está disponible en el catálogo actual.',()=>chips([{t:'Hablar con un ejecutivo',act:'human'}]));return;}
+    S.viewing=x.id;
+    if(direct){S.contextOffer=id;save();return showVisitForm(x);}
+    if(S.contextOffer===id)return;
+    S.contextOffer=id;save();
+    const subject=/departamento|\bdepto\b/i.test(x.t)?'este departamento':/\bcasa\b/i.test(x.t)?'esta casa':'esta propiedad';
+    add('¿Te gustaría agendar una visita a '+subject+'?');
+    chips([{t:'Sí, agendar visita',act:'visit',id:x.id,cls:'pri'},{t:'Ver otras propiedades',q:'busco '+(x.op==='venta'?'comprar':'arriendo')}]);
+  }
   /* ---------- WhatsApp alternado ---------- */
   function waNum(){let i=0;try{i=+localStorage.getItem('cg_wa_turno')||0;localStorage.setItem('cg_wa_turno',String((i+1)%WA.length));}catch(e){}return WA[i%WA.length];}
   function summary(){
@@ -691,7 +750,7 @@
     return lines.join('\n');
   }
   let sendingVisit=false;
-  async function submitVisit(){const v=S.visit,x=v&&byId(v.id);if(!x||sendingVisit)return; if(v.sent)return bot('Esta solicitud ya fue registrada. Está pendiente de confirmación.');sendingVisit=true;try{const r=await fetch('/.netlify/functions/lead-propiedad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:v.nombre,telefono:v.tel,propiedad:x.t,operacion:x.op,comuna:x.c,url:location.origin+x.href,codigo:x.id,mensaje:'Solicitud de visita desde Zumi. Preferencia: '+v.dia+' '+v.hora+'; pendiente de confirmación.'})});const j=await r.json();if(!r.ok||!j.ok)throw Error();v.sent=true;save();bot('Solicitud enviada. Tu visita queda pendiente de confirmación por un ejecutivo.',()=>chips([{t:'Escribir al ejecutivo',act:'wa',cls:'wa'}]));}catch{bot('No pude registrar tu solicitud. Puedes reintentar o enviarla por WhatsApp.',()=>chips([{t:'Reintentar',act:'vconfirm'},{t:'Enviar por WhatsApp',act:'wa'}]));}finally{sendingVisit=false;}}
+  async function submitVisit(){const v=S.visit,x=v&&byId(v.id);if(!x||sendingVisit)return; if(v.sent)return bot('Esta solicitud ya fue registrada. Está pendiente de confirmación.');sendingVisit=true;try{const r=await fetch('/.netlify/functions/lead-propiedad',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:v.nombre,telefono:v.tel,propiedad:x.t,operacion:x.op,comuna:x.c,url:location.origin+x.href,codigo:x.id,mensaje:'Solicitud de visita desde Zumi. Preferencia: '+v.dia+' '+v.hora+'; pendiente de confirmación.'})});const j=await r.json();if(!r.ok||!j.ok)throw Error();v.sent=true;save();bot('Solicitud enviada. Tu visita queda pendiente de confirmación por un ejecutivo.',()=>chips([visitWhatsAppChip(v,x)]));}catch{bot('No pude registrar tu solicitud. Puedes reintentar o enviarla por WhatsApp.',()=>chips([{t:'Reintentar',act:'vconfirm'},visitWhatsAppChip(v,x)]));}finally{sendingVisit=false;}}
   function handoff(){
     const txt=summary();
     bot('Te conecto con un ejecutivo. Preparé este resumen para que no tengas que repetir nada — revísalo antes de enviar:',()=>{
@@ -794,7 +853,7 @@
     const t=block('<div class="zw-typing"><span class="zw-tav"><img src="'+ZUMI_IMG+'" alt=""></span><i></i><i></i><i></i></div>');pose('think');
     try{
       const r=await fetch(AI,{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-        body:JSON.stringify({message:v.slice(0,1000),history:(S.hist||[]).slice(-8).map(m=>({role:m.role,content:String(m.content).slice(0,750)})),propertyId:S.viewing||location.pathname.match(/rec[A-Za-z0-9]{14}/)?.[0]||null})});
+        body:JSON.stringify({message:v.slice(0,1000),history:(S.hist||[]).slice(-8).map(m=>({role:m.role,content:String(m.content).slice(0,750)})),propertyId:pagePropertyId()||S.viewing||null})});
       clearTimeout(to);if(!r.ok)throw new Error('ai '+r.status);
       const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';j.actions=[...(Array.isArray(j.ids)?[{type:'cards',items:j.ids.filter(id=>byId(id))}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:'human'}]}];
       S.hist=(S.hist||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
@@ -816,7 +875,8 @@
     if(a==='start'){const map={owner:'owner',rent:'rent',buy:'buy'};if(id==='proj'){add('Proyectos nuevos','me');return route('proyectos nuevos');}add(esc(el&&el.dataset.label||id),'me');return startFlow(map[id]);}
     if(a==='fav'){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);else S.favs.push(id);root.querySelectorAll('.fav[data-id="'+id+'"]').forEach(b=>b.classList.toggle('on',i<0));save();if(i<0)pose('success',1200);return;}
     if(a==='view'){S.viewing=id;save();return;}
-    if(a==='visit'){const x=byId(id);if(!x)return;add('Agendar visita · '+esc(x.t),'me');return startFlow('visit',{id});}
+    if(a==='pagevisit')return contextVisit(true);
+    if(a==='visit'){const x=byId(id);if(!x)return;add('Agendar visita · '+esc(x.t),'me');return showVisitForm(x);}
     if(a==='info'){const x=PROJ.find(p=>p.id===id);add('Solicitar información · '+esc(x?x.t:''),'me');return handoff();}
     if(a==='vconfirm'){return submitVisit();}
     if(a==='vchange'){if(S.visit){S.flow={name:'visit',step:2,data:S.visit};save();}return nextStep();}
@@ -867,15 +927,16 @@
   }
 
   /* ---------- abrir / cerrar ---------- */
-  function open(){
+  function open(direct=false){
     root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
     pose('point',1800);chime();
-    if(!S.started){S.started=true;menu(false);}
+    if(!S.started){S.started=true;if(!pagePropertyId())menu(false);}
+    if(pagePropertyId())void contextVisit(direct===true);
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
   function close(){stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}root.classList.remove('open');S.open=false;g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
-  g('#zwOpen').onclick=open;
+  g('#zwOpen').onclick=()=>open(!!pagePropertyId());
   g('#zwHit').onclick=open;g('#zwHit').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};
   g('#zwClose').onclick=close;
   g('#zwHide').onclick=e=>{e.stopPropagation();root.classList.add('gone');S.hidden=true;save();};
@@ -899,6 +960,18 @@
     if(b.dataset.q){e.preventDefault();return ask(b.dataset.q);}
     if(b.tagName==='A'&&b.dataset.act==='view'){if(call&&byId(b.dataset.id)){e.preventDefault();call.known.add(b.dataset.id);openVoiceProperty(call,byId(b.dataset.id));return;}act('view',b.dataset.id);return;}
     e.preventDefault();act(b.dataset.act,b.dataset.id,b);
+  });
+  msgs.addEventListener('submit',async e=>{
+    const form=e.target.closest('form[data-visit-form]');if(!form)return;
+    e.preventDefault();if(!form.reportValidity()||form.dataset.submitting==='1')return;
+    const d=new FormData(form),nombre=String(d.get('nombre')||'').trim(),tel=String(d.get('tel')||'').trim();
+    if(!nombre||tel.replace(/\D/g,'').length<8){add('Revisa tu nombre y teléfono antes de continuar.','sys');return;}
+    form.dataset.submitting='1';form.querySelector('button').disabled=true;
+    const id=form.dataset.visitForm;
+    if(!await ensureCatalog()||!byId(id)){form.dataset.submitting='0';form.querySelector('button').disabled=false;add('No pude verificar esta propiedad. Inténtalo otra vez.','sys');return;}
+    S.visit={id,nombre,tel,dia:String(d.get('dia')),hora:String(d.get('hora'))};S.viewing=id;
+    form.parentElement.remove();save();
+    await submitVisit();
   });
   g('#zwForm').onsubmit=e=>{e.preventDefault();const v=g('#zwInput').value;g('#zwInput').value='';ask(v);};
 
@@ -946,7 +1019,10 @@
     if(typeof a.maximo==='number'&&Number.isFinite(a.maximo)&&a.maximo>0){f.maximo=a.maximo;f.moneda=a.moneda==='UF'?'UF':'CLP';}
     c.filters=f;applyVoiceFilters(f);return f;
   }
-  function compactVoice(){if(call){g('#zwVoice').classList.add('compact');scroll();}}
+  function compactVoice(){if(call){
+    root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
+    g('#zwVoice').classList.add('compact');save();scroll();requestAnimationFrame(scroll);
+  }}
   function voiceRow(x){return {id:x.id,name:x.t,commune:x.c,beds:x.d,baths:x.b,price:x.uf??x.p,currency:x.uf!=null?'UF':'CLP',parking:x.e?'Sí':'Por confirmar',commonExpensesCLP:x.gc??null,kind:x.op==='venta'?'buy':'rent',url:x.href};}
   function voiceSend(c,event){if(call===c&&c.dc?.readyState==='open'){c.dc.send(JSON.stringify(event));return true;}return false;}
   function continueVoice(c){if(call===c&&c.needsResponse&&!c.generating&&!c.pending){c.needsResponse=false;voiceSend(c,{type:'response.create'});}}
@@ -954,7 +1030,7 @@
   function voiceHistory(role,content){S.hist=(S.hist||[]).concat({role,content:String(content).slice(0,750)}).slice(-16);save();}
   function openVoiceProperty(c,x){
     if(!x||!c.known.has(x.id)||!sameSite(x.href))return false;
-    S.viewing=x.id;c.selected=x.id;save();
+    S.viewing=x.id;c.selected=x.id;compactVoice();save();
     if(c.viewer){c.viewer.remove();c.viewer=null;}
     const dialog=document.createElement('dialog');dialog.setAttribute('aria-label','Ficha de propiedad');dialog.style.cssText='position:fixed;inset:0;width:100%;height:100%;max-width:100%;max-height:100%;margin:0;padding:0;border:0;background:white;color:#33214d;';
     const bar=document.createElement('div');bar.style.cssText='display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#f3ecff';
@@ -972,6 +1048,7 @@
       const a=JSON.parse(j.arguments||'{}');
       if(j.name==='buscar_propiedades'){
         const f=mergeVoiceFilters(c,a);
+        c.viewer?.close();compactVoice();
         if(!await ensureCatalog()){out={error:'catalogo_temporalmente_no_disponible',mensaje:'No se pudo verificar el inventario. No inventes resultados.'};}
         else if(call===c){
           const matches=voiceMatches(ALL,f),list=matches.slice(0,3);
@@ -988,7 +1065,7 @@
           try{const res=await fetch('/api/properties?id='+encodeURIComponent(id),{signal:c.abort.signal});if(res.ok){const detail=(await res.json()).properties?.find(v=>v.id===id);if(detail)out={...out,superficieUtil:detail.usableArea,descripcion:String(detail.description||'').slice(0,1000)};}}catch{}
         }else{
           c.viewer?.close();compactVoice();c.selected=id;S.viewing=id;
-          startFlow('visit',{id,...(typeof a.horario==='string'&&a.horario.trim()?{hora:a.horario.trim().slice(0,100)}:{})});
+          showVisitForm(x,typeof a.horario==='string'?a.horario.trim():'');
           out={formularioAbierto:true,propiedad:voiceRow(x),mensaje:'Solicita completar y confirmar la solicitud en el chat; no se ha reservado ni enviado aún.'};
         }
       }else out={error:'accion_desconocida'};
@@ -1020,10 +1097,10 @@
       dc.onopen=async()=>{
         if(call!==c)return;clearTimeout(c.timeout);await ensureCatalog();if(call!==c)return;
         const recent=(S.last||[]).map(byId).filter(Boolean).slice(0,3);recent.forEach(x=>c.known.add(x.id));
-        const selected=byId(S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
+        const selected=byId(pagePropertyId()||S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
         voiceContext(c,'Contexto de búsqueda guardado: '+JSON.stringify({filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha: selected?voiceRow(selected):null})+'. Respeta las correcciones nuevas del cliente por encima de estos datos. Para buscar, usa buscar_propiedades con filtros actualizados. No inventes fichas.');
         g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');
-        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. Si ya hay filtros, pregunta si quiere continuar o cambiarlos. No inventes precios ni propiedades.'}});
+        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. Si está en una ficha individual, ofrece coordinar una visita a esa propiedad. Si no, y ya hay filtros, pregunta si quiere continuar o cambiarlos. No inventes precios ni propiedades.'}});
         c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
@@ -1045,14 +1122,14 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('open'))close();});
 
   /* ---------- restaurar conversación al navegar ---------- */
-  if(S.html){msgs.innerHTML=S.html;msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());msgs.querySelectorAll('.zw-cards,.zw-cmp').forEach(e=>e.remove());}
+  if(S.html){msgs.innerHTML=S.html;msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());msgs.querySelectorAll('.zw-cards,.zw-cmp').forEach(e=>e.remove());msgs.querySelectorAll('form[data-visit-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button').disabled=false;});}
   if(S.hidden)root.classList.add('gone');
-  if(S.open){root.classList.add('open');pose('wait');setTimeout(scroll,50);}
+  if(S.open){root.classList.add('open');pose('wait');setTimeout(scroll,50);if(pagePropertyId())void contextVisit(false);}
 
   /* ---------- sugerencia proactiva discreta (una vez por sesión) ---------- */
   try{
     const p=decodeURIComponent(location.pathname);
-    if(/Ficha|Proyecto /.test(p)&&!sessionStorage.getItem('zumi_hint')){
+    if(!pagePropertyId()&&/Ficha|Proyecto /.test(p)&&!sessionStorage.getItem('zumi_hint')){
       setTimeout(()=>{if(root.classList.contains('open')||S.hidden)return;sessionStorage.setItem('zumi_hint','1');g('#zwBT').textContent='¿Quieres que coordinemos una visita?';g('#zwBS').textContent='Te ayudo a agendarla en un minuto.';pose('greet',2200);},25000);
     }
   }catch(e){}
