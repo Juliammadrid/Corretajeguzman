@@ -6,6 +6,14 @@
 (async function(){
   if(window.top!==window||document.getElementById('zumi-root')) return;
   const ZUMI_IMG=window.ZUMI_IMG||'/assets/zumi.png';
+  const ZUMI_BODY=window.ZUMI_BODY||'/assets/zumi-body.png', ZUMI_ARM=window.ZUMI_ARM||'/assets/zumi-arm.png';
+  // Only the actual homepage is allowed to display the plush launcher.
+  function isHomePage(pathname){
+    const p=decodeURIComponent(pathname||'/').replace(/\/+$/,'').toLowerCase();
+    return p===''||p==='/index.html'||p==='/home - corretaje guzman.html';
+  }
+  const homePage=isHomePage(location.pathname);
+  let homeMinimized=false;
   const WA=['56944637680','56944717233'];
   const KEY='zumi_v2_live';
   const nf=new Intl.NumberFormat('es-CL');
@@ -125,11 +133,13 @@
 .zw-x{position:absolute;top:-9px;left:-9px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--zl);display:grid;place-items:center;color:var(--zk3);box-shadow:0 3px 8px rgba(0,0,0,.08)}
 .zw-x:hover{color:var(--zk)}
 #zumi-root.open .zw-bubble{display:none}
-#zumi-root.gone .zw-dock{display:none}
+#zumi-root .zw-dock{display:none}
+#zumi-root.home-mascot:not(.open) .zw-dock{display:flex}
+#zumi-root.open .zw-dock{display:none}
 #zumi-root .zw-peek{position:absolute;right:0;bottom:0;width:58px;height:58px;border-radius:50%;background:var(--zv);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(124,58,237,.4);padding:0;transition:transform .2s}
 #zumi-root .zw-peek:hover{transform:scale(1.04)}
 #zumi-root .zw-peek:focus-visible{outline:3px solid #c4b5fd;outline-offset:3px}
-#zumi-root.open .zw-peek{display:none}
+#zumi-root.open .zw-peek,#zumi-root.home-mascot .zw-peek{display:none}
 #zumi-root .zw-cards[hidden]{display:none}
 /* personaje */
 .zw-char{position:relative;width:100px;height:119px;flex:none}
@@ -340,6 +350,7 @@
   /* ---------- íconos ---------- */
   const I=(d,s)=>'<svg width="'+(s||18)+'" height="'+(s||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
   const IC={tree:'<path d="M12 22v-6"/><path d="M8 16h8l-3-4h2l-3-4h2l-2-4-2 4h2l-3 4h2z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',min:'<path d="M5 12h14"/>',dots:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',send:'<path d="m5 12 14-7-5 14-2.5-5.5z"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',vol:'<path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',mute:'<path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/>',key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M15 8l2 2"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',home:'<path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',build:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>',heart:'<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/>',plus:'<path d="M12 5v14M5 12h14"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'};
+  const charHTML='<div class="zw-z"><img class="zb" src="'+ZUMI_BODY+'" alt="Zumi" draggable="false"><img class="za" src="'+ZUMI_ARM+'" alt="" draggable="false"><span class="lid l"></span><span class="lid r"></span></div>';
   const miniHTML='<img src="'+ZUMI_IMG+'" alt="">';
 
   const css2=`
@@ -376,6 +387,14 @@
   /* ---------- DOM ---------- */
   const root=document.createElement('div');root.id='zumi-root';root.dataset.zs='greet';
   root.innerHTML=`
+  ${homePage?`  <div class="zw-dock">
+    <div class="zw-bubble" id="zwBubble">
+      <button type="button" class="zw-x" id="zwHide" aria-label="Minimizar a Zumi">${I(IC.x,12)}</button>
+      <b id="zwBT">¿Necesitas ayuda?</b><span id="zwBS">Te ayudo a encontrar tu próxima propiedad.</span>
+      <button type="button" class="zw-cta" id="zwOpen" aria-controls="zwPanel">Conversa con Zumi</button>
+    </div>
+    <div class="zw-char"><span class="glow"></span><div class="zw-body">${charHTML}</div><span class="zw-hit" id="zwHit" role="button" tabindex="0" aria-label="Abrir conversación con Zumi"></span></div>
+  </div>`:''}
   <button type="button" class="zw-peek" id="zwPeek" aria-label="Abrir conversación con Zumi" aria-controls="zwPanel" aria-expanded="false">${I(IC.chat,27)}</button>
   <section class="zw-panel" id="zwPanel" aria-label="Conversación con Zumi" aria-hidden="true" inert>
     <header class="zw-head">
@@ -437,7 +456,8 @@
   /* ---------- estados del personaje ---------- */
   let poseT=null;
   function pose(s,ms){clearTimeout(poseT);root.dataset.zs=s;if(ms)poseT=setTimeout(()=>{root.dataset.zs=root.classList.contains('open')?'wait':'idle';},ms);}
-  pose('idle');
+  pose(homePage?'greet':'idle',homePage?2600:0);
+  if(homePage)setInterval(()=>{if(root.classList.contains('home-mascot')&&!document.hidden)pose('greet',2400);},14000);
 
   /* ---------- sonido / voz ---------- */
   function chime(){if(!S.sound)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();[[660,0],[990,.11]].forEach(([f,t])=>{const o=a.createOscillator(),gn=a.createGain();o.type='sine';o.frequency.value=f;gn.gain.setValueAtTime(.0001,a.currentTime+t);gn.gain.exponentialRampToValueAtTime(.07,a.currentTime+t+.02);gn.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.3);o.connect(gn);gn.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.32);});}catch(e){}}
@@ -887,13 +907,16 @@
   }
 
   /* ---------- abrir / cerrar ---------- */
+  function showHomeLauncher(){return homePage&&!homeMinimized&&!S.open;}
+  function syncLauncher(){root.classList.toggle('home-mascot',showHomeLauncher());}
   function setPanelOpen(value){
     root.classList.toggle('open',value);root.classList.remove('gone');
-    S.open=value;S.hidden=false;
+    S.open=value;S.hidden=false;syncLauncher();
     const panel=g('#zwPanel');panel.inert=!value;panel.setAttribute('aria-hidden',String(!value));
     g('#zwPeek').setAttribute('aria-expanded',String(value));
   }
   function open(direct=false){
+    if(homePage)homeMinimized=true;
     setPanelOpen(true);
     pose('point',1800);chime();
     void restoreCards();
@@ -905,6 +928,15 @@
   function close(){stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}setPanelOpen(false);g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
   g('#zwClose').onclick=close;
   g('#zwPeek').onclick=()=>open(false);
+  if(homePage){
+    g('#zwOpen').onclick=()=>open(false);
+    g('#zwHit').onclick=()=>open(false);
+    g('#zwHit').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(false);}};
+    g('#zwHide').onclick=e=>{
+      e.stopPropagation();homeMinimized=true;syncLauncher();pose('idle');
+      g('#zwPeek').focus({preventScroll:true});
+    };
+  }
   g('#zwSound').onclick=()=>{S.sound=!S.sound;g('#zwSound').innerHTML=I(S.sound?IC.vol:IC.mute,17);g('#zwSound').setAttribute('aria-label',S.sound?'Silenciar':'Activar sonido');if(!S.sound)stopSpeech();save();};
   g('#zwMore').onclick=e=>{e.stopPropagation();g('#zwMenu').classList.toggle('on');};
   document.addEventListener('click',e=>{if(!e.target.closest('#zwMenu,#zwMore'))g('#zwMenu').classList.remove('on');});
