@@ -13,10 +13,10 @@ export function makeKnowledge(window){
  const proyectos=(window.PROYECTOS||[]).filter(p=>p.activa!==false).map(p=>{
    const d=window.PROYECTO_FICHAS?.[p.slug]||{};
    const confirmadas=window.TIPOLOGIAS_CONFIRMADAS?.[p.slug]||[];
-   return {id:p.slug,nombre:p.name,comuna:p.commune,direccion:p.address,desdeUF:p.desdeUF,entrega:p.entrega,especificaciones:p.specs,url:p.detalle,imagen:p.image,
+   return {id:p.slug,nombre:p.name,comuna:p.commune,direccion:p.address,desdeUF:p.desdeUF,entrega:p.entrega,especificaciones:p.specs,url:p.detalle,imagen:p.image,cotizacion:'/cotizacion.html?slug='+encodeURIComponent(p.slug),
     ...pick(d,['lead','reserva','subsidioTasa','caracteristicas','cerca','off']),comunes:labels(d.comunes),
-    tipologias:(d.tipologias||[]).map(x=>pick(x,['nombre','m2int','m2tot','desdeUF','hastaUF'])),
-    tipologiasConfirmadas:confirmadas.map(x=>pick(x,['nombre','planta','m2int','m2tot','terraza','orientacion','desdeUF']))};
+    tipologias:(d.tipologias||[]).map(x=>pick(x,['id','nombre','m2int','m2tot','desdeUF','hastaUF','plano','orientacion'])),
+    tipologiasConfirmadas:confirmadas.map(x=>pick(x,['id','nombre','planta','m2int','m2tot','terraza','orientacion','desdeUF','plano']))};
  });
  return {version:1,parcelas,proyectos,servicios:{
   propietario:{titulo:'Arrendar mi propiedad',datos:['Plan Prioridad: 50% de un mes de arriendo, se cobra solo al concretar el arriendo.','Plan Básico: sin costo de corretaje para el propietario, publicación simple sin publicidad.','Gestionamos publicación, visitas, evaluación, contrato y firma.'],url:'/propietarios'},
