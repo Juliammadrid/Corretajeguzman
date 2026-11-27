@@ -109,11 +109,16 @@
   function sectionRows(kind=section){
     return kind==='parcelas'?PROJ.filter(x=>x.parcela).concat(V.filter(x=>norm(x.type)==='parcela')):kind==='proyectos'?PROJ.filter(x=>!x.parcela):[];
   }
+  function projectQuote(id){return '/cotizacion.html?slug='+encodeURIComponent(id);}
+  function projectActions(id=sectionFocus()){
+    const p=PROJ.find(x=>!x.parcela&&x.id===id);if(!p)return;
+    chips([{t:'Cotizar '+p.t,href:projectQuote(p.id),cls:'pri'},{t:'Tipologías y planos',q:'Muéstrame las tipologías y planos de '+p.t},{t:'Pie y financiamiento',q:'¿Qué condiciones de financiamiento tiene '+p.t+'?'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);
+  }
   function sectionMenu(){
     const ui=SECTION_UI[section];if(!ui)return false;
     const focus=sectionRows().find(x=>x.id===sectionFocus());
     add(focus?'Hola, estás viendo <b>'+esc(focus.t)+'</b>. ¿Quieres conocer precios, características o coordinar una visita?':esc(ui.hello));
-    chips(ui.options.map(([t,q])=>({t,q})).concat({t:'Otros servicios',act:'sectionhome'}));
+    if(section==='proyectos'&&focus){projectActions(focus.id);chips([{t:'Otros proyectos',q:'listar proyectos'},{t:'Otros servicios',act:'sectionhome'}]);}else chips(ui.options.map(([t,q])=>({t,q})).concat({t:'Otros servicios',act:'sectionhome'}));
     return true;
   }
   function sectionContact(){
@@ -208,6 +213,7 @@
       const intent=ownerIntent(v);if(intent==='plans')return showOwnerPlans();if(intent==='form')return showOwnerForm(v);
     }
     if(/^(?:solicitar administracion|quiero postular como corredor|completar solicitud de arriendo|abrir simulador)$/.test(q))return bot('Te dejo el acceso directo para que puedas continuar.',sectionFormChips);
+    if(section==='proyectos'&&sectionFocus()&&/cotiz/.test(q))return bot('Puedes solicitar una cotización personalizada aquí.',()=>projectActions());
     if(/^(?:coordinar visita|quiero coordinar una visita a una parcela|quiero cotizar un proyecto|hablar con un ejecutivo)$/.test(q))return bot('Te conecto con nuestro equipo para confirmar los detalles.',sectionContact);
     return askAI(v,section);
   }
@@ -652,6 +658,7 @@
     });
     const h=bars.reduce((m,e)=>Math.max(m,innerHeight-e.getBoundingClientRect().top),0);
     root.style.bottom=h?Math.round(h+14)+'px':'';
+    if(matchMedia('(min-width:641px)').matches)g('#zwPanel').style.maxHeight='calc(100dvh - '+(h+40)+'px)';
   }
   place();addEventListener('resize',place);addEventListener('scroll',place,{passive:true});addEventListener('load',place);
   setTimeout(place,600);setTimeout(place,1800);
@@ -1045,7 +1052,7 @@
       clearTimeout(to);if(!r.ok)throw new Error('ai '+r.status);
       const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';
       const ids=Array.isArray(j.ids)?j.ids.filter(id=>domain?sectionRows(domain).some(x=>x.id===id):byId(id)):[];
-      j.actions=[...(ids.length?[{type:'cards',items:ids}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:domain?'sectioncontact':'human'},...(domain&&SECTION_UI[domain]?[{t:'Ver sección',href:SECTION_UI[domain].url}]:[])]}];
+      j.actions=[...(ids.length?[{type:'cards',items:ids}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:domain?'sectioncontact':'human'},...(domain==='proyectos'&&sectionFocus()?[{t:'Cotizar este proyecto',href:projectQuote(sectionFocus()),cls:'pri'}]:[]),...(domain&&SECTION_UI[domain]?[{t:'Ver sección',href:SECTION_UI[domain].url}]:[])]}];
       const histKey=domain?'sectionHist':'hist';
       S[histKey]=(S[histKey]||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
       if(j.text){void say(j.text,false);pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
@@ -1157,6 +1164,7 @@
     S.sectionKey=sectionKey;
     if(section==='ventas')S.voiceOperation='buy';
     if(pagePropertyId())void contextVisit(direct===true);
+    if(section==='proyectos'&&sectionFocus()&&!msgs.querySelector('a[href="'+projectQuote(sectionFocus())+'"]'))projectActions();
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
@@ -1423,7 +1431,8 @@
         if(!SECTION_UI[requested]){out={error:'seccion_desconocida'};}
         else{
           switchSection(requested);compactVoice();
-          if(a.accion==='contacto'){sectionContact();out={mostrado:true,nota:'Se mostró el contacto, no se ha confirmado ninguna visita.'};}
+          if(requested==='proyectos'&&a.accion==='formulario'){const id=(Array.isArray(a.ids)?a.ids:[]).find(id=>PROJ.some(p=>!p.parcela&&p.id===id))||sectionFocus();if(id){projectActions(id);out={mostrado:true,nota:'Se mostró el enlace de cotización; el cliente debe completar el formulario.'};}else{out={error:'proyecto_no_identificado'};}}
+          else if(a.accion==='contacto'){sectionContact();out={mostrado:true,nota:'Se mostró el contacto, no se ha confirmado ninguna visita.'};}
           else if(a.accion==='formulario'){sectionFormChips();out={mostrado:true,nota:section==='propietario'?'Se abrió el formulario dentro del chat. El cliente debe completarlo y enviarlo.':'Se mostró el acceso al formulario.'};}
           else if(requested==='propietario'){showOwnerPlans();out={mostrado:true,nota:'Comparativa visual de planes mostrada con botones para inscribir la propiedad.'};}
           else{await ensureCatalog();await knowledgeReady;const rows=sectionRows();const selected=Array.isArray(a.ids)&&a.ids.length?rows.filter(x=>a.ids.includes(x.id)):rows.slice(0,6);
@@ -1487,9 +1496,9 @@
         void knowledgeReady.then(k=>{
           if(call!==c||!k)return;
           const focus=sectionFocus();
-          const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones}));
+          const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones,tipologias:x.tipologias,reserva:x.reserva}));
           const data={seccion:section,parcelas:k.parcelas,proyectos:projectSummaries,proyectoEnPantalla:(k.proyectos||[]).find(x=>x.id===focus)||null,servicios:k.servicios};
-          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Si falta un dato ofrece consultar al equipo.');
+          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Para cotizar un proyecto usa mostrar_seccion con seccion proyectos, accion formulario e ids con el slug exacto del proyecto. Prioriza el proyecto en pantalla. Puedes asesorar sobre todos los servicios aunque el cliente esté en otra sección. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Si falta un dato ofrece consultar al equipo.');
         });
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
