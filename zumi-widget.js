@@ -6,7 +6,6 @@
 (async function(){
   if(window.top!==window||document.getElementById('zumi-root')) return;
   const ZUMI_IMG=window.ZUMI_IMG||'/assets/zumi.png';
-  const ZUMI_BODY=window.ZUMI_BODY||'/assets/zumi-body.png', ZUMI_ARM=window.ZUMI_ARM||'/assets/zumi-arm.png';
   const WA=['56944637680','56944717233'];
   const KEY='zumi_v2_live';
   const nf=new Intl.NumberFormat('es-CL');
@@ -127,8 +126,11 @@
 .zw-x:hover{color:var(--zk)}
 #zumi-root.open .zw-bubble{display:none}
 #zumi-root.gone .zw-dock{display:none}
-.zw-peek{position:absolute;right:0;bottom:0;width:46px;height:46px;border-radius:50%;background:var(--zv);color:#fff;display:none;place-items:center;box-shadow:0 10px 24px rgba(124,58,237,.4)}
-#zumi-root.gone:not(.open) .zw-peek{display:grid}
+#zumi-root .zw-peek{position:absolute;right:0;bottom:0;width:58px;height:58px;border-radius:50%;background:var(--zv);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(124,58,237,.4);padding:0;transition:transform .2s}
+#zumi-root .zw-peek:hover{transform:scale(1.04)}
+#zumi-root .zw-peek:focus-visible{outline:3px solid #c4b5fd;outline-offset:3px}
+#zumi-root.open .zw-peek{display:none}
+#zumi-root .zw-cards[hidden]{display:none}
 /* personaje */
 .zw-char{position:relative;width:100px;height:119px;flex:none}
 .zw-z{position:absolute;inset:0}
@@ -187,7 +189,7 @@
 #zumi-root[data-zs=wait] .zw-arm.l{transform:rotate(-12deg)}
 #zumi-root[data-zs=wait] .zw-arm.r{transform:rotate(12deg)}
 /* panel */
-.zw-panel{position:absolute;right:112px;bottom:0;width:384px;height:min(660px,calc(100dvh - 40px));background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(20,15,30,.28);display:flex;flex-direction:column;overflow:hidden;transform-origin:100% 100%;transform:translateY(28px) scale(.97);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.zw-panel{position:absolute;right:0;bottom:0;width:384px;height:min(660px,calc(100dvh - 40px));background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(20,15,30,.28);display:flex;flex-direction:column;overflow:hidden;transform-origin:100% 100%;transform:translateY(28px) scale(.97);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
 #zumi-root.open .zw-panel{transform:none;opacity:1;pointer-events:auto}
 .zw-head{position:relative;background:linear-gradient(135deg,#1d1238 0%,#4c1d95 55%,#7c3aed 100%);color:#fff;padding:14px 12px 15px 16px;display:flex;align-items:center;gap:10px;flex:none}
 .zw-head::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:22px 22px;-webkit-mask-image:linear-gradient(200deg,#000,transparent 70%);mask-image:linear-gradient(200deg,#000,transparent 70%);pointer-events:none}
@@ -338,8 +340,6 @@
   /* ---------- íconos ---------- */
   const I=(d,s)=>'<svg width="'+(s||18)+'" height="'+(s||18)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
   const IC={tree:'<path d="M12 22v-6"/><path d="M8 16h8l-3-4h2l-3-4h2l-2-4-2 4h2l-3 4h2z"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',min:'<path d="M5 12h14"/>',dots:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',send:'<path d="m5 12 14-7-5 14-2.5-5.5z"/>',phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',vol:'<path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>',mute:'<path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/>',key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M15 8l2 2"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',home:'<path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',build:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/>',heart:'<path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/>',plus:'<path d="M12 5v14M5 12h14"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',chat:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'};
-  const face='<div class="zw-ph"><span class="zw-eye l"></span><span class="zw-eye r"></span><span class="zw-cheek l"></span><span class="zw-cheek r"></span><span class="zw-mouth"></span></div><span class="zw-arm l"></span><span class="zw-arm r"></span>';
-  const charHTML='<div class="zw-z"><img class="zb" src="'+ZUMI_BODY+'" alt="Zumi" draggable="false"><img class="za" src="'+ZUMI_ARM+'" alt="" draggable="false"><span class="lid l"></span><span class="lid r"></span></div>';
   const miniHTML='<img src="'+ZUMI_IMG+'" alt="">';
 
   const css2=`
@@ -376,16 +376,8 @@
   /* ---------- DOM ---------- */
   const root=document.createElement('div');root.id='zumi-root';root.dataset.zs='greet';
   root.innerHTML=`
-  <div class="zw-dock">
-    <div class="zw-bubble" id="zwBubble">
-      <button class="zw-x" id="zwHide" aria-label="Ocultar a Zumi">${I(IC.x,12)}</button>
-      <b id="zwBT">¿Necesitas ayuda?</b><span id="zwBS">Te ayudo a encontrar tu próxima propiedad.</span>
-      <button class="zw-cta" id="zwOpen">Conversa con Zumi</button>
-    </div>
-    <div class="zw-char"><span class="glow"></span><div class="zw-body">${charHTML}</div><span class="zw-hit" id="zwHit" role="button" tabindex="0" aria-label="Abrir conversación con Zumi"></span></div>
-  </div>
-  <button class="zw-peek" id="zwPeek" aria-label="Mostrar a Zumi">${I(IC.chat,20)}</button>
-  <section class="zw-panel" id="zwPanel" aria-label="Conversación con Zumi">
+  <button type="button" class="zw-peek" id="zwPeek" aria-label="Abrir conversación con Zumi" aria-controls="zwPanel" aria-expanded="false">${I(IC.chat,27)}</button>
+  <section class="zw-panel" id="zwPanel" aria-label="Conversación con Zumi" aria-hidden="true" inert>
     <header class="zw-head">
       <div class="zw-mini">${miniHTML}</div>
       <div class="zw-hd"><b>Zumi</b><span><i></i>Asistente de Corretaje Guzmán</span></div>
@@ -425,52 +417,6 @@
     p.style.height=vv.height+'px';p.style.top=vv.offsetTop+'px';p.style.bottom='auto';
     const m=document.getElementById('zwMsgs');if(m&&kb)m.scrollTop=m.scrollHeight;};
     vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);fit();})();
-  let scT;window.addEventListener('scroll',()=>{root.classList.add('scrolled');clearTimeout(scT);scT=setTimeout(()=>root.classList.remove('scrolled'),1200);},{passive:true});
-  /* sugerencia contextual: tras 25 s en una ficha, cambia el globo una sola vez */
-  /* globo contextual desde el inicio + se esconde solo a los 8 s */
-  (async function(){
-    const X=pageCtx(), bt=document.getElementById('zwBT'), bs=document.getElementById('zwBS'), bub=document.getElementById('zwBubble');
-    const nm=X.name?X.name:'';
-    const M={
-      proyecto:['¿Te ayudo a cotizar'+(nm?' '+nm:' este proyecto')+'?','Te digo al tiro si te alcanza con tu renta.'],
-      parcela:['¿Simulamos tu parcela?','Crédito directo con pie desde 40%.'],
-      'ficha-arriendo':['¿Te gustaría agendar una visita?','Coordinemos una visita a esta propiedad.'],
-      'ficha-venta':['¿Te gustaría conocer esta propiedad?','Te ayudo a coordinar una visita.'],
-      ficha:['¿Te interesa esta propiedad?','Te ayudo a coordinar una visita.'],
-      arriendos:['¿Buscas en alguna comuna?','Dime dónde y tu presupuesto, y te muestro opciones.'],
-      ventas:['¿Qué te gustaría comprar?','Te muestro casas y departamentos en venta.'],
-      proyectos:['¿Primera vivienda o inversión?','Te recomiendo el proyecto que más te calza.'],
-      simulador:['¿Calculamos juntos?','Con tu renta te digo cuánto puedes comprar.'],
-      propietario:['¿Arrendamos tu propiedad?','Te cuento cómo funciona en un minuto.'],
-      admin:['¿Administramos tu propiedad?','Cobramos, pagamos y te mandamos la liquidación.'],
-      corredor:['¿Quieres ser corredor?','Te explico cómo trabajar con nosotros.']
-    }[X.type];
-    if(M&&bt&&bs){bt.textContent=M[0];bs.textContent=M[1];}
-    if(X.id&&pagePropertyId()){
-      catalogReady.then(()=>{
-        const x=byId(pagePropertyId());if(!x)return;
-        const subject=/departamento|\bdepto\b/i.test(x.t)?'este departamento':/\bcasa\b/i.test(x.t)?'esta casa':'esta propiedad';
-        bt.textContent='¿Te gustaría agendar una visita a '+subject+'?';
-        bs.textContent='Te ayudo a coordinarla con nuestro equipo.';
-        document.getElementById('zwOpen').textContent='Agendar visita';
-      });
-    }
-    if(!bub)return;
-    let hideT=null;
-    const hide=()=>{if(!root.classList.contains('open'))root.classList.add('bub-off');};
-    const arm=()=>{clearTimeout(hideT);hideT=setTimeout(hide,8000);};
-    arm();
-    bub.addEventListener('mouseenter',()=>clearTimeout(hideT));
-    bub.addEventListener('mouseleave',arm);
-    const ch=root.querySelector('.zw-char');
-    if(ch){
-      ch.addEventListener('mouseenter',()=>{root.classList.remove('bub-off');clearTimeout(hideT);});
-      ch.addEventListener('mouseleave',arm);
-    }
-    const st=document.createElement('style');
-    st.textContent='#zumi-root .zw-bubble{transition:opacity .35s ease,transform .35s ease}#zumi-root.bub-off:not(.open) .zw-bubble{opacity:0;transform:translateY(8px) scale(.96);pointer-events:none}';
-    document.head.appendChild(st);
-  })();
   const g=s=>$$(root,s);
   const msgs=g('#zwMsgs');
 
@@ -491,8 +437,7 @@
   /* ---------- estados del personaje ---------- */
   let poseT=null;
   function pose(s,ms){clearTimeout(poseT);root.dataset.zs=s;if(ms)poseT=setTimeout(()=>{root.dataset.zs=root.classList.contains('open')?'wait':'idle';},ms);}
-  pose('greet',2600);
-  setInterval(()=>{if(!root.classList.contains('open')&&!root.classList.contains('gone')&&!document.hidden)pose('greet',2400);},14000);
+  pose('idle');
 
   /* ---------- sonido / voz ---------- */
   function chime(){if(!S.sound)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();[[660,0],[990,.11]].forEach(([f,t])=>{const o=a.createOscillator(),gn=a.createGain();o.type='sine';o.frequency.value=f;gn.gain.setValueAtTime(.0001,a.currentTime+t);gn.gain.exponentialRampToValueAtTime(.07,a.currentTime+t+.02);gn.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.3);o.connect(gn);gn.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.32);});}catch(e){}}
@@ -889,7 +834,7 @@
     if(a==='start'&&id==='others'){add('Otros servicios','me');return bot('También te podemos ayudar con:<br>• <b>Administración de propiedades</b>: cobramos el arriendo, pagamos al propietario y enviamos la liquidación cada mes.<br>• <b>Ser corredor</b>: trabaja con nuestra cartera de propiedades y tu propio portal.',()=>chips([{t:'Administración de propiedades',href:'/Administracion%20de%20Propiedades%20-%20Corretaje%20Guzman.html'},{t:'Quiero ser corredor',href:'/Se%20Corredor%20-%20Corretaje%20Guzman.html'},{t:'Hablar con un ejecutivo',act:'human'}]));}
     if(a==='start'){const map={owner:'owner',rent:'rent',buy:'buy'};if(id==='proj'){add('Proyectos nuevos','me');return route('proyectos nuevos');}add(esc(el&&el.dataset.label||id),'me');return startFlow(map[id]);}
     if(a==='fav'){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);else S.favs.push(id);root.querySelectorAll('.fav[data-id="'+id+'"]').forEach(b=>b.classList.toggle('on',i<0));save();if(i<0)pose('success',1200);return;}
-    if(a==='view'){S.viewing=id;save();return;}
+    if(a==='view'){S.viewing=id;close();return;}
     if(a==='pagevisit')return contextVisit(true);
     if(a==='visit'){const x=byId(id);if(!x)return;add('Agendar visita · '+esc(x.t),'me');return showVisitForm(x);}
     if(a==='info'){const x=PROJ.find(p=>p.id===id);add('Solicitar información · '+esc(x?x.t:''),'me');return handoff();}
@@ -942,20 +887,24 @@
   }
 
   /* ---------- abrir / cerrar ---------- */
+  function setPanelOpen(value){
+    root.classList.toggle('open',value);root.classList.remove('gone');
+    S.open=value;S.hidden=false;
+    const panel=g('#zwPanel');panel.inert=!value;panel.setAttribute('aria-hidden',String(!value));
+    g('#zwPeek').setAttribute('aria-expanded',String(value));
+  }
   function open(direct=false){
-    root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
+    setPanelOpen(true);
     pose('point',1800);chime();
+    void restoreCards();
     if(!S.started){S.started=true;if(!pagePropertyId())menu(false);}
     if(pagePropertyId())void contextVisit(direct===true);
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
-  function close(){stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}root.classList.remove('open');S.open=false;g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
-  g('#zwOpen').onclick=()=>open(!!pagePropertyId());
-  g('#zwHit').onclick=open;g('#zwHit').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}};
+  function close(){stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}setPanelOpen(false);g('#zwMenu').classList.remove('on');pose('idle');save();try{speechSynthesis.cancel();}catch(e){}}
   g('#zwClose').onclick=close;
-  g('#zwHide').onclick=e=>{e.stopPropagation();root.classList.add('gone');S.hidden=true;save();};
-  g('#zwPeek').onclick=()=>{root.classList.remove('gone');S.hidden=false;save();pose('greet',2200);};
+  g('#zwPeek').onclick=()=>open(false);
   g('#zwSound').onclick=()=>{S.sound=!S.sound;g('#zwSound').innerHTML=I(S.sound?IC.vol:IC.mute,17);g('#zwSound').setAttribute('aria-label',S.sound?'Silenciar':'Activar sonido');if(!S.sound)stopSpeech();save();};
   g('#zwMore').onclick=e=>{e.stopPropagation();g('#zwMenu').classList.toggle('on');};
   document.addEventListener('click',e=>{if(!e.target.closest('#zwMenu,#zwMore'))g('#zwMenu').classList.remove('on');});
@@ -973,7 +922,11 @@
       if(v==='down')add('Gracias, lo tomo en cuenta. ¿Prefieres que te atienda un ejecutivo?','sys');return;}
     const b=e.target.closest('[data-act],[data-q]');if(!b)return;
     if(b.dataset.q){e.preventDefault();return ask(b.dataset.q);}
-    if(b.tagName==='A'&&b.dataset.act==='view'){if(call&&byId(b.dataset.id)){e.preventDefault();call.known.add(b.dataset.id);openVoiceProperty(call,byId(b.dataset.id));return;}act('view',b.dataset.id);return;}
+    if(b.tagName==='A'&&b.dataset.act==='view'){
+      if(call&&byId(b.dataset.id)){e.preventDefault();call.known.add(b.dataset.id);openVoiceProperty(call,byId(b.dataset.id));return;}
+      // Text chat: navigate normally in this tab and leave the launcher closed.
+      act('view',b.dataset.id);return;
+    }
     e.preventDefault();act(b.dataset.act,b.dataset.id,b);
   });
   msgs.addEventListener('submit',async e=>{
@@ -1095,7 +1048,7 @@
     c.filters=f;applyVoiceFilters(f);return f;
   }
   function compactVoice(){if(call){
-    root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
+    setPanelOpen(true);
     g('#zwVoice').classList.add('compact');save();scroll();requestAnimationFrame(scroll);
   }}
   const VOICE_STYLE='Habla como una asesora chilena de Santiago, con tuteo natural. Usa «ya», «te muestro», «arriendo», «gastos comunes». No uses voseo rioplatense («querés», «tenés»). Pronuncia cien mil pesos (nunca ciento mil), novecientos cincuenta mil pesos y cuatrocientos mil pesos. Nunca digas «cuatrocientos pesos» por 400.000. Respeta literalmente los montos en palabras proporcionados; no leas dígitos ni el símbolo de moneda.';
@@ -1280,19 +1233,32 @@
     }catch{if(call===c)endCall('No pude iniciar la llamada. Puedes usar el chat de texto.');}
   };
   g('#zwVend').onclick=()=>endCall('Llamada finalizada');g('#zwVtxt').onclick=()=>endCall('Seguimos por texto');g('#zwVmute').onclick=()=>{if(call){call.muted=!call.muted;syncCallMic(call);}};
-  window.addEventListener('pagehide',()=>{stopSpeech();endCall();if(rec?.state==='recording'){recCancelled=true;rec.stop();}});
+  window.addEventListener('pagehide',()=>{close();});
+  window.addEventListener('pageshow',e=>{if(e.persisted){setPanelOpen(false);save();}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('open'))close();});
 
-  /* ---------- restaurar conversación al navegar ---------- */
-  if(S.html){msgs.innerHTML=S.html;msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());msgs.querySelectorAll('.zw-cards,.zw-cmp').forEach(e=>e.remove());msgs.querySelectorAll('form[data-visit-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button').disabled=false;});}
-  if(S.hidden)root.classList.add('gone');
-  if(S.open){root.classList.add('open');pose('wait');setTimeout(scroll,50);if(pagePropertyId())void contextVisit(false);}
-
-  /* ---------- sugerencia proactiva discreta (una vez por sesión) ---------- */
-  try{
-    const p=decodeURIComponent(location.pathname);
-    if(!pagePropertyId()&&/Ficha|Proyecto /.test(p)&&!sessionStorage.getItem('zumi_hint')){
-      setTimeout(()=>{if(root.classList.contains('open')||S.hidden)return;sessionStorage.setItem('zumi_hint','1');g('#zwBT').textContent='¿Quieres que coordinemos una visita?';g('#zwBS').textContent='Te ayudo a agendarla en un minuto.';pose('greet',2200);},25000);
+  /* ---------- restore chat history, but never auto-open on navigation ---------- */
+  async function restoreCards(){
+    const groups=Array.from(msgs.querySelectorAll('.zw-cards[data-restore]'));
+    if(!groups.length)return;
+    if(!await ensureCatalog())return;
+    for(const group of groups){
+      if(!group.isConnected)continue;
+      const ids=Array.from(group.querySelectorAll('a[data-act="view"]')).map(a=>a.dataset.id);
+      const list=ids.map(id=>byId(id)||PROJ.find(p=>p.id===id)).filter(Boolean);
+      if(!list.length){group.remove();continue;}
+      group.innerHTML=list.map(card).join('');group.removeAttribute('data-restore');group.hidden=false;
     }
-  }catch(e){}
+    save();if(S.open)scroll();
+  }
+  if(S.html){
+    msgs.innerHTML=S.html;
+    msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());
+    // Rebuild saved cards from the current public catalog before showing them.
+    msgs.querySelectorAll('.zw-cards').forEach(el=>{el.hidden=true;el.setAttribute('data-restore','1');});
+    msgs.querySelectorAll('.zw-cmp').forEach(el=>el.remove());
+    msgs.querySelectorAll('form[data-visit-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button').disabled=false;});
+  }
+  setPanelOpen(false);save();
+  void restoreCards();
 })();
