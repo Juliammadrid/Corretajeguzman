@@ -982,6 +982,7 @@
     else if(m=s.match(/\$\s?([\d.]{5,})/))o.budget=+m[1].replace(/\./g,'');
     else if(m=s.match(/\b(\d{3}[.]?\d{3})\b/))o.budget=+m[1].replace(/\./g,'');
     if(m=s.match(/uf\s?([\d.]+)|([\d.]+)\s?uf/))o.uf=+(m[1]||m[2]).replace(/\./g,'');
+    const shared=userSearchCriteria(t,ALL,S.flow?.name==='rent'&&FLOWS.rent[S.flow.step]?.k==='budget');if(shared.moneda==='CLP'&&shared.maximo>0)o.budget=shared.maximo;if(shared.banos!=null)o.banos=shared.banos;
     const W={un:1,uno:1,una:1,dos:2,tres:3,cuatro:4};
     if(m=s.match(/(\d|un|uno|una|dos|tres|cuatro)\s*(dorm|habitac|pieza|d\b)/))o.dorm=W[m[1]]||+m[1];
     if(/(?:sin|no necesito|no quiero) estacionamiento/.test(s))o.est=false;else if(/estacionamiento|auto\b/.test(s))o.est=true;
@@ -1264,6 +1265,20 @@
       add('Tuve un problema para responder. ¿Lo intentamos de nuevo o prefieres hablar con un ejecutivo?','sys');
       chips([{t:'Reintentar',q:v},{t:'Hablar con un ejecutivo',act:'human'}]);pose('wait');save();}
   }
+  function textCatalogSearch(v,u,previous){
+    if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
+    const f=mergedSearchFilters(previous,u,v);
+    S.flow=null;S.await=null;S.viewing=null;applyVoiceFilters(f);
+    const matches=voiceMatches(ALL,f);metricSearch(f,matches.length,'text');
+    const wantsVisit=/\b(?:agendar|coordinar|solicitar|reservar)\b.{0,35}\bvisita\b/.test(norm(v));
+    if(matches.length){
+      const zone=f.comuna?' en <b>'+esc(f.comuna)+'</b>':' en distintas comunas';
+      const text='Encontré <b>'+matches.length+' '+(matches.length===1?'propiedad':'propiedades')+'</b>'+zone+' que '+(matches.length===1?'cumple':'cumplen')+' tus filtros'+(f.operacion==='rent'&&f.maximo?' de arriendo (hasta '+(f.moneda==='UF'?'UF '+nf.format(f.maximo):money(f.maximo))+', sin gastos comunes)':'')+'. '+(wantsVisit?'Elige la que te guste y presiona Agendar visita.':!f.comuna?'¿En qué comuna prefieres buscar?':'');
+      return bot(text,()=>{showCards(matches.slice(0,6));chips([...(f.comuna?[]:['Cambiar comuna']),...(f.operacion==='rent'?[rentalCta()]:[])]);});
+    }
+    S.last=[];save();
+    return bot('No encontré propiedades que cumplan todos esos filtros'+(f.comuna?' en <b>'+esc(f.comuna)+'</b>':'')+'. ¿Te gustaría cambiar alguno?',()=>chips(['Cambiar comuna','Cambiar presupuesto',...(f.operacion==='rent'?[rentalCta()]:[])]));
+  }
   async function ask(t){const v=String(t).trim();if(!v)return;
     if(!call||rentalIntent(v))metric('message');if(rentalIntent(v)){add(esc(v),'me');return showRentalForm();}
     const pId=pagePropertyId(),lastBot=Array.from(msgs.querySelectorAll('.zw-m.bot')).pop()?.textContent||'';
@@ -1271,15 +1286,7 @@
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
-    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});acceptVoiceTurn(call,v);return;}add(esc(v),'me');const next=explicitSectionSwitch(v)||(/administracion|administrar mi propiedad/.test(norm(v))?'admin':/planes de arriendo|publicar mi propiedad/.test(norm(v))?'propietario':/postular.*corredor|ser corredor/.test(norm(v))?'corredor':/parcelas|terrenos/.test(norm(v))?'parcelas':/proyectos nuevos|proyectos inmobiliarios/.test(norm(v))?'proyectos':'');if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(section==='propietario'&&ownerIntent(v)==='form')return showOwnerForm(v);if(specialist()||section==='ventas'){sectionMenu();if(specialist()&&!explicitSectionSwitch(v))return askSpecial(v);return;}}if(section==='propietario'&&ownerIntent(v)){S.flow=null;S.await=null;return askSpecial(v);}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
-    if(u.comuna&&u.maximo>0){
-      if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
-      const f=mergedSearchFilters({...voiceFilters(),...(section==='ventas'?{operacion:'buy'}:{})},u,v);applyVoiceFilters(f);
-      const matches=voiceMatches(ALL,f);metricSearch(f,matches.length,'text');
-      if(matches.length)return bot('Encontré <b>'+matches.length+' '+(matches.length===1?'propiedad':'propiedades')+'</b> que cumplen tus filtros.',()=>{showCards(matches.slice(0,6));if(f.operacion==='rent')chips([rentalCta()]);});
-      return bot('No encontré propiedades que cumplan todos esos filtros. ¿Te gustaría cambiar alguno?',()=>chips(['Cambiar comuna','Cambiar presupuesto',...(f.operacion==='rent'?[rentalCta()]:[])]));
-    }
-    Object.assign(S.prefs,parse(v));save();return askAI(v);}
+    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});acceptVoiceTurn(call,v);return;}add(esc(v),'me');const next=explicitSectionSwitch(v)||(/administracion|administrar mi propiedad/.test(norm(v))?'admin':/planes de arriendo|publicar mi propiedad/.test(norm(v))?'propietario':/postular.*corredor|ser corredor/.test(norm(v))?'corredor':/parcelas|terrenos/.test(norm(v))?'parcelas':/proyectos nuevos|proyectos inmobiliarios/.test(norm(v))?'proyectos':'');if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(section==='propietario'&&ownerIntent(v)==='form')return showOwnerForm(v);if(specialist()||section==='ventas'){sectionMenu();if(specialist()&&!explicitSectionSwitch(v))return askSpecial(v);return;}}if(section==='propietario'&&ownerIntent(v)){S.flow=null;S.await=null;return askSpecial(v);}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();const previous={...voiceFilters(),...(section==='ventas'?{operacion:'buy'}:{})};const waitingBudget=S.flow?.name==='rent'&&FLOWS.rent[S.flow.step]?.k==='budget';const u=userSearchCriteria(v,ALL,waitingBudget);if(!S.await&&(!S.flow||['rent','buy'].includes(S.flow.name))&&catalogSearchIntent(v,u,previous,waitingBudget))return textCatalogSearch(v,u,previous);if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);    Object.assign(S.prefs,parse(v));save();return askAI(v);}
   window.Zumi=Object.assign(window.Zumi||{},{render,ask,open:()=>open(),state:()=>S,context:pageCtx});
 
   /* ---------- acciones de botones ---------- */
@@ -1453,9 +1460,31 @@
     if(/\b(estudios?|studios?)\b/.test(t))return 'estudio';
     return ''; // "propiedad", "inmueble" and unknown labels are not property types.
   };
-  function userSearchCriteria(text,rows=ALL){
+  // Chilean rental shorthand: 300 a 320 means a ceiling of $320,000.
+  function rentalBudget(text,context=false){
+    const t=norm(text);
+    if(/\b(?:uf|unidades de fomento|millones?|millon|palos?)\b/.test(t))return null;
+    const property=/\b(?:arriendo|arrendar|alquiler|departamentos?|deptos?|dptos?|casas?|habitaciones?|dormitorios?|banos?|propiedades?|visita)\b/.test(t);
+    const price=/\b(?:presupuesto|maximo|tope|puedo pagar|puedo gastar|hasta|precio|valor|lucas?|mil|pesos)\b/.test(t)||t.includes('$');
+    if(!context&&!property&&!price)return null;
+    const decode=s=>{const v=Number(s.replace(/\./g,''));return v>=100&&v<10000?v*1000:v;};
+    const range=/(?:^|[^\d.])(\d{1,3}(?:\.\d{3})+|\d{5,9}|\d{3,4})\s*(?:mil|lucas?|pesos)?\s*(?:a|hasta|y|[-–])\s*\$?\s*(\d{1,3}(?:\.\d{3})+|\d{5,9}|\d{3,4})(?:\s*(?:mil|lucas?|pesos))?(?!\d|[.,]\d|\s*(?:m2|m²|metros?|horas?|dias?|uf)\b)/g;
+    let m;while((m=range.exec(t))){const a=decode(m[1]),b=decode(m[2]);if(a>=100000&&b>=100000&&a<=10000000&&b<=10000000)return Math.max(a,b);}
+    const bare=Array.from(t.matchAll(/(?:\b(?:hasta|maximo|tope|presupuesto(?: de)?|valor(?: de)?|precio(?: de)?|de|por)\s*[:$]?\s*|\$\s*)(\d{3,4})(?!\d|[.,]\d|\s*(?:m2|m²|metros?|horas?|dias?|uf|dormitorios?|banos?)\b)/g));
+    if(bare.length&&(price||property||context)){const v=decode(bare.at(-1)[1]);if(v>=100000&&v<=10000000)return v;}
+    if(context&&/^\s*\d{3,4}\s*[.!]?\s*$/.test(t)){const v=decode(t.match(/\d+/)[0]);if(v>=100000&&v<=10000000)return v;}
+    return null;
+  }
+  function catalogSearchIntent(text,u,previous,waitingBudget=false){
+    const t=norm(text),seek=/\b(?:busco|buscando|buscar|quiero|quisiera|necesito|muestrame|mostrar|tienen|tienes|hay|alternativas?|opciones?|agendar|coordinar|arrendar|arriendo|comprar|compra)\b/.test(t);
+    if(/\b(?:arrendar mi|publicar mi|vender mi|administrar mi|mi propiedad|mi departamento|mi casa|proyectos? nuevos|parcelas?|terrenos?|credito hipotecario|cuanto puedo comprar)\b/.test(t))return false;
+    if(/\b(?:comparar|favoritos?|gastos comunes|aceptan mascotas|requisitos?)\b/.test(t)&&!seek)return false;
+    if(u.maximo>0&&(u.comuna||u.dormitorios!=null||u.banos!=null||u.tipo||seek||waitingBudget||/^(?:hasta|maximo|tope|presupuesto)\b/.test(t)&&previous.comuna))return true;
+    return !!(u.comuna&&previous.maximo>0&&seek);
+  }
+  function userSearchCriteria(text,rows=ALL,context=false){
     const t=norm(text||''), out={};
-    const communes=Array.from(new Set([...COMUNAS,...rows.map(x=>x.c).filter(Boolean)])).sort((a,b)=>b.length-a.length);
+    const communes=Array.from(new Set([...COMUNAS,...RENTAL_COMUNAS.filter(c=>!c.includes('(Centro)')),...rows.map(x=>x.c).filter(Boolean)])).sort((a,b)=>b.length-a.length);
     const commune=communes.find(v=>(' '+t.replace(/[^a-z0-9 ]/g,' ')+' ').includes(' '+norm(v)+' '));
     if(commune)out.comuna=commune;
     const w={un:1,una:1,uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9};
@@ -1471,6 +1500,7 @@
     else if(scaled){out.maximo=(scaled[1]==='medio'?.5:w[scaled[1]]??Number(scaled[1].replace(',','.')))*(/mil$|luca/.test(scaled[2])?1000:1000000);out.moneda='CLP';}
     if(/\b(arriendo|arrendar|alquiler)\b/.test(t))out.operacion='rent';
     if(/\b(comprar|compra|en venta)\b/.test(t))out.operacion='buy';
+    if(out.operacion!=='buy'&&!uf){const budget=rentalBudget(t,context);if(budget){out.maximo=budget;out.moneda='CLP';if(!out.operacion&&/\b(?:arrendar|arriendo|alquiler|agendar|coordinar|visita)\b/.test(t))out.operacion='rent';}}
     if(/\b(?:sin|no necesito|no quiero)\s+estacionamiento\b/.test(t))out.estacionamiento=false;
     else if(/\bestacionamiento\b/.test(t))out.estacionamiento=true;
     const type=voiceType(t);if(type)out.tipo=type;
@@ -1502,13 +1532,13 @@
     save();
   }
   function mergedSearchFilters(previous,a,utterance=''){
-    const u=userSearchCriteria(utterance), f={...previous}, t=norm(utterance);
+    const u=userSearchCriteria(utterance,ALL,previous.operacion==='rent'&&previous.maximo>0), f={...previous}, t=norm(utterance);
     const nextCommune=u.comuna??a.comuna;
     const nextOp=u.operacion??a.operacion;
     const changed=nextCommune&&communeKey(nextCommune)!==communeKey(f.comuna);
     const opChanged=['rent','buy'].includes(nextOp)&&nextOp!==f.operacion;
     const retain=/\b(?:mismos?|mismas?|manteniendo|mantener|igual que|con los mismos filtros|como antes)\b/.test(t);
-    const fresh=!retain&&(changed||opChanged||(u.comuna&&u.maximo>0)||
+    const fresh=!retain&&(changed||opChanged||(u.comuna&&u.maximo>0)||(u.maximo>0&&(u.dormitorios!=null||u.banos!=null)&&/\b(?:busco|quiero|quisiera|gustaria|necesito|agendar|coordinar)\b/.test(t))||
       (!utterance&&a.comuna&&a.maximo>0&&changed));
     if(fresh){
       delete f.dormitorios;delete f.banos;delete f.estacionamiento;delete f.tipo;
