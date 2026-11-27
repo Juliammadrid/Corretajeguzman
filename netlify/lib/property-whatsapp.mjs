@@ -16,7 +16,7 @@ export function makePropertyWhatsapp({ getEnv, fetcher = fetch, warn = console.w
       status: 405, headers: { ...HEADERS, Allow: 'GET, HEAD' },
     });
     const text = new URL(request.url).searchParams.get('text') || '';
-    if (!text.startsWith('Hola, quiero más información sobre esta propiedad: ') || text.length > 2000) {
+    if (!['Hola, quiero más información sobre esta propiedad: ', 'Hola, vengo desde Zumi', 'Hola, me interesa '].some(prefix => text.startsWith(prefix) && text.length > prefix.length) || text.length > 2000) {
       return new Response('Consulta de propiedad inválida', { status: 400, headers: HEADERS });
     }
     let phone = NUMBERS[0];
