@@ -28,8 +28,8 @@ console.log('Complete public site and portal packaged; project images verified.'
  for(const d of await readdir(path.join(output,'proyectos'),{withFileTypes:true}))if(d.isDirectory())publicPages.push('proyectos/'+d.name+'/index.html');
  for(const p of publicPages){
    const file=path.join(output,p);let h;try{h=await readFile(file,'utf8');}catch(e){if(e.code==='ENOENT')continue;throw e;}
-   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-v2-voice-catalog');
-   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=2-voice-catalog-20261126" data-zumi-v2 defer></script></body>');
+   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-v2-no-opening-greeting');
+   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=2-no-opening-greeting-20261126" data-zumi-v2 defer></script></body>');
    await writeFile(file,h);
  }
  for(const p of ['zumi-widget.js','assets/zumi.png','assets/zumi-body.png','assets/zumi-arm.png'])await access(path.join(output,p));

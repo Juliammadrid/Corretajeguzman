@@ -870,7 +870,7 @@
   function open(){
     root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
     pose('point',1800);chime();
-    if(!S.started){S.started=true;menu(false);setTimeout(()=>say('Hola, soy Zumi. ¿En qué te puedo ayudar hoy?'),350);}
+    if(!S.started){S.started=true;menu(false);}
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
