@@ -952,7 +952,7 @@
     if(a==='vchange'){if(S.visit){S.flow={name:'visit',step:2,data:S.visit};save();}return nextStep();}
     if(a==='vcancel'){if(S.visit?.sent)return bot('La solicitud ya fue enviada. Contacta al ejecutivo para cancelarla.');S.visit=null;save();return bot('Listo, descarté el borrador. ¿Te ayudo con algo más?',()=>chips(['Ver más propiedades','Volver al inicio']));}
     if(a==='human')return handoff();
-    if(a==='wa'){window.open('https://wa.me/'+waNum()+'?text='+encodeURIComponent(summary()),'_blank');add('Se abrió WhatsApp con tu resumen. Recuerda presionar <b>enviar</b> en WhatsApp para que llegue al ejecutivo.','sys');return;}
+    if(a==='wa'){window.open('/.netlify/functions/property-whatsapp?text='+encodeURIComponent(summary()),'_blank');add('Se abrió WhatsApp con tu resumen. Recuerda presionar <b>enviar</b> en WhatsApp para que llegue al ejecutivo.','sys');return;}
     if(a==='services'){return bot('Así trabajamos con propietarios:<br>'+CONFIG.planes.map(([t,d])=>'<br><b>'+t+'</b> — '+d).join(''),()=>chips([{t:'Ver detalle de servicios',href:PAGES.servicios},{t:'Completar solicitud',href:PAGES.solicitud,cls:'pri'},{t:'Hablar con un ejecutivo',act:'human'}]));}
     if(a==='compare')return compare();
     if(a==='favs')return favs();
