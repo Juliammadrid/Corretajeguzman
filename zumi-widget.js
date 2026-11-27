@@ -109,11 +109,19 @@
   function sectionRows(kind=section){
     return kind==='parcelas'?PROJ.filter(x=>x.parcela).concat(V.filter(x=>norm(x.type)==='parcela')):kind==='proyectos'?PROJ.filter(x=>!x.parcela):[];
   }
+  function showProjectQuote(id){
+    if(!PROJ.some(p=>!p.parcela&&p.id===id))return;
+    const existing=msgs.querySelector('iframe[data-quote="'+id+'"]');
+    if(existing){scrollMessageIntoView(existing,'start');return;}
+    add('Elige tu tipología y completa tus datos aquí. Podrás revisar la simulación y enviar tu solicitud antes de continuar por WhatsApp.');
+    block('<iframe title="Cotización del proyecto" data-quote="'+esc(id)+'" src="'+esc(projectQuote(id)+'&zumi=1')+'" style="width:100%;height:480px;border:1px solid #e5dff1;border-radius:12px;background:white"></iframe>');
+    chips([{t:'Abrir cotizador completo',href:projectQuote(id)}]);
+  }
   function projectQuote(id){return '/cotizacion.html?slug='+encodeURIComponent(id);}
   const PROJECT_TOPICS=[['Departamentos y precios','precios'],['Tipologías y planos','planos'],['Pie y formas de pago','financiamiento'],['Simular mi dividendo','dividendo'],['Fecha de entrega','entrega'],['Ubicación y conectividad','ubicacion'],['Equipamiento y áreas comunes','equipamiento'],['Comprar para invertir','inversion']];
   function projectActions(id=sectionFocus()){
     const p=PROJ.find(x=>!x.parcela&&x.id===id);if(!p)return;
-    chips(PROJECT_TOPICS.map(([t,key])=>({t,q:'Información del proyecto '+key+' '+id})).concat([{t:'Cotizar '+p.t,href:projectQuote(id),cls:'pri'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]));
+    chips(PROJECT_TOPICS.map(([t,key])=>({t,q:'Información del proyecto '+key+' '+id})).concat([{t:'Cotizar '+p.t,act:'projectquote',id,cls:'pri'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]));
   }
   async function projectTopic(v){
     const match=String(v).match(/^Información del proyecto (\w+) ([\w-]+)$/);if(!match)return false;
@@ -140,7 +148,7 @@
     else if(topic==='financiamiento')add(title+(p.reserva?'Reserva publicada: '+esc(p.reserva)+'<br>':'')+(p.subsidioTasa===true?'La ficha menciona subsidio de tasa, sujeto a condiciones.<br>':'')+'El pie, cuotas, descuentos y crédito deben confirmarse para la unidad elegida. ¿Cuánto tienes ahorrado para el pie?');
     else if(topic==='dividendo'){add(title+'Podemos estimar tu capacidad de compra según renta, ahorro y plazo. La simulación no es una aprobación bancaria.');chips([{t:'Abrir simulador',href:'/simulador-capacidad/',cls:'pri'}]);}
     else if(topic==='inversion')add(title+'Para evaluar la inversión conviene comparar precio, arriendo esperado, gastos, vacancia y financiamiento. '+(price?'Precio publicado desde '+uf(price)+'. ':'')+'No tenemos una rentabilidad garantizada. ¿Buscas renta mensual o plusvalía?');
-    chips([{t:'Cotizar este proyecto',href:projectQuote(id),cls:'pri'},{t:'Ver otras características',q:'Información del proyecto equipamiento '+id},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);save();return true;
+    chips([{t:'Cotizar este proyecto',act:'projectquote',id,cls:'pri'},{t:'Ver otras características',q:'Información del proyecto equipamiento '+id},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);save();return true;
   }
   function sectionMenu(){
     const ui=SECTION_UI[section];if(!ui)return false;
@@ -242,7 +250,7 @@
       const intent=ownerIntent(v);if(intent==='plans')return showOwnerPlans();if(intent==='form')return showOwnerForm(v);
     }
     if(/^(?:solicitar administracion|quiero postular como corredor|completar solicitud de arriendo|abrir simulador)$/.test(q))return bot('Te dejo el acceso directo para que puedas continuar.',sectionFormChips);
-    if(section==='proyectos'&&sectionFocus()&&/cotiz/.test(q))return bot('Puedes solicitar una cotización personalizada aquí.',()=>projectActions());
+    if(section==='proyectos'&&sectionFocus()&&/cotiz/.test(q))return showProjectQuote(sectionFocus());
     if(/^(?:coordinar visita|quiero coordinar una visita a una parcela|quiero cotizar un proyecto|hablar con un ejecutivo)$/.test(q))return bot('Te conecto con nuestro equipo para confirmar los detalles.',sectionContact);
     return askAI(v,section);
   }
@@ -1081,7 +1089,7 @@
       clearTimeout(to);if(!r.ok)throw new Error('ai '+r.status);
       const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';
       const ids=Array.isArray(j.ids)?j.ids.filter(id=>domain?sectionRows(domain).some(x=>x.id===id):byId(id)):[];
-      j.actions=[...(ids.length?[{type:'cards',items:ids}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:domain?'sectioncontact':'human'},...(domain==='proyectos'&&sectionFocus()?[{t:'Cotizar este proyecto',href:projectQuote(sectionFocus()),cls:'pri'}]:[]),...(domain&&SECTION_UI[domain]?[{t:'Ver sección',href:SECTION_UI[domain].url}]:[])]}];
+      j.actions=[...(ids.length?[{type:'cards',items:ids}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:domain?'sectioncontact':'human'},...(domain==='proyectos'&&sectionFocus()?[{t:'Cotizar este proyecto',act:'projectquote',id:sectionFocus(),cls:'pri'}]:[]),...(domain&&SECTION_UI[domain]?[{t:'Ver sección',href:SECTION_UI[domain].url}]:[])]}];
       const histKey='hist';
       S[histKey]=(S[histKey]||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
       if(j.text){void say(j.text,false);pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
@@ -1109,6 +1117,7 @@
 
   /* ---------- acciones de botones ---------- */
   function act(a,id,el){
+    if(a==='projectquote')return showProjectQuote(id);
     if(a==='start'&&id==='buy'){add('Comprar','me');return bot('¿Qué te gustaría comprar?',()=>chips([{t:'Propiedades en venta',q:'busco comprar'},{t:'Proyectos nuevos',q:'proyectos nuevos'}]));}
     if(a==='start'&&id==='parcel'){add('Parcelas','me');switchSection('parcelas');return sectionMenu();}
     if(a==='sectionhome'){switchSection('home');return menu(true);}
@@ -1193,7 +1202,7 @@
     S.sectionKey=sectionKey;
     if(section==='ventas')S.voiceOperation='buy';
     if(pagePropertyId())void contextVisit(direct===true);
-    if(section==='proyectos'&&sectionFocus()&&!msgs.querySelector('a[href="'+projectQuote(sectionFocus())+'"]'))projectActions();
+    if(section==='proyectos'&&sectionFocus()&&!msgs.querySelector('[data-act="projectquote"][data-id="'+sectionFocus()+'"]'))projectActions();
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
   }
