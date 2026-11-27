@@ -168,7 +168,7 @@
   }
   function ownerPhone(value){
     let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56')&&d.length===11)d=d.slice(2);
-    return d.length===9?'+56'+d:'';
+    return /^9\d{8}$/.test(d)?'+56'+d:'';
   }
   function ownerPayload(values){
     const phone=ownerPhone(values.whatsapp);
