@@ -1,12 +1,14 @@
 // Zumi 5.2.1 — stable photo endpoint backed by Airtable.
 // This endpoint serves only the FIRST photograph of a currently public listing.
 // Never expose an Airtable token or internal fields to the browser.
-const SOURCES={rent:{table:'Propiedades en arriendo',link:'Link de la web'},buy:{table:'Propiedades en venta',link:'Link sitio web'}};
-function visibleRecord(row,source,id){const f=row?.fields||{};let u;
-  try{u=new URL(f[source.link]||'');}catch{return false;}
-  if(u.protocol!=='https:'||u.hostname.replace(/^www\./,'')!=='corretajeguzman.com'||!u.pathname.startsWith('/propiedad/')||!u.pathname.includes(id))return false;
-  const status=typeof f.Estado==='object'?f.Estado?.name:String(f.Estado||'');
-  return !/reservad|vendid|arrendad|inactiv|retirad|eliminad/i.test(status);
+import {normalize} from './properties.mjs';
+import {isPublic,isAvailable} from '../../seo-core.mjs';
+const env=k=>globalThis.Netlify?.env.get(k)||process.env[k];
+const SOURCES={rent:{table:env('AIRTABLE_RENT_TABLE_ID')||'tblOZztlu6qSLMAtc',operation:'arriendo'},buy:{table:env('AIRTABLE_SALE_TABLE_ID')||'tblB67Zm9zxDlFwY7',operation:'venta'}};
+function visibleRecord(row,source,id){
+ if(row?.id!==id)return false;
+ const p=normalize(row,source.operation);
+ return p.operation===source.operation&&isPublic(p)&&isAvailable(p)&&p.priceValue>0;
 }
 const fail=(status=404)=>new Response('',{status,headers:{'cache-control':'no-store','x-content-type-options':'nosniff'}});
 export default async function handler(req){
@@ -15,7 +17,7 @@ export default async function handler(req){
  const rawIndex=String(searchParams.get('index')??'0');
  if(!/^[0-3]$/.test(rawIndex)||!/^rec[A-Za-z0-9]{14}$/.test(id)||!SOURCES[kind])return fail(400);
  const index=Number(rawIndex);
- const token=(process.env.AIRTABLE_TOKEN || process.env.AIRTABLE_API_KEY),base=(process.env.AIRTABLE_BASE_ID || 'appkG5ldIIHTVkXf6');
+ const token=(env('AIRTABLE_API_KEY') || env('AIRTABLE_TOKEN')),base=(env('AIRTABLE_BASE_ID') || 'appkG5ldIIHTVkXf6');
  if(!token||!/^app[A-Za-z0-9]{14}$/.test(base||''))return fail(503);
  try{
   const source=SOURCES[kind];

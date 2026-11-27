@@ -31,7 +31,7 @@ const F = {
   photos:       ["Fotos", "Foto", "Imágenes", "Imagenes", "Photos"],
   priceValue:   ["Precio valor", "Precio", "Valor"],
   currency:     ["Moneda", "Currency"],
-  commonExpenses: ["Valor gasto común", "Gastos comunes", "Gasto común", "GGCC"],
+  commonExpenses: ["Valor gasto común", "Valor gasto comun", "Gastos comunes", "Gasto común", "GGCC"],
   parking:      ["Estacionamiento", "Estacionamientos", "Garaje"],
   storage:      ["Bodega"],
   propertyType: ["Tipo propiedad", "Tipo de propiedad", "Tipo de inmueble", "Tipo", "Categoría", "Categoria"],
@@ -60,6 +60,14 @@ const list = (v) => { if (v == null) return []; if (Array.isArray(v)) return v.m
 const photos = (v) => { if (Array.isArray(v)) return v.map(a => a && a.url ? a.url : a).filter(x => typeof x === "string"); if (typeof v === "string") return v.split(/[\s,]+/).filter(u => /^https?:\/\//.test(u)); return []; };
 const norm = (v) => String(v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
+function parkingCount(value) {
+  if(value==null||value==="")return null;
+  const v=norm(pick(value));
+  if(/^(?:no\b|sin\b|0\b)/.test(v))return 0;
+  if(/^(?:si\b|incluid|con\b)/.test(v))return 1;
+  if(/\d/.test(v))return num(v);
+  return null;
+}
 function inferPropertyType(raw, title) {
   const text = norm(`${pick(raw) || ""} ${title || ""}`);
   if (/\b(parcela|terreno|lote|sitio)\b/.test(text)) return "Parcela";
@@ -97,7 +105,7 @@ export function normalize(rec, operation) {
     commonExpenses: num(g("commonExpenses")) || 0,
     bedrooms: g("bedrooms") != null ? num(g("bedrooms")) : null,
     bathrooms: g("bathrooms") != null ? num(g("bathrooms")) : null,
-    parking: g("parking") != null ? (num(g("parking")) ?? (g("parking") ? 1 : 0)) : null,
+    parking: parkingCount(g("parking")),
     storage: !!g("storage"),
     propertyType: inferPropertyType(g("propertyType"), title),
     description: g("description") ? String(g("description")) : "",
