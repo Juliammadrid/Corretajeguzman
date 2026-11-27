@@ -1133,7 +1133,7 @@
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
-    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');const next=explicitSectionSwitch(v)||(/administracion|administrar mi propiedad/.test(norm(v))?'admin':/planes de arriendo|publicar mi propiedad/.test(norm(v))?'propietario':/postular.*corredor|ser corredor/.test(norm(v))?'corredor':/parcelas|terrenos/.test(norm(v))?'parcelas':/proyectos nuevos|proyectos inmobiliarios/.test(norm(v))?'proyectos':'');if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(section==='propietario'&&ownerIntent(v)==='form')return showOwnerForm(v);if(specialist()||section==='ventas'){sectionMenu();if(specialist()&&!explicitSectionSwitch(v))return askSpecial(v);return;}}if(section==='propietario'&&ownerIntent(v)){S.flow=null;S.await=null;return askSpecial(v);}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
+    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});acceptVoiceTurn(call,v);return;}add(esc(v),'me');const next=explicitSectionSwitch(v)||(/administracion|administrar mi propiedad/.test(norm(v))?'admin':/planes de arriendo|publicar mi propiedad/.test(norm(v))?'propietario':/postular.*corredor|ser corredor/.test(norm(v))?'corredor':/parcelas|terrenos/.test(norm(v))?'parcelas':/proyectos nuevos|proyectos inmobiliarios/.test(norm(v))?'proyectos':'');if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(section==='propietario'&&ownerIntent(v)==='form')return showOwnerForm(v);if(specialist()||section==='ventas'){sectionMenu();if(specialist()&&!explicitSectionSwitch(v))return askSpecial(v);return;}}if(section==='propietario'&&ownerIntent(v)){S.flow=null;S.await=null;return askSpecial(v);}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
     if(u.comuna&&u.maximo>0){
       if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
       const f=mergedSearchFilters({...voiceFilters(),...(section==='ventas'?{operacion:'buy'}:{})},u,v);applyVoiceFilters(f);
@@ -1436,33 +1436,85 @@
       const timer=setTimeout(done,2000);c.transcriptReady=done;
     });
   }
-  const VOICE_GREETING='Hola, ¿cómo estás? Cuéntame, ¿qué estás buscando? ¿Arrendar, comprar o quizás una parcela?';
-  function greetingLine(onProperty){return onProperty?'Hola, ¿cómo estás? ¿Te gustaría conocer más sobre esta propiedad o coordinar una visita?':SECTION_UI[section]?'Hola, ¿cómo estás? '+SECTION_UI[section].hello:VOICE_GREETING;}
+  const VOICE_GREETING='Hola, ¿cómo estás?';
+  function greetingLine(){return VOICE_GREETING;}
+  function nextServiceQuestion(onProperty,domain){
+    if(onProperty)return '¿Te gustaría conocer más sobre esta propiedad o coordinar una visita?';
+    if(domain==='parcelas')return 'Cuéntame, ¿buscas una parcela para vivir o para invertir?';
+    if(domain==='proyectos')return 'Cuéntame, ¿estás buscando tu primera vivienda o una inversión?';
+    if(domain==='propietario')return 'Cuéntame, ¿qué propiedad te gustaría arrendar?';
+    if(domain==='admin')return 'Cuéntame, ¿en qué te puedo ayudar con la administración de tu propiedad?';
+    if(domain==='corredor')return 'Cuéntame, ¿te gustaría trabajar con nosotros como corredor?';
+    if(domain==='arriendos')return 'Cuéntame, ¿en qué comuna estás buscando arriendo?';
+    if(domain==='ventas')return 'Cuéntame, ¿en qué comuna estás buscando comprar?';
+    if(domain==='solicitud')return 'Cuéntame, ¿en qué te puedo ayudar con tu solicitud de arriendo?';
+    if(domain==='simulador')return 'Cuéntame, ¿quieres saber cuánto podrías comprar?';
+    return 'Cuéntame, ¿qué estás buscando? ¿Arrendar, comprar o quizás una parcela?';
+  }
+  function socialIntroReply(v,onProperty,domain){
+    const q=norm(v).replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+    if(!q)return '';
+    const cleaned=q.replace(/^(?:hola |buenos dias |buenas tardes |buenas noches |eh |ya )+/,'').trim();
+    if(/^(?:(?:muy |super |bastante )?bien|excelente|todo bien|todo tranquilo|bien bien|perfecto|hola|buenas|buenos dias|buenas tardes|buenas noches|como estas|que tal|gracias)(?: (?:muchas )?gracias)?(?: y (?:tu|usted)(?: como estas)?)?$/.test(cleaned)||!cleaned){
+      const reply=/\by (?:tu|usted)\b|como estas|que tal/.test(q)?'Bien, gracias. ':'Qué bueno. ';
+      return reply+nextServiceQuestion(onProperty,domain);
+    }
+    if(/^(?:mal|mas o menos|regular|no muy bien|no tan bien)(?: gracias)?(?: y tu)?$/.test(cleaned))return 'Pucha, espero que mejore tu día. '+nextServiceQuestion(onProperty,domain);
+    return '';
+  }
+  function voiceStatus(c,phase){
+    if(call!==c)return;
+    const states={
+      connecting:['Conectando…','Preparando la conversación','think'],
+      greeting:['Zumi te saluda…','Escucha el saludo.','speak'],
+      thinking:['Un momento…','Preparando mi respuesta.','think'],
+      speaking:['Zumi está hablando…','Puedes conversar con Zumi.','speak'],
+      listening:[c.muted?'Micrófono silenciado':'Te escucho…',c.muted?'Activa el micrófono para hablar.':'Habla cuando quieras.','listen'],
+      hearing:['Te escucho…','Estoy escuchando tu voz.','listen'],
+      unclear:['Te escucho…','No alcancé a entenderte. ¿Puedes repetirlo?','listen']
+    };
+    const state=states[phase];if(!state)return;
+    g('#zwVst').textContent=state[0];g('#zwVsub').textContent=state[1];
+    g('#zwBars').style.visibility=['speaking','listening','hearing','greeting','unclear'].includes(phase)?'visible':'hidden';
+    pose(state[2]);c.phase=phase;
+  }
   function sendGreeting(c){
-    if(call!==c||c.greetingSent)return;
-    c.greetingSent=true;clearTimeout(c.configTimer);
-    const text=greetingLine(!!pagePropertyId());
-    g('#zwVst').textContent='Zumi te saluda…';g('#zwVsub').textContent='En un momento te escucho.';pose('speak');
-    voiceSend(c,{type:'response.create',response:{tool_choice:'none',max_output_tokens:100,instructions:'Solo pronuncia exactamente la siguiente frase, con voz cálida, natural y chilena. No agregues ninguna otra palabra, explicación, información del catálogo ni pregunta. Termina inmediatamente después de la frase y espera la intervención del usuario. Frase: '+JSON.stringify(text)}});
-    c.greetingTimer=setTimeout(()=>finishGreeting(c),18000);
+    if(call!==c||c.greetingSent||!c.channelReady||!c.manualTurns||!c.audioAttached)return;
+    clearTimeout(c.configTimer);
+    // Explicit audio and an isolated input keep prior chat history out of the greeting.
+    const text=greetingLine();
+    const sent=voiceSend(c,{type:'response.create',response:{conversation:'none',input:[],output_modalities:['audio'],tool_choice:'none',instructions:'Pronuncia solamente esta frase con tono cálido y chileno, sin añadir nada. No hagas otra pregunta, espera después: '+JSON.stringify(text)}});
+    if(!sent)return;
+    c.greetingSent=true;c.generating=true;voiceStatus(c,'connecting');
+    c.greetingTimer=setTimeout(()=>{if(call===c&&c.intro)endCall('No pude reproducir el saludo. Intenta llamar nuevamente o continúa por texto.');},16000);
   }
   function syncCallMic(c){
     const track=c.stream?.getAudioTracks()[0];if(track)track.enabled=!c.intro&&!c.muted;
     g('#zwVmute').classList.toggle('on',!!c.muted);
   }
   function finishGreeting(c){
-    if(call!==c||!c.intro)return;
-    clearTimeout(c.greetingTimer);clearTimeout(c.configTimer);c.intro=false;syncCallMic(c);
-    g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');
-    continueVoice(c);
+    if(call!==c||!c.intro||!c.greetingStarted||!c.greetingStopped||!c.playbackReady)return;
+    clearTimeout(c.greetingTimer);clearTimeout(c.configTimer);c.intro=false;c.awaitingGreetingAnswer=true;c.generating=false;c.audioPlaying=false;
+    syncCallMic(c);
+    for(const text of c.contextQueue.splice(0))voiceContext(c,text);
+    voiceContext(c,'Ya saludaste diciendo únicamente «Hola, ¿cómo estás?». Espera la respuesta real del cliente. Si te cuenta qué busca, atiende directamente esa solicitud. Si responde solamente al saludo, contesta con naturalidad y recién pregunta qué necesita. Haz una pregunta a la vez.');
+    voiceStatus(c,'listening');continueVoice(c);
   }
   function voiceSend(c,event){if(call===c&&c.dc?.readyState==='open'){c.dc.send(JSON.stringify(event));return true;}return false;}
-  function continueVoice(c){if(call===c&&!c.intro&&c.needsResponse&&!c.generating&&!c.pending){
-    c.needsResponse=false;
-    const line=c.nextSpokenSearch;c.nextSpokenSearch=null;
-    voiceSend(c,line?{type:'response.create',response:{tool_choice:'none',instructions:VOICE_STYLE+' Lee únicamente este resultado verificado, con naturalidad, sin modificar los números: '+JSON.stringify(line)}}:{type:'response.create'});
-  }}
+  function continueVoice(c){
+    if(call!==c||c.intro||!c.needsResponse||c.generating||c.audioPlaying||c.pending)return;
+    const line=c.nextSocialLine||c.nextSpokenSearch;
+    const event=line?{type:'response.create',response:{output_modalities:['audio'],tool_choice:'none',instructions:VOICE_STYLE+' Pronuncia únicamente esta respuesta, con naturalidad, y espera: '+JSON.stringify(line)}}:{type:'response.create',response:{output_modalities:['audio']}};
+    if(voiceSend(c,event)){c.needsResponse=false;c.nextSocialLine=null;c.nextSpokenSearch=null;c.generating=true;voiceStatus(c,'thinking');}
+  }
   function voiceContext(c,text){voiceSend(c,{type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text}]}});}
+  function queueVoiceContext(c,text){if(call!==c)return;if(c.intro)c.contextQueue.push(text);else voiceContext(c,text);}
+  function acceptVoiceTurn(c,words){
+    if(call!==c||c.intro||!/[\p{L}\p{N}]/u.test(words))return;
+    c.lastUser=words;
+    if(c.awaitingGreetingAnswer){c.awaitingGreetingAnswer=false;c.nextSocialLine=socialIntroReply(words,!!pagePropertyId(),section)||null;}
+    c.needsResponse=true;continueVoice(c);
+  }
   function voiceHistory(role,content){S.hist=(S.hist||[]).concat({role,content:String(content).slice(0,750)}).slice(-16);save();}
   function openVoiceProperty(c,x){
     if(!x||!c.known.has(x.id)||!sameSite(x.href))return false;
@@ -1529,67 +1581,110 @@
     }
   }
   function endCall(msg){
-    const c=call;call=null;if(c){clearInterval(c.timer);clearTimeout(c.timeout);clearTimeout(c.configTimer);clearTimeout(c.greetingTimer);c.abort.abort();c.viewer?.remove();c.dc?.close();c.pc?.close();c.stream?.getTracks().forEach(t=>t.stop());c.audio?.remove();}
+    const c=call;call=null;if(c){clearInterval(c.timer);clearTimeout(c.timeout);clearTimeout(c.configTimer);clearTimeout(c.greetingTimer);clearTimeout(c.transcribeTimer);c.abort.abort();c.viewer?.remove();c.dc?.close();c.pc?.close();c.stream?.getTracks().forEach(t=>t.stop());c.audio?.remove();}
     g('#zwVoice').classList.remove('on','compact');g('#zwVmute').classList.remove('on');pose('wait');if(msg)add(msg,'sys');
   }
   g('#zwVsee').onclick=compactVoice;
   g('#zwCall').onclick=async()=>{
     if(call){g('#zwVoice').classList.toggle('compact');return;}stopSpeech();
-    const c={abort:new AbortController(),secs:0,calls:new Set(),known:new Set(),filters:voiceFilters(),pending:0,generating:false,needsResponse:false,intro:true,muted:false,manualTurns:false,greetingSent:false};
+    const c={abort:new AbortController(),secs:0,calls:new Set(),known:new Set(),filters:voiceFilters(),pending:0,generating:false,needsResponse:false,intro:true,muted:false,manualTurns:false,greetingSent:false,channelReady:false,audioAttached:false,playbackReady:false,greetingStarted:false,greetingStopped:false,audioPlaying:false,contextQueue:[],spokenItems:new Set(),seenTranscripts:new Set()};
     call=c;g('#zwVoice').classList.remove('compact');g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / 05:00';
     c.timeout=setTimeout(()=>{if(call===c)endCall('No pude conectar la llamada. Inténtalo nuevamente.');},35000);
     try{
       c.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
       if(call!==c){c.stream.getTracks().forEach(t=>t.stop());return;}
-      c.pc=new RTCPeerConnection();c.audio=document.createElement('audio');c.audio.autoplay=true;document.body.append(c.audio);
-      c.pc.ontrack=e=>{if(call!==c)return;c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audio.play().catch(()=>{if(call===c)endCall('El navegador bloqueó la reproducción de audio.');});};
+      c.pc=new RTCPeerConnection();c.audio=document.createElement('audio');c.audio.autoplay=true;c.audio.setAttribute('playsinline','');c.audio.muted=false;document.body.append(c.audio);
+      c.pc.ontrack=e=>{
+        if(call!==c)return;c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audioAttached=true;
+        c.audio.play().then(()=>{if(call===c){c.playbackReady=true;finishGreeting(c);}}).catch(()=>{if(call===c)endCall('El navegador bloqueó la reproducción de audio. Vuelve a iniciar la llamada.');});
+        sendGreeting(c);
+      };
       c.pc.onconnectionstatechange=()=>{if(call===c&&c.pc.connectionState==='failed')endCall('Se perdió la conexión de voz.');};
       syncCallMic(c); // Keep the mic quiet while Zumi delivers the opening line.
       c.stream.getTracks().forEach(t=>c.pc.addTrack(t,c.stream));
       const dc=c.dc=c.pc.createDataChannel('oai-events');
       dc.onopen=()=>{
-        if(call!==c)return;clearTimeout(c.timeout);
-        // Explicitly control the next turn: silence is never a user request.
-        voiceSend(c,{type:'session.update',session:{type:'realtime',audio:{input:{turn_detection:{type:'server_vad',threshold:0.65,silence_duration_ms:700,create_response:false,interrupt_response:true}}}}});
-        // Older session implementations can fall back to the original VAD behavior.
-        c.configTimer=setTimeout(()=>sendGreeting(c),1800);
+        if(call!==c)return;clearTimeout(c.timeout);c.channelReady=true;
+        // The server starts with manual VAD. Confirm it before opening the mic.
+        if(!c.manualTurns)voiceSend(c,{type:'session.update',session:{type:'realtime',audio:{input:{turn_detection:{type:'server_vad',threshold:0.60,prefix_padding_ms:300,silence_duration_ms:800,create_response:false,interrupt_response:true}}}}});
+        c.configTimer=setTimeout(()=>{if(call===c&&!c.greetingSent)endCall('No pude preparar el audio de la llamada. Inténtalo nuevamente.');},12000);
+        sendGreeting(c);
         c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);
         void ensureCatalog().then(()=>{
           if(call!==c)return;
           const recent=(S.last||[]).map(byId).filter(Boolean).slice(0,3);recent.forEach(x=>c.known.add(x.id));
           const selected=byId(pagePropertyId()||S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
           const context='Contexto guardado, no es una solicitud nueva: '+JSON.stringify({seccion:section,filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha:selected?voiceRow(selected):null,conversacion:(S.hist||[]).slice(-8)})+'. Después del saludo espera una intervención real del cliente. Nunca expliques limitaciones del catálogo sin que el cliente haya solicitado buscar. Para buscar usa buscar_propiedades y sus resultados verificados. Si cambia de comuna o hace una nueva búsqueda con comuna y precio, elimina los dormitorios anteriores salvo que pida conservarlos. No apliques requisitos no pedidos. Si dice propiedad o inmueble no es un tipo. '+VOICE_STYLE;
-          voiceContext(c,context);
+          queueVoiceContext(c,context);
         });
         void knowledgeReady.then(k=>{
           if(call!==c||!k)return;
           const focus=sectionFocus();
           const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones,tipologias:x.tipologias,reserva:x.reserva}));
           const data={seccion:section,parcelas:k.parcelas,proyectos:projectSummaries,proyectoEnPantalla:(k.proyectos||[]).find(x=>x.id===focus)||null,servicios:k.servicios};
-          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Para cotizar un proyecto, solo cuando el cliente lo solicite, usa mostrar_seccion con seccion proyectos, accion formulario e ids con el slug exacto del proyecto; muestra un botón que abre el cotizador web completo fuera del chat. No pidas datos de cotización en la conversación ni digas que se abrió un formulario dentro del chat. Prioriza el proyecto en pantalla. Puedes asesorar sobre todos los servicios aunque el cliente esté en otra sección. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Para obtener detalles completos de cualquier otro proyecto llama mostrar_seccion con accion listar e ids exactos antes de responder. Si falta un dato ofrece consultar al equipo.');
+          queueVoiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Para cotizar un proyecto, solo cuando el cliente lo solicite, usa mostrar_seccion con seccion proyectos, accion formulario e ids con el slug exacto del proyecto; muestra un botón que abre el cotizador web completo fuera del chat. No pidas datos de cotización en la conversación ni digas que se abrió un formulario dentro del chat. Prioriza el proyecto en pantalla. Puedes asesorar sobre todos los servicios aunque el cliente esté en otra sección. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Para obtener detalles completos de cualquier otro proyecto llama mostrar_seccion con accion listar e ids exactos antes de responder. Si falta un dato ofrece consultar al equipo.');
         });
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
-        if(j.type==='session.updated'){
+        if(j.type==='session.created'||j.type==='session.updated'){
           const vad=j.session?.audio?.input?.turn_detection;
           if(vad?.create_response===false){c.manualTurns=true;sendGreeting(c);}
         }
-        if(j.type==='input_audio_buffer.speech_started'&&!c.intro){c.lastUser='';c.transcriptionPending=true;}
-        if(j.type==='conversation.item.input_audio_transcription.failed'){c.transcriptionPending=false;c.transcriptReady?.();if(!c.intro&&c.manualTurns)add('No alcancé a entenderte. ¿Puedes repetirlo?','sys');}
+        if(j.type==='input_audio_buffer.speech_started'&&!c.intro&&!c.muted){
+          c.lastUser='';c.transcriptionPending=true;
+          if(j.item_id)c.spokenItems.add(j.item_id);voiceStatus(c,'hearing');
+        }
+        if(j.type==='input_audio_buffer.speech_stopped'&&!c.intro&&c.transcriptionPending){
+          voiceStatus(c,'thinking');clearTimeout(c.transcribeTimer);
+          c.transcribeTimer=setTimeout(()=>{if(call===c&&c.transcriptionPending){c.transcriptionPending=false;c.transcriptReady?.();voiceStatus(c,'unclear');}},8500);
+        }
+        if(j.type==='conversation.item.input_audio_transcription.failed'){
+          clearTimeout(c.transcribeTimer);c.transcriptionPending=false;c.transcriptReady?.();
+          if(!c.intro&&!c.generating&&!c.audioPlaying)voiceStatus(c,'unclear');
+        }
         if(j.type==='conversation.item.input_audio_transcription.completed'){
-          c.transcriptionPending=false;c.transcriptReady?.();
+          const heard=j.item_id?c.spokenItems.has(j.item_id):!!c.transcriptionPending;
+          if(j.item_id&&c.seenTranscripts.has(j.item_id))return;
+          if(j.item_id)c.seenTranscripts.add(j.item_id);
+          clearTimeout(c.transcribeTimer);c.transcriptionPending=false;c.transcriptReady?.();
           const words=String(j.transcript||'').trim();
-          if(!c.intro&&/[\p{L}\p{N}]/u.test(words)){
-            c.lastUser=words;add(esc(words),'me');voiceHistory('user',words);
-            if(c.manualTurns){c.needsResponse=true;continueVoice(c);}
-          }
+          if(!c.intro&&heard&&/[\p{L}\p{N}]/u.test(words)){
+            add(esc(words),'me');voiceHistory('user',words);acceptVoiceTurn(c,words);
+          }else if(!c.intro&&!c.generating&&!c.audioPlaying)voiceStatus(c,'listening');
         }
         if(j.type==='response.output_audio_transcript.done'&&j.transcript){add(esc(j.transcript),'bot');voiceHistory('assistant',j.transcript);}
-        if(j.type==='response.created'){c.generating=true;if(c.intro&&c.greetingSent)c.greetingResponseId=j.response?.id;pose('speak');}
-        if(j.type==='response.done'){c.generating=false;if(c.intro){if(j.response?.status==='failed'||j.response?.status==='cancelled')finishGreeting(c);}else{pose('listen');continueVoice(c);}}
-        if(j.type==='output_audio_buffer.stopped'&&c.intro&&(!c.greetingResponseId||j.response_id===c.greetingResponseId))finishGreeting(c);
+        if(j.type==='response.created'){
+          c.generating=true;
+          if(c.intro&&c.greetingSent)c.greetingResponseId=j.response?.id;
+          if(!c.intro)voiceStatus(c,'thinking');
+        }
+        if(j.type==='output_audio_buffer.started'){
+          c.audioPlaying=true;
+          if(c.intro&&c.greetingSent&&(!c.greetingResponseId||j.response_id===c.greetingResponseId)){c.greetingStarted=true;voiceStatus(c,'greeting');}
+          else if(!c.intro)voiceStatus(c,'speaking');
+        }
+        if(j.type==='response.done'){
+          c.generating=false;
+          if(c.intro){
+            if(['failed','cancelled','incomplete'].includes(j.response?.status))endCall('No pude completar el saludo. Intenta nuevamente.');
+          }else{
+            if(j.response?.status==='failed'&&!c.audioPlaying){add('No pude reproducir esa respuesta. ¿Puedes repetir la pregunta?','sys');}
+            if(!c.audioPlaying&&!c.pending&&!c.transcriptionPending)voiceStatus(c,'listening');
+            continueVoice(c);
+          }
+        }
+        if(j.type==='output_audio_buffer.stopped'){
+          c.audioPlaying=false;
+          if(c.intro&&c.greetingStarted&&(!c.greetingResponseId||j.response_id===c.greetingResponseId)){c.greetingStopped=true;finishGreeting(c);}
+          else if(!c.intro){if(!c.generating&&!c.pending&&!c.transcriptionPending)voiceStatus(c,'listening');continueVoice(c);}
+        }
+        if(j.type==='output_audio_buffer.cleared'&&!c.intro){c.audioPlaying=false;continueVoice(c);}
         if(j.type==='response.function_call_arguments.done'&&!c.intro)void runVoiceTool(c,j);
-        if(j.type==='error'){c.generating=false;if(c.intro&&!c.greetingSent)sendGreeting(c);else if(c.intro)finishGreeting(c);else continueVoice(c);}
+        if(j.type==='error'){
+          c.generating=false;
+          if(c.intro){endCall('No pude iniciar correctamente el audio. Intenta llamar nuevamente.');}
+          else{if(!c.audioPlaying&&!c.pending)voiceStatus(c,'listening');continueVoice(c);}
+        }
       }catch{}};
       dc.onclose=()=>{if(call===c)endCall('Se cerró la conexión de voz.');};
       const offer=await c.pc.createOffer();await c.pc.setLocalDescription(offer);
@@ -1597,7 +1692,7 @@
       if(!r.ok)throw Error();if(call===c)await c.pc.setRemoteDescription({type:'answer',sdp:await r.text()});
     }catch{if(call===c)endCall('No pude iniciar la llamada. Puedes usar el chat de texto.');}
   };
-  g('#zwVend').onclick=()=>endCall('Llamada finalizada');g('#zwVtxt').onclick=()=>endCall('Seguimos por texto');g('#zwVmute').onclick=()=>{if(call){call.muted=!call.muted;syncCallMic(call);}};
+  g('#zwVend').onclick=()=>endCall('Llamada finalizada');g('#zwVtxt').onclick=()=>endCall('Seguimos por texto');g('#zwVmute').onclick=()=>{if(call){call.muted=!call.muted;syncCallMic(call);if(!call.intro&&!call.generating&&!call.audioPlaying)voiceStatus(call,'listening');}};
   window.addEventListener('pagehide',()=>{close();});
   window.addEventListener('pageshow',e=>{if(e.persisted){setPanelOpen(false);save();}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('open'))close();});
