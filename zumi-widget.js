@@ -237,7 +237,7 @@
     if(/^(?:se corredor|quiero ser corredor)$/.test(q))return 'corredor';
     return '';
   }
-  function switchSection(next){if(!next||next===section)return false;section=next;S.flow=null;S.await=null;S.sectionHist=[];if(next==='ventas')S.voiceOperation='buy';if(next==='arriendos')S.voiceOperation='rent';save();return true;}
+  function switchSection(next){if(!next||next===section)return false;section=next;S.flow=null;S.await=null;S.sectionHist=[];if(S.open)metricOpen();if(next==='ventas')S.voiceOperation='buy';if(next==='arriendos')S.voiceOperation='rent';save();return true;}
   const OWNER_PLANS=['Plan Prioridad','Plan Básico','No estoy seguro','Quiero asesoría'];
   const OWNER_TYPES=['Departamento','Casa','Estudio','Oficina','Parcela','Otro'];
   function ownerPlan(value){const q=norm(value);return /prioridad/.test(q)?OWNER_PLANS[0]:/basico/.test(q)?OWNER_PLANS[1]:/asesor/.test(q)?OWNER_PLANS[3]:/seguro/.test(q)?OWNER_PLANS[2]:'';}
@@ -363,9 +363,11 @@
   }
   async function submitRentalForm(form){
     if(form.dataset.submitting==='1')return;
+    const current=Number(form.dataset.step)||0;
+    if(current<3){const err=validateRentalStep(form,current);if(err)form.querySelector('.zw-owner-status').textContent=err;else rentalStep(form,current+1);return;}
     const status=form.querySelector('.zw-owner-status'),button=form.querySelector('[type=submit]');
     for(let i=0;i<4;i++){
-      // Reveal a bad step before calling native validity feedback.
+      // Reveal and validate each step; a failed one remains on screen.
       rentalStep(form,i);const err=validateRentalStep(form,i);if(err){status.textContent=err;return;}
     }
     let data;try{data=rentalPayload(rentalValues(form));}catch(e){status.textContent=e.message;return;}
@@ -1247,7 +1249,7 @@
       chips([{t:'Reintentar',q:v},{t:'Hablar con un ejecutivo',act:'human'}]);pose('wait');save();}
   }
   async function ask(t){const v=String(t).trim();if(!v)return;
-    metric('message');if(rentalIntent(v)){add(esc(v),'me');return showRentalForm();}
+    if(!call||rentalIntent(v))metric('message');if(rentalIntent(v)){add(esc(v),'me');return showRentalForm();}
     const pId=pagePropertyId(),lastBot=Array.from(msgs.querySelectorAll('.zw-m.bot')).pop()?.textContent||'';
     if(!call&&(section==='proyectos'||sectionFromPath(location.pathname,location.search)==='proyectos'||quoteProjectId(v))&&quoteIntent(v)){S.flow=null;S.await=null;add(esc(v),'me');return showProjectQuote(quoteProjectId(v,sectionFocus()));}
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
@@ -1855,7 +1857,7 @@
     msgs.querySelectorAll('.zw-cards').forEach(el=>{el.hidden=true;el.setAttribute('data-restore','1');});
     msgs.querySelectorAll('.zw-cmp').forEach(el=>el.remove());
     msgs.querySelectorAll('form[data-visit-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button').disabled=false;});
-    msgs.querySelectorAll('form[data-rental-form]').forEach(f=>{delete f.dataset.submitting;f.reset();rentalStep(f,0);f.querySelector('[type=submit]').disabled=false;f.querySelector('[type=submit]').textContent='Enviar solicitud de arriendo';});
+    msgs.querySelectorAll('form[data-rental-form]').forEach(f=>{delete f.dataset.submitting;f.reset();f.querySelector('[data-rental-complement]').hidden=true;f.querySelectorAll('[data-commune]').forEach(el=>el.hidden=false);rentalStep(f,0);f.querySelector('[type=submit]').disabled=false;f.querySelector('[type=submit]').textContent='Enviar solicitud de arriendo';});
     msgs.querySelectorAll('form[data-owner-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button[type=submit]').disabled=false;f.querySelector('button[type=submit]').textContent='Enviar e inscribir mi propiedad';f.querySelector('.zw-owner-status').textContent='';});
   }
   setPanelOpen(false);save();

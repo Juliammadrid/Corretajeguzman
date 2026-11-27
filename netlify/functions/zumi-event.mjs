@@ -13,7 +13,8 @@ export default async function handler(req){
  try{
   const raw=await req.text();if(raw.length>2048)return new Response(null,{status:413});
   const event=clean(JSON.parse(raw));if(!event)return new Response(null,{status:400});
-  const result=await fetch('https://aoemvstjbwvkoqjoirsx.supabase.co/rest/v1/zumi_events',{method:'POST',headers:{apikey:'sb_publishable_W0jdkGh4ZfYsd-5C5WcHpA_vDDMEw2u','Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(event),signal:AbortSignal.timeout(4000)});
+  const token=process.env.ZUMI_BRIDGE_TOKEN;if(!token)return new Response(null,{status:503});
+  const result=await fetch('https://aoemvstjbwvkoqjoirsx.supabase.co/functions/v1/zumi-asistente',{method:'POST',headers:{'x-zumi-bridge':token,'Content-Type':'application/vnd.cg.zumi-event+json'},body:JSON.stringify(event),signal:AbortSignal.timeout(8000)});
   return new Response(null,{status:result.ok?204:502,headers:{'cache-control':'no-store'}});
  }catch{return new Response(null,{status:400});}
 }
