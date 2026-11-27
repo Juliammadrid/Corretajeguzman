@@ -101,7 +101,23 @@
     try{analyticsSession=sessionStorage.getItem('cg-zumi-analytics-session')||crypto.randomUUID();sessionStorage.setItem('cg-zumi-analytics-session',analyticsSession);}catch{analyticsSession=globalThis.crypto?.randomUUID?.()||'';}
     return analyticsSession;
   }
+  let liveControl={"greeting":"Hola, ¿cómo estás?","tone":"natural","voice":"marin","max_call_seconds":300,"calls_enabled":true,"analytics_enabled":true,"notes":{}}, controlAt=0,controlPending=null;
+  function refreshControl(){
+    if(controlPending)return controlPending;
+    if(Date.now()-controlAt<15000)return Promise.resolve(liveControl);
+    controlPending=fetch('/.netlify/functions/zumi-control',{cache:'no-cache',signal:AbortSignal.timeout(2500)}).then(r=>r.ok?r.json():null).then(c=>{
+      if(c&&typeof c.greeting==='string'&&[120,180,300,420,600].includes(c.max_call_seconds)){
+        liveControl={...liveControl,...c};controlAt=Date.now();
+        const b=document.getElementById('zwCall');if(b)b.title=liveControl.calls_enabled?'Conversar por voz':'Llamadas temporalmente pausadas';
+      }
+      return liveControl;
+    }).catch(()=>liveControl).finally(()=>{controlPending=null;});
+    return controlPending;
+  }
+  void refreshControl();
+
   function metric(event,value=null,commune=null,channel=null){
+    if(!liveControl.analytics_enabled)return;
     try{
       const id=analyticsId();if(!id)return;
       const payload={id:crypto.randomUUID(),session_id:id,event,section,channel:channel||(call?'voice':'text'),commune:canonicalCommune(commune),value:Number.isFinite(value)?Math.max(0,Math.min(300000,Math.round(value))):null};
@@ -1345,7 +1361,7 @@
   }
   function open(direct=false){
     if(homePage)homeMinimized=true;
-    setPanelOpen(true);metricOpen();
+    setPanelOpen(true);void refreshControl();metricOpen();
     pose('point',1800);chime();
     void restoreCards();
     const sectionKey=section+':'+sectionFocus()+(section==='proyectos'?':advisor-v3':'');
@@ -1565,7 +1581,7 @@
     });
   }
   const VOICE_GREETING='Hola, ¿cómo estás?';
-  function greetingLine(){return VOICE_GREETING;}
+  function greetingLine(c){return c?.settings?.greeting||liveControl.greeting||VOICE_GREETING;}
   function nextServiceQuestion(onProperty,domain){
     if(onProperty)return '¿Te gustaría conocer más sobre esta propiedad o coordinar una visita?';
     if(domain==='parcelas')return 'Cuéntame, ¿buscas una parcela para vivir o para invertir?';
@@ -1610,7 +1626,7 @@
     if(call!==c||c.greetingSent||!c.channelReady||!c.manualTurns||!c.audioAttached)return;
     clearTimeout(c.configTimer);
     // Explicit audio and an isolated input keep prior chat history out of the greeting.
-    const text=greetingLine();
+    const text=greetingLine(c);
     const sent=voiceSend(c,{type:'response.create',response:{conversation:'none',input:[],output_modalities:['audio'],tool_choice:'none',instructions:'Pronuncia solamente esta frase con tono cálido y chileno, sin añadir nada. No hagas otra pregunta, espera después: '+JSON.stringify(text)}});
     if(!sent)return;
     c.greetingSent=true;c.generating=true;voiceStatus(c,'connecting');
@@ -1715,10 +1731,12 @@
     g('#zwVoice').classList.remove('on','compact');g('#zwVmute').classList.remove('on');pose('wait');if(msg)add(msg,'sys');
   }
   g('#zwVsee').onclick=compactVoice;
+  function formatCallTime(seconds){return String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');}
   g('#zwCall').onclick=async()=>{
-    if(call){g('#zwVoice').classList.toggle('compact');return;}stopSpeech();
+    if(call){g('#zwVoice').classList.toggle('compact');return;}
+    await refreshControl();if(call)return;if(!liveControl.calls_enabled){add('Las llamadas están temporalmente pausadas. Podemos seguir conversando por texto.');return;}stopSpeech();
     const c={abort:new AbortController(),secs:0,calls:new Set(),known:new Set(),filters:voiceFilters(),pending:0,generating:false,needsResponse:false,intro:true,muted:false,manualTurns:false,greetingSent:false,channelReady:false,audioAttached:false,playbackReady:false,greetingStarted:false,greetingStopped:false,audioPlaying:false,contextQueue:[],spokenItems:new Set(),seenTranscripts:new Set()};
-    call=c;c.startedAt=performance.now();c.turn=0;metric('call_attempt',null,null,'voice');g('#zwVoice').classList.remove('compact');g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / 05:00';
+    call=c;c.settings={...liveControl};c.usageResponses=new Set();c.startedAt=performance.now();c.turn=0;metric('call_attempt',null,null,'voice');g('#zwVoice').classList.remove('compact');g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / '+formatCallTime(c.settings.max_call_seconds);
     c.timeout=setTimeout(()=>{if(call===c)endCall('No pude conectar la llamada. Inténtalo nuevamente.');},35000);
     try{
       c.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
@@ -1739,7 +1757,7 @@
         if(!c.manualTurns)voiceSend(c,{type:'session.update',session:{type:'realtime',audio:{input:{turn_detection:{type:'server_vad',threshold:0.60,prefix_padding_ms:300,silence_duration_ms:800,create_response:false,interrupt_response:true}}}}});
         c.configTimer=setTimeout(()=>{if(call===c&&!c.greetingSent)endCall('No pude preparar el audio de la llamada. Inténtalo nuevamente.');},12000);
         sendGreeting(c);
-        c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);
+        c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=formatCallTime(c.secs)+' / '+formatCallTime(c.settings.max_call_seconds);if(c.secs>=c.settings.max_call_seconds)endCall('Llamada finalizada');},1000);
         void ensureCatalog().then(()=>{
           if(call!==c)return;
           const recent=(S.last||[]).map(byId).filter(Boolean).slice(0,3);recent.forEach(x=>c.known.add(x.id));
@@ -1794,6 +1812,8 @@
           else if(!c.intro){if(c.latencyAt!=null){metric('voice_latency',performance.now()-c.latencyAt,null,'voice');c.latencyAt=null;}voiceStatus(c,'speaking');}
         }
         if(j.type==='response.done'){
+          const u=j.response?.usage,rid=j.response?.id;
+          if(u&&rid&&!c.usageResponses.has(rid)){c.usageResponses.add(rid);for(const [ev,v] of [['voice_input_audio',u.input_token_details?.audio_tokens],['voice_output_audio',u.output_token_details?.audio_tokens],['voice_input_text',u.input_token_details?.text_tokens],['voice_output_text',u.output_token_details?.text_tokens]])if(Number.isInteger(v)&&v>=0)metric(ev,v,null,'voice');}
           c.generating=false;
           if(c.intro){
             if(['failed','cancelled','incomplete'].includes(j.response?.status))endCall('No pude completar el saludo. Intenta nuevamente.');
