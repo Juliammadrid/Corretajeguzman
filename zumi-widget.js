@@ -109,15 +109,43 @@
   function sectionRows(kind=section){
     return kind==='parcelas'?PROJ.filter(x=>x.parcela).concat(V.filter(x=>norm(x.type)==='parcela')):kind==='proyectos'?PROJ.filter(x=>!x.parcela):[];
   }
-  function showProjectQuote(id){
-    if(!PROJ.some(p=>!p.parcela&&p.id===id))return;
-    const existing=msgs.querySelector('iframe[data-quote="'+id+'"]');
-    if(existing){scrollMessageIntoView(existing,'start');return;}
-    add('Elige tu tipología y completa tus datos aquí. Podrás revisar la simulación y enviar tu solicitud antes de continuar por WhatsApp.');
-    block('<iframe title="Cotización del proyecto" data-quote="'+esc(id)+'" src="'+esc(projectQuote(id)+'&zumi=1')+'" style="width:100%;height:480px;border:1px solid #e5dff1;border-radius:12px;background:white"></iframe>');
-    chips([{t:'Abrir cotizador completo',href:projectQuote(id)}]);
+  // Quotes are completed only on the full web page, never inside an iframe.
+  function projectQuote(id){return '/cotizacion.html?slug='+encodeURIComponent(id)+'&origen=zumi';}
+  function quoteIntent(v){
+    const t=norm(v).trim().replace(/^[¿¡]+/,'');
+    if(/\b(?:no quiero|no deseo|no voy a|sin necesidad de)\s+cotiz/.test(t))return false;
+    if(/^(?:como|que|cuanto|cual|donde)\b/.test(t))return false;
+    return /\b(?:cotizar|cotizame|cotizalo|cotizemos|cotizaremos|cotizemos|cotiza)\b/.test(t)||/\b(?:quiero|necesito|deseo|solicitar|enviar|hacer|abrir|ir a|continuar con)\b.{0,40}\bcotizacion\b/.test(t);
   }
-  function projectQuote(id){return '/cotizacion.html?slug='+encodeURIComponent(id);}
+  function quoteProjectId(v,focus=''){
+    const text=' '+norm(v).replace(/[^a-z0-9]+/g,' ')+' ';
+    const names=PROJ.filter(p=>!p.parcela).map(p=>({id:p.id,name:norm(p.t).replace(/[^a-z0-9]+/g,' ').trim(),slug:norm(p.id).replace(/[^a-z0-9]+/g,' ').trim()}));
+    const matches=names.filter(p=>text.includes(' '+p.name+' ')||text.includes(' '+p.slug+' '));
+    if(matches.length===1)return matches[0].id;
+    if(matches.length>1)return '';
+    return names.some(p=>p.id===focus)?focus:'';
+  }
+  function showProjectQuote(id,offerOnly=false){
+    const project=PROJ.find(p=>!p.parcela&&p.id===id);
+    if(!project){
+      add('¿Qué proyecto te gustaría cotizar? Elige uno de los proyectos disponibles.');
+      chips(PROJ.filter(p=>!p.parcela).map(p=>({t:p.t,act:'projectquote',id:p.id})));
+      return false;
+    }
+    const url=projectQuote(project.id);
+    if(offerOnly){
+      add('Te dejo el acceso al cotizador de <b>'+esc(project.t)+'</b> para que puedas completarlo cómodamente en la página completa.');
+      chips([{t:'Cotizar '+project.t,act:'projectquote',id:project.id,cls:'pri'}]);
+      return true;
+    }
+    S.flow=null;S.await=null;
+    add('Vamos al cotizador de <b>'+esc(project.t)+'</b>. Ahí puedes elegir tu tipología y completar tus datos.');
+    // Preserve the advisory conversation and close the overlay before navigating.
+    close();
+    if(location.pathname==='/cotizacion.html'&&new URLSearchParams(location.search).get('slug')===project.id)return true;
+    location.assign(url);
+    return true;
+  }
   const PROJECT_TOPICS=[['Departamentos y precios','precios'],['Tipologías y planos','planos'],['Pie y formas de pago','financiamiento'],['Simular mi dividendo','dividendo'],['Fecha de entrega','entrega'],['Ubicación y conectividad','ubicacion'],['Equipamiento y áreas comunes','equipamiento'],['Comprar para invertir','inversion']];
   function projectActions(id=sectionFocus()){
     const p=PROJ.find(x=>!x.parcela&&x.id===id);if(!p)return;
@@ -250,7 +278,7 @@
       const intent=ownerIntent(v);if(intent==='plans')return showOwnerPlans();if(intent==='form')return showOwnerForm(v);
     }
     if(/^(?:solicitar administracion|quiero postular como corredor|completar solicitud de arriendo|abrir simulador)$/.test(q))return bot('Te dejo el acceso directo para que puedas continuar.',sectionFormChips);
-    if(section==='proyectos'&&sectionFocus()&&/cotiz/.test(q))return showProjectQuote(sectionFocus());
+    if(section==='proyectos'&&quoteIntent(v))return showProjectQuote(quoteProjectId(v,sectionFocus()));
     if(/^(?:coordinar visita|quiero coordinar una visita a una parcela|quiero cotizar un proyecto|hablar con un ejecutivo)$/.test(q))return bot('Te conecto con nuestro equipo para confirmar los detalles.',sectionContact);
     return askAI(v,section);
   }
@@ -1101,7 +1129,7 @@
   }
   async function ask(t){const v=String(t).trim();if(!v)return;
     const pId=pagePropertyId(),lastBot=Array.from(msgs.querySelectorAll('.zw-m.bot')).pop()?.textContent||'';
-    if(!call&&sectionFromPath(location.pathname,location.search)==='proyectos'&&sectionFocus()&&/\bcotiz\w*/.test(norm(v))){S.flow=null;S.await=null;add(esc(v),'me');return showProjectQuote(sectionFocus());}
+    if(!call&&(section==='proyectos'||sectionFromPath(location.pathname,location.search)==='proyectos'||quoteProjectId(v))&&quoteIntent(v)){S.flow=null;S.await=null;add(esc(v),'me');return showProjectQuote(quoteProjectId(v,sectionFocus()));}
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
@@ -1471,7 +1499,7 @@
         if(!SECTION_UI[requested]){out={error:'seccion_desconocida'};}
         else{
           switchSection(requested);compactVoice();
-          if(requested==='proyectos'&&a.accion==='formulario'){const id=(Array.isArray(a.ids)?a.ids:[]).find(id=>PROJ.some(p=>!p.parcela&&p.id===id))||sectionFocus();if(id){showProjectQuote(id);out={mostrado:true,nota:'Se abrió el formulario de cotización dentro del chat; el cliente debe completarlo.'};}else{out={error:'proyecto_no_identificado'};}}
+          if(requested==='proyectos'&&a.accion==='formulario'){const id=(Array.isArray(a.ids)?a.ids:[]).find(id=>PROJ.some(p=>!p.parcela&&p.id===id))||sectionFocus();if(id){showProjectQuote(id,true);out={mostrado:true,nota:'Se mostró un botón para abrir el cotizador completo de ese proyecto en la web. Pide al cliente que lo presione cuando esté listo. Al navegar termina la llamada; no se abrió un formulario en el chat ni se envió ninguna cotización.'};}else{showProjectQuote('',true);out={error:'proyecto_no_identificado',nota:'Se mostraron los proyectos para elegir cuál cotizar.'};}}
           else if(a.accion==='contacto'){sectionContact();out={mostrado:true,nota:'Se mostró el contacto, no se ha confirmado ninguna visita.'};}
           else if(a.accion==='formulario'){sectionFormChips();out={mostrado:true,nota:section==='propietario'?'Se abrió el formulario dentro del chat. El cliente debe completarlo y enviarlo.':'Se mostró el acceso al formulario.'};}
           else if(requested==='propietario'){showOwnerPlans();out={mostrado:true,nota:'Comparativa visual de planes mostrada con botones para inscribir la propiedad.'};}
@@ -1538,7 +1566,7 @@
           const focus=sectionFocus();
           const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones,tipologias:x.tipologias,reserva:x.reserva}));
           const data={seccion:section,parcelas:k.parcelas,proyectos:projectSummaries,proyectoEnPantalla:(k.proyectos||[]).find(x=>x.id===focus)||null,servicios:k.servicios};
-          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Para cotizar un proyecto usa mostrar_seccion con seccion proyectos, accion formulario e ids con el slug exacto del proyecto. Prioriza el proyecto en pantalla. Puedes asesorar sobre todos los servicios aunque el cliente esté en otra sección. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Para obtener detalles completos de cualquier otro proyecto llama mostrar_seccion con accion listar e ids exactos antes de responder. Si falta un dato ofrece consultar al equipo.');
+          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Para cotizar un proyecto, solo cuando el cliente lo solicite, usa mostrar_seccion con seccion proyectos, accion formulario e ids con el slug exacto del proyecto; muestra un botón que abre el cotizador web completo fuera del chat. No pidas datos de cotización en la conversación ni digas que se abrió un formulario dentro del chat. Prioriza el proyecto en pantalla. Puedes asesorar sobre todos los servicios aunque el cliente esté en otra sección. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Para obtener detalles completos de cualquier otro proyecto llama mostrar_seccion con accion listar e ids exactos antes de responder. Si falta un dato ofrece consultar al equipo.');
         });
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
@@ -1591,6 +1619,15 @@
   if(S.html){
     msgs.innerHTML=S.html.split('/assets/zumi-planes-propietarios.svg').join('/assets/planes-propietarios-original.jpg');
     msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());
+    msgs.querySelectorAll('iframe[data-quote]').forEach(frame=>{
+      const id=frame.dataset.quote,project=PROJ.find(p=>!p.parcela&&p.id===id);
+      const wrapper=frame.parentElement;
+      if(project)wrapper.innerHTML='<div class="zw-chips"><button class="pri" data-act="projectquote" data-id="'+esc(id)+'">Cotizar '+esc(project.t)+'</button></div>';
+      else wrapper.remove();
+    });
+    msgs.querySelectorAll('a[href*="cotizacion.html"]').forEach(a=>{
+      try{const u=new URL(a.getAttribute('href'),location.origin),id=u.searchParams.get('slug');if(u.origin===location.origin&&PROJ.some(p=>!p.parcela&&p.id===id)){a.href=projectQuote(id);a.dataset.act='projectquote';a.dataset.id=id;}}catch{}
+    });
     // Rebuild saved cards from the current public catalog before showing them.
     msgs.querySelectorAll('.zw-cards').forEach(el=>{el.hidden=true;el.setAttribute('data-restore','1');});
     msgs.querySelectorAll('.zw-cmp').forEach(el=>el.remove());

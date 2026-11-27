@@ -213,7 +213,7 @@
       tipologia:t?(t.nombre+(t.planta?' — Planta '+t.planta:'')):'Por definir',
       precio:pUF?String(Math.round(pUF)):'',
       destino:destino==='inversion'?'inversion':'primera',
-      origen:embedded?'Zumi - Cotizador':'Web - Cotizador', fecha_envio:new Date().toISOString(), requestId
+      origen:(embedded||new URLSearchParams(location.search).get('origen')==='zumi')?'Zumi - Cotizador':'Web - Cotizador', fecha_envio:new Date().toISOString(), requestId
     };
     enviando=true;
     const btn=$('#czSubmit'), btnHtml=btn.innerHTML;
