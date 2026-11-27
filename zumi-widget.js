@@ -123,6 +123,7 @@
     chips([{t:'Contactar por WhatsApp',href:'/.netlify/functions/property-whatsapp?text='+encodeURIComponent(message),blank:true,cls:'wa'},{t:'Ver sección',href:ui.url}]);
   }
   function sectionFormChips(){
+    if(section==='propietario')return showOwnerForm();
     const ui=SECTION_UI[section];if(ui)chips([{t:section==='simulador'?'Abrir simulador':section==='corredor'?'Ir a postulación':section==='propietario'?'Publicar propiedad':section==='admin'?'Solicitar administración':'Completar solicitud',href:ui.url,cls:'pri'}]);
   }
   function explicitSectionSwitch(t){
@@ -138,13 +139,74 @@
     return '';
   }
   function switchSection(next){if(!next||next===section)return false;section=next;S.flow=null;S.await=null;S.sectionHist=[];if(next==='ventas')S.voiceOperation='buy';if(next==='arriendos')S.voiceOperation='rent';save();return true;}
+  const OWNER_PLANS=['Plan Prioridad','Plan Básico','No estoy seguro','Quiero asesoría'];
+  const OWNER_TYPES=['Departamento','Casa','Estudio','Oficina','Parcela','Otro'];
+  function ownerPlan(value){const q=norm(value);return /prioridad/.test(q)?OWNER_PLANS[0]:/basico/.test(q)?OWNER_PLANS[1]:/asesor/.test(q)?OWNER_PLANS[3]:/seguro/.test(q)?OWNER_PLANS[2]:'';}
+  function ownerIntent(value){const q=norm(value).trim();
+    if(/^(?:comparar planes|conocer los planes|que plan me conviene|ver planes|diferencia entre (?:los )?planes)/.test(q))return 'plans';
+    if(/^(?:iniciar publicacion|inscribir mi propiedad|publicar mi propiedad|completar formulario|quiero (?:inscribir|publicar|avanzar)|avanzar|quiero (?:el )?plan (?:prioridad|basico)|plan (?:prioridad|basico))/.test(q))return 'form';
+    return '';
+  }
+  function showOwnerPlans(){
+    switchSection('propietario');S.flow=null;S.await=null;
+    if(call){call.viewer?.close();compactVoice();}
+    add('Estos son nuestros dos planes para arrendar tu propiedad. Elige el que más te acomode y te ayudo a inscribirla.');
+    block('<div class="zw-owner-plans"><a href="/assets/zumi-planes-propietarios.svg" target="_blank" rel="noopener" aria-label="Ampliar comparación de planes"><img src="/assets/zumi-planes-propietarios.svg" alt="Plan Prioridad: 50% de un mes de arriendo, solo al concretarlo. Plan Básico: 0% de comisión para el propietario."></a></div>');
+    chips([{t:'Quiero Plan Prioridad',act:'ownerform',id:'prioridad',cls:'pri'},{t:'Quiero Plan Básico',act:'ownerform',id:'basico'},{t:'Inscribir mi propiedad',act:'ownerform'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);
+  }
+  function showOwnerForm(preferred=''){
+    switchSection('propietario');S.flow=null;S.await=null;
+    if(call){call.viewer?.close();compactVoice();}
+    const plan=ownerPlan(preferred);
+    const current=msgs.querySelector('form[data-owner-form]');
+    if(current){if(plan){for(const el of current.querySelectorAll('input[name=plan]'))el.checked=el.value===plan;}current.scrollIntoView({block:'start'});return;}
+    const opts=(list,optional=false)=>'<option value="">'+(optional?'Selecciona si corresponde…':'Selecciona…')+'</option>'+list.map(x=>'<option value="'+esc(x[1])+'">'+esc(x[0])+'</option>').join('');
+    const plans=OWNER_PLANS.map((name,i)=>'<label class="zw-owner-plan"><input type="radio" name="plan" value="'+esc(name)+'"'+(i===0?' required':'')+(name===plan?' checked':'')+'> '+esc(name)+'</label>').join('');
+    add('Perfecto. Completa tus datos y los de tu propiedad aquí mismo. Nuestro equipo recibirá tu solicitud.');
+    block('<form class="zw-owner-form" data-owner-form><strong>Inscribir mi propiedad</strong><small>Completa el formulario de Corretaje Guzmán. Los campos marcados como opcionales puedes dejarlos en blanco.</small><h4>Tus datos</h4><label>Nombre y apellido<input name="nombre" autocomplete="name" maxlength="100" required placeholder="Ej: Patricio Soto"></label><label>WhatsApp (+56)<input type="tel" name="whatsapp" autocomplete="tel" maxlength="20" required placeholder="9 1234 5678"></label><label>Correo electrónico<input type="email" name="email" autocomplete="email" maxlength="150" required placeholder="tucorreo@ejemplo.cl"></label><h4>Tu propiedad</h4><label>Tipo de propiedad<select name="tipo" required>'+opts(OWNER_TYPES.map(v=>[v,v]))+'</select></label><label>Comuna<input name="comuna" maxlength="100" required placeholder="Ej: Providencia"></label><label>Dirección (opcional)<input name="direccion" maxlength="200" placeholder="Calle y número"></label><div class="zw-owner-row"><label>Dormitorios<select name="dormitorios">'+opts([['Estudio','0'],['1','1'],['2','2'],['3','3'],['4 o más','4']],true)+'</select></label><label>Baños<select name="banos">'+opts([['1','1'],['2','2'],['3 o más','3']],true)+'</select></label></div><label>Valor de arriendo estimado (opcional)<input name="valor" inputmode="numeric" maxlength="14" placeholder="$450.000"></label><h4>Plan de interés</h4><div class="zw-owner-row">'+plans+'</div><label class="zw-owner-consent"><input type="checkbox" name="acepta" required> Autorizo a Corretaje Guzmán a contactarme para gestionar el arriendo de mi propiedad.</label><small>Consulta nuestra <a href="/politica-de-privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</small><button type="submit">Enviar e inscribir mi propiedad</button><div class="zw-owner-status" role="alert"></div></form>');
+    const form=msgs.querySelector('form[data-owner-form]');requestAnimationFrame(()=>form?.scrollIntoView({block:'start',behavior:'smooth'}));
+  }
+  function ownerPhone(value){
+    let d=String(value||'').replace(/\D/g,'');if(d.startsWith('56')&&d.length===11)d=d.slice(2);
+    return d.length===9?'+56'+d:'';
+  }
+  function ownerPayload(values){
+    const phone=ownerPhone(values.whatsapp);
+    const nombre=String(values.nombre||'').trim(),email=String(values.email||'').trim(),comuna=String(values.comuna||'').trim();
+    if(!nombre||!phone||!/^\S+@\S+\.\S+$/.test(email)||!comuna||!OWNER_TYPES.includes(values.tipo)||!OWNER_PLANS.includes(values.plan)||!values.acepta)throw Error('Revisa tus datos y acepta la autorización de contacto.');
+    const result={nombre,whatsapp:phone,email,tipo:values.tipo,comuna,direccion:String(values.direccion||'').trim(),plan:values.plan,acepta:true,origen:'Zumi · Propietarios',etapa:'Formulario completo',fecha_envio:new Date().toISOString()};
+    for(const k of ['dormitorios','banos'])if(values[k]!==''&&values[k]!=null)result[k]=Number(values[k]);
+    const v=String(values.valor||'').replace(/\D/g,'');if(v)result.valor=Number(v);
+    return result;
+  }
+  async function submitOwnerForm(form){
+    if(!form.reportValidity()||form.dataset.submitting==='1')return;
+    const status=form.querySelector('.zw-owner-status'),button=form.querySelector('button[type=submit]');
+    let payload;
+    try{payload=ownerPayload(Object.fromEntries(new FormData(form)));}catch(e){status.textContent=e.message;return;}
+    status.textContent='';form.dataset.submitting='1';button.disabled=true;button.textContent='Enviando…';
+    try{
+      const r=await fetch('/api/lead-propietario',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:AbortSignal.timeout(18000)});
+      const j=await r.json().catch(()=>null);
+      if(!r.ok||!j?.ok||!/^rec[A-Za-z0-9]{14}$/.test(j.id||''))throw Error('No se confirmó el registro.');
+      form.parentElement.remove();save();
+      add('¡Listo! Recibimos tu solicitud de arriendo. Nuestro equipo se pondrá en contacto contigo para coordinar la publicación.');
+      chips([{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);pose('success',1600);
+    }catch(e){
+      status.textContent='No pude confirmar que tu solicitud se registró. Puedes reintentar sin volver a completar tus datos.';
+      form.dataset.submitting='0';button.disabled=false;button.textContent='Reintentar envío';
+    }
+  }
+
   async function askSpecial(v){
     const q=norm(v);
     if(/^(?:listar parcelas|listar proyectos)$/.test(q)){
       await ensureCatalog();const rows=sectionRows();
       return bot(rows.length?'Estas son las opciones publicadas actualmente.':'Por ahora no encontré proyectos publicados.',()=>{if(rows.length)showCards(rows);sectionContact();});
     }
-    if(section==='propietario'&&q==='iniciar publicacion')return startFlow('owner');
+    if(section==='propietario'){
+      const intent=ownerIntent(v);if(intent==='plans')return showOwnerPlans();if(intent==='form')return showOwnerForm(v);
+    }
     if(/^(?:solicitar administracion|quiero postular como corredor|completar solicitud de arriendo|abrir simulador)$/.test(q))return bot('Te dejo el acceso directo para que puedas continuar.',sectionFormChips);
     if(/^(?:coordinar visita|quiero coordinar una visita a una parcela|quiero cotizar un proyecto|hablar con un ejecutivo)$/.test(q))return bot('Te conecto con nuestro equipo para confirmar los detalles.',sectionContact);
     return askAI(v,section);
@@ -349,6 +411,22 @@
 .zw-sum div:last-child{border-bottom:0}
 .zw-sum span{color:var(--zk3);width:78px;flex:none}
 .zw-sum b{color:var(--zk);font-weight:600}
+
+.zw-owner-plans{width:100%;border:1px solid var(--zl);border-radius:15px;overflow:hidden;background:#100b1e}
+.zw-owner-plans a{display:block}.zw-owner-plans img{display:block;width:100%;height:auto;max-width:100%;border-radius:14px}
+.zw-owner-form{display:grid;gap:12px;background:#fff;border:1px solid var(--zl);border-radius:15px;padding:14px;color:var(--zk);font-size:13px;width:100%;min-width:0}
+.zw-owner-form strong{font-size:17px}.zw-owner-form small{color:var(--zk2);line-height:1.35}
+.zw-owner-form h4{margin:4px 0 0;font-size:11px;text-transform:uppercase;color:#6b27d6;letter-spacing:.06em}
+.zw-owner-form label{display:grid;gap:5px;font-weight:600;min-width:0}
+.zw-owner-form input:not([type=checkbox]):not([type=radio]),.zw-owner-form select{width:100%;min-width:0;padding:10px;border:1px solid var(--zl);border-radius:9px;font:inherit;font-size:16px;background:#fff;color:var(--zk)}
+.zw-owner-form .zw-owner-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.zw-owner-form .zw-owner-plan,.zw-owner-form .zw-owner-consent{display:flex;align-items:flex-start;gap:7px;font-weight:400}
+.zw-owner-form .zw-owner-plan{padding:9px;border:1px solid var(--zl);border-radius:9px}
+.zw-owner-form input[type=radio],.zw-owner-form input[type=checkbox]{accent-color:#7c3aed;flex:none;margin-top:3px}
+.zw-owner-form button[type=submit]{background:var(--zv);color:#fff;font-weight:700;padding:12px;border-radius:10px;white-space:normal}
+.zw-owner-form button:disabled{opacity:.55;cursor:default}.zw-owner-status{color:#b42318;font-size:12px;white-space:normal}.zw-owner-status:empty{display:none}
+@media(max-width:360px){.zw-owner-form .zw-owner-row{grid-template-columns:1fr}}
+
 .zw-visit-form{display:grid;gap:10px;background:#fff;border:1px solid var(--zl);border-radius:14px;padding:14px;color:var(--zk);font-size:13px}
 .zw-visit-form strong{font-size:16px}.zw-visit-form small{color:var(--zk2);font-size:12px}
 .zw-visit-form label{display:grid;gap:5px;font-weight:600}
@@ -854,7 +932,7 @@
     if(/volver al inicio|nueva conversacion|empezar de nuevo/.test(s)){S.flow=null;save();return menu(true);}
     if(/persona|ejecutivo|humano|asesor/.test(s))return handoff();
     if(/vender mi|quiero vender/.test(s))return bot('¡Te ayudamos a vender! Cuéntame algunos datos y un ejecutivo te contactará con una tasación referencial.',()=>{S.flow={name:'owner',step:0,data:{op:'venta'}};save();nextStep();});
-    if(/arrendar mi|mi propiedad|mi depto|mi departamento|publicar/.test(s))return startFlow('owner');
+    if(/arrendar mi|mi propiedad|mi depto|mi departamento|publicar/.test(s)){switchSection('propietario');return sectionMenu();}
     if(/llevame|ir a|abre los|abre las|muestrame los/.test(s)){
       const dest=/arriendo/.test(s)?'arriendos':/proyecto/.test(s)?'proyectos':/parcela/.test(s)?'parcelas':/formulario|propietario|solicitud/.test(s)?'solicitud':/venta|comprar/.test(s)?'ventas':null;
       if(dest){bot('¡Vamos! Te llevo ahí. Seguiré aquí mismo si necesitas algo.',()=>{setTimeout(()=>{location.href=PAGES[dest];},700);});return;}
@@ -913,7 +991,7 @@
       const histKey=domain?'sectionHist':'hist';
       S[histKey]=(S[histKey]||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
       if(j.text){void say(j.text,false);pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
-        stream(d,esc(j.text).replace(/\n/g,"<br>"),()=>{fbBar(d);(j.actions||[]).forEach(render);pose('wait');save();});}
+        stream(d,esc(j.text.replace(/\[([^\]]+)\]\(([^)]+)\)/g,"$1")).replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\n/g,"<br>"),()=>{fbBar(d);(j.actions||[]).forEach(render);pose('wait');save();});}
       else{(j.actions||[]).forEach(render);save();}
     }catch(e){clearTimeout(to);t.remove();
       add('Tuve un problema para responder. ¿Lo intentamos de nuevo o prefieres hablar con un ejecutivo?','sys');
@@ -924,7 +1002,7 @@
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
-    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');const next=explicitSectionSwitch(v);if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(specialist()||section==='ventas')return sectionMenu();}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
+    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');const next=explicitSectionSwitch(v);if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(section==='propietario'&&ownerIntent(v)==='form')return showOwnerForm(v);if(specialist()||section==='ventas')return sectionMenu();}if(section==='propietario'&&ownerIntent(v)){S.flow=null;S.await=null;return askSpecial(v);}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
     if(u.comuna&&u.maximo>0){
       if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
       const f=mergedSearchFilters({...voiceFilters(),...(section==='ventas'?{operacion:'buy'}:{})},u,v);applyVoiceFilters(f);
@@ -940,6 +1018,9 @@
     if(a==='start'&&id==='buy'){add('Comprar','me');return bot('¿Qué te gustaría comprar?',()=>chips([{t:'Propiedades en venta',q:'busco comprar'},{t:'Proyectos nuevos',q:'proyectos nuevos'}]));}
     if(a==='start'&&id==='parcel'){add('Parcelas','me');switchSection('parcelas');return sectionMenu();}
     if(a==='sectionhome'){switchSection('home');return menu(true);}
+    if(a==='ownerform')return showOwnerForm(id||'');
+    if(a==='ownerplans')return showOwnerPlans();
+    if(a==='start'&&id==='owner'){add('Arrendar mi propiedad','me');switchSection('propietario');return sectionMenu();}
     if(a==='sectioncontact')return sectionContact();
     if(a==='start'&&id==='others'){add('Otros servicios','me');return bot('También te podemos ayudar con:<br>• <b>Administración de propiedades</b>: cobramos el arriendo, pagamos al propietario y enviamos la liquidación cada mes.<br>• <b>Ser corredor</b>: trabaja con nuestra cartera de propiedades y tu propio portal.',()=>chips([{t:'Administración de propiedades',href:'/Administracion%20de%20Propiedades%20-%20Corretaje%20Guzman.html'},{t:'Quiero ser corredor',href:'/Se%20Corredor%20-%20Corretaje%20Guzman.html'},{t:'Hablar con un ejecutivo',act:'human'}]));}
     if(a==='start'){const map={owner:'owner',rent:'rent',buy:'buy'};if(id==='proj'){add('Proyectos nuevos','me');return route('proyectos nuevos');}add(esc(el&&el.dataset.label||id),'me');return startFlow(map[id]);}
@@ -953,6 +1034,7 @@
     if(a==='vcancel'){if(S.visit?.sent)return bot('La solicitud ya fue enviada. Contacta al ejecutivo para cancelarla.');S.visit=null;save();return bot('Listo, descarté el borrador. ¿Te ayudo con algo más?',()=>chips(['Ver más propiedades','Volver al inicio']));}
     if(a==='human')return handoff();
     if(a==='wa'){window.open('/.netlify/functions/property-whatsapp?text='+encodeURIComponent(summary()),'_blank');add('Se abrió WhatsApp con tu resumen. Recuerda presionar <b>enviar</b> en WhatsApp para que llegue al ejecutivo.','sys');return;}
+    if(a==='services'&&section==='propietario')return showOwnerPlans();
     if(a==='services'){return bot('Así trabajamos con propietarios:<br>'+CONFIG.planes.map(([t,d])=>'<br><b>'+t+'</b> — '+d).join(''),()=>chips([{t:'Ver detalle de servicios',href:PAGES.servicios},{t:'Completar solicitud',href:PAGES.solicitud,cls:'pri'},{t:'Hablar con un ejecutivo',act:'human'}]));}
     if(a==='compare')return compare();
     if(a==='favs')return favs();
@@ -1057,6 +1139,7 @@
     e.preventDefault();act(b.dataset.act,b.dataset.id,b);
   });
   msgs.addEventListener('submit',async e=>{
+    const owner=e.target.closest('form[data-owner-form]');if(owner){e.preventDefault();return submitOwnerForm(owner);}
     const form=e.target.closest('form[data-visit-form]');if(!form)return;
     e.preventDefault();if(!form.reportValidity()||form.dataset.submitting==='1')return;
     const d=new FormData(form),nombre=String(d.get('nombre')||'').trim(),tel=String(d.get('tel')||'').trim();
@@ -1283,7 +1366,8 @@
         else{
           switchSection(requested);compactVoice();
           if(a.accion==='contacto'){sectionContact();out={mostrado:true,nota:'Se mostró el contacto, no se ha confirmado ninguna visita.'};}
-          else if(a.accion==='formulario'){sectionFormChips();out={mostrado:true,nota:'Se mostró el acceso al formulario.'};}
+          else if(a.accion==='formulario'){sectionFormChips();out={mostrado:true,nota:section==='propietario'?'Se abrió el formulario dentro del chat. El cliente debe completarlo y enviarlo.':'Se mostró el acceso al formulario.'};}
+          else if(requested==='propietario'){showOwnerPlans();out={mostrado:true,nota:'Comparativa visual de planes mostrada con botones para inscribir la propiedad.'};}
           else{await ensureCatalog();await knowledgeReady;const rows=sectionRows();const selected=Array.isArray(a.ids)&&a.ids.length?rows.filter(x=>a.ids.includes(x.id)):rows.slice(0,6);
             if(selected.length)showCards(selected);
             out={total:selected.length,mostrado:!!selected.length,proyectos:selected.map(x=>({id:x.id,nombre:x.t,comuna:x.c,desdeUF:x.uf,precioCLP:x.p,datos:[...(knowledge?.parcelas||[]),...(knowledge?.proyectos||[])].find(k=>k.id===x.id)||null}))};
@@ -1347,7 +1431,7 @@
           const focus=sectionFocus();
           const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones}));
           const data={seccion:section,parcelas:k.parcelas,proyectos:projectSummaries,proyectoEnPantalla:(k.proyectos||[]).find(x=>x.id===focus)||null,servicios:k.servicios};
-          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Si falta un dato ofrece consultar al equipo.');
+          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Si un propietario pide comparar planes usa mostrar_seccion con seccion propietario y accion listar. Si quiere inscribir la propiedad usa accion formulario; nunca pidas los datos personales por voz, deja que el cliente complete el formulario dentro del chat. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Si falta un dato ofrece consultar al equipo.');
         });
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
@@ -1404,6 +1488,7 @@
     msgs.querySelectorAll('.zw-cards').forEach(el=>{el.hidden=true;el.setAttribute('data-restore','1');});
     msgs.querySelectorAll('.zw-cmp').forEach(el=>el.remove());
     msgs.querySelectorAll('form[data-visit-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button').disabled=false;});
+    msgs.querySelectorAll('form[data-owner-form]').forEach(f=>{delete f.dataset.submitting;f.querySelector('button[type=submit]').disabled=false;f.querySelector('button[type=submit]').textContent='Enviar e inscribir mi propiedad';f.querySelector('.zw-owner-status').textContent='';});
   }
   setPanelOpen(false);save();
   void restoreCards();

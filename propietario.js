@@ -96,7 +96,10 @@ async function send(data) {
   data.fecha_envio = new Date().toISOString();
   if (data.whatsapp) data.whatsapp = '+56' + String(data.whatsapp).replace(/\D/g, '');
   if (data.valor) data.valor = Number(String(data.valor).replace(/\D/g, '')) || data.valor;
-  try { await fetch(POST_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); } catch (e) { /* preview sin backend */ }
+  const r=await fetch(POST_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  const result=await r.json().catch(()=>null);
+  if(!r.ok||!result?.ok||!/^rec[A-Za-z0-9]{14}$/.test(result.id||''))throw Error('No se pudo confirmar el registro.');
+  return result;
 }
 
 /* ---- quick form (hero) → scroll al formulario completo precargado ---- */
@@ -111,7 +114,7 @@ $('#quickForm').addEventListener('submit', async (e) => {
   if (of.whatsapp) of.whatsapp.value = fd.whatsapp || '';
   if (of.comuna) of.comuna.value = fd.comuna || '';
   if (of.tipo && fd.tipo) of.tipo.value = fd.tipo;
-  await send({ ...fd, etapa: 'lead rápido (hero)' });
+  try{await send({ ...fd, etapa: 'lead rápido (hero)' });}catch(e){/* El formulario completo conserva los datos y permite reintentar. */}
   const btn = e.target.querySelector('button');
   btn.innerHTML = '<i data-lucide="check" class="ico"></i>¡Listo! Completa el detalle ↓'; if (window.lucide) lucide.createIcons();
   document.getElementById('formulario').scrollIntoView({ behavior: 'smooth' });
@@ -126,7 +129,7 @@ $('#ownerForm').addEventListener('submit', async (e) => {
   const data = Object.fromEntries(new FormData(e.target).entries());
   const btn = e.target.querySelector('button[type=submit]');
   btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="ico"></i>Enviando…'; if (window.lucide) lucide.createIcons();
-  await send(data);
+  try{await send(data);}catch(e){btn.disabled=false;btn.textContent='Reintentar envío';let msg=e.target.querySelector('[data-send-error]');if(!msg){msg=document.createElement('p');msg.dataset.sendError='1';msg.setAttribute('role','alert');btn.insertAdjacentElement('afterend',msg);}msg.textContent='No se pudo confirmar el registro. Reintenta sin perder tus datos.';return;}
   $('#ownerForm').style.display = 'none';
   $('#ownerOk').classList.add('show');
   $('#ownerOk').scrollIntoView({ block: 'center', behavior: 'smooth' });
