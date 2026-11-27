@@ -374,7 +374,15 @@ footer{background:var(--dark);color:#cfc9da;padding:50px 0 28px;margin-top:20px}
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=20260922-2">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512.png?v=20260922-2">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png?v=20260922-2">
-</head>
+<script>if(new URLSearchParams(location.search).get('zumi')==='1'&&window.parent!==window)document.documentElement.classList.add('zumi-embed');</script>
+<style>
+.zumi-embed header,.zumi-embed footer,.zumi-embed .cz-hero,.zumi-embed .cz-links{display:none!important}
+.zumi-embed .cz-body{display:flex!important;flex-direction:column!important;padding:10px!important;margin:0!important;gap:12px!important;width:100%!important;max-width:none!important;box-sizing:border-box}
+.zumi-embed .cz-main,.zumi-embed .cz-side{width:100%!important;min-width:0!important;position:static!important}
+.zumi-embed .cz-block{padding:12px!important}
+.zumi-embed .cz-fgrid,.zumi-embed .cz-tipos{grid-template-columns:1fr!important}
+.zumi-embed body{padding-top:0!important}
+</style></head>
 <body>
 
 <header class="nav">
@@ -533,7 +541,7 @@ window.COT_CONFIG = {
   endpoint: "/api/lead-cotizacion"
 };
 </script>
-<script src="/cotizacion.js?v=tipologias-20261002b"></script>
+<script src="/cotizacion.js?v=zumi-20261127"></script>
 <script src="/guzman-header.js?v=nav-wa-20260923"></script>
 <script defer src="/plantas-visor.js?v=20261002b"></script>
 </body>
