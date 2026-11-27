@@ -10,6 +10,7 @@
   const $=(s,r=document)=>r.querySelector(s);
   const nf=new Intl.NumberFormat('es-CL');
   const CFG=window.COT_CONFIG||{};
+  const embedded=window.parent!==window&&new URLSearchParams(location.search).get('zumi')==='1';
   const GRID=(window.PROYECTOS||[]).filter(p=>p.activa!==false);
   const FICHAS=window.PROYECTO_FICHAS||{};
   const FKEYS=Object.keys(FICHAS);
@@ -119,7 +120,7 @@
       ['Renta mínima sugerida',money(renta)],
       ['Reserva',money(CFG.reserva||100000)]
     ].map(r=>'<div class="l"><span>'+r[0]+'</span><b>'+r[1]+'</b></div>').join('');
-    $('#accHl').innerHTML='<b>Pie financiado:</b> paga el pie en hasta '+meses+' cuotas de <b>'+money(pie/meses)+'</b> directamente con la inmobiliaria.'+((cur._f&&cur._f.subsidioTasa)?' Además tiene <b>subsidio a la tasa</b>.':'');
+    $('#accHl').innerHTML='<b>Escenario referencial de pie:</b> paga el pie en hasta '+meses+' cuotas de <b>'+money(pie/meses)+'</b> si la inmobiliaria confirma esa modalidad.'+((cur._f&&cur._f.subsidioTasa)?' Además tiene <b>subsidio a la tasa</b>.':'');
     if(window.TIPOLOGIAS_CONFIRMADAS?.[cur._fk||cur.slug]){
       $('#accHl').innerHTML='<b>Saldo del pie:</b> confirma si la inmobiliaria permite financiarlo. Sin considerar ahorro propio, repartir este pie en '+meses+' cuotas daría <b>'+money(pie/meses)+'/mes</b>, adicionales al dividendo. Es un escenario referencial, no una condición confirmada de esta planta.';
     }
@@ -212,7 +213,7 @@
       tipologia:t?(t.nombre+(t.planta?' — Planta '+t.planta:'')):'Por definir',
       precio:pUF?String(Math.round(pUF)):'',
       destino:destino==='inversion'?'inversion':'primera',
-      origen:'Web - Cotizador', fecha_envio:new Date().toISOString(), requestId
+      origen:embedded?'Zumi - Cotizador':'Web - Cotizador', fecha_envio:new Date().toISOString(), requestId
     };
     enviando=true;
     const btn=$('#czSubmit'), btnHtml=btn.innerHTML;
@@ -234,11 +235,13 @@
     requestId=reqId();
     form.style.display='none'; $('#okProy').textContent=cur.name; $('#czOk').classList.add('show');
     const msg='Hola, acabo de cotizar '+data.proyecto+' ('+data.comuna+') — '+data.tipologia+(data.precio?' · UF '+nf.format(+data.precio):'')+'. Mi nombre es '+data.nombre+' '+data.apellido+'.';
+    const pct=(CFG.financiaBanco||{})[destino]||0.8;
+    const resumen=msg+'\nDestino: '+(destino==='inversion'?'Inversión':'Primera vivienda')+(pUF?'\nPie referencial: '+ufTxt(pUF*(1-pct))+'\nDividendo estimado: '+money(dividendo(pUF*UF*pct))+'/mes':'')+'\nPlazo de compra: '+data.periodo+'\nCrédito preaprobado: '+data.credito+'\nContacto preferido: '+data.contacto+'\nSolicitud registrada: '+data.requestId;
     const okBox=$('#czOk');
     if(!okBox.querySelector('.cz-okwa')){
       okBox.insertAdjacentHTML('beforeend','<a class="btn btn-violet cz-okwa" style="margin-top:22px;display:inline-flex" target="_blank" rel="noopener"><i data-lucide="message-circle" class="ico"></i>Escribir por WhatsApp</a>');
     }
-    okBox.querySelector('.cz-okwa').href='https://wa.me/'+nextWa()+'?text='+encodeURIComponent(msg);
+    okBox.querySelector('.cz-okwa').href='https://wa.me/'+nextWa()+'?text='+encodeURIComponent(resumen);
     okBox.scrollIntoView({block:'center',behavior:'smooth'});
     if(window.lucide) lucide.createIcons();
   });
