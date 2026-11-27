@@ -151,7 +151,7 @@
     switchSection('propietario');S.flow=null;S.await=null;
     if(call){call.viewer?.close();compactVoice();}
     add('Estos son nuestros dos planes para arrendar tu propiedad. Elige el que más te acomode y te ayudo a inscribirla.');
-    block('<div class="zw-owner-plans"><a href="/assets/zumi-planes-propietarios.svg" target="_blank" rel="noopener" aria-label="Ampliar comparación de planes"><img src="/assets/zumi-planes-propietarios.svg" alt="Plan Prioridad: 50% de un mes de arriendo, solo al concretarlo. Plan Básico: 0% de comisión para el propietario."></a></div>');
+    block('<div class="zw-owner-plans"><a href="/assets/planes-propietarios-original.jpg" target="_blank" rel="noopener" aria-label="Ampliar comparación de planes"><img src="/assets/planes-propietarios-original.jpg" alt="Plan Prioridad: 50% de un mes de arriendo, solo al concretarlo. Plan Básico: 0% de comisión para el propietario."></a></div>');
     chips([{t:'Quiero Plan Prioridad',act:'ownerform',id:'prioridad',cls:'pri'},{t:'Quiero Plan Básico',act:'ownerform',id:'basico'},{t:'Inscribir mi propiedad',act:'ownerform'},{t:'Hablar con un ejecutivo',act:'sectioncontact'}]);
   }
   function showOwnerForm(preferred=''){
@@ -1482,7 +1482,7 @@
     save();if(S.open)scroll();
   }
   if(S.html){
-    msgs.innerHTML=S.html;
+    msgs.innerHTML=S.html.split('/assets/zumi-planes-propietarios.svg').join('/assets/planes-propietarios-original.jpg');
     msgs.querySelectorAll('.zw-typing').forEach(t=>t.parentElement.remove());
     // Rebuild saved cards from the current public catalog before showing them.
     msgs.querySelectorAll('.zw-cards').forEach(el=>{el.hidden=true;el.setAttribute('data-restore','1');});

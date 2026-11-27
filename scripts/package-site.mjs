@@ -32,12 +32,12 @@ console.log('Complete public site and portal packaged; project images verified.'
  for(const d of await readdir(path.join(output,'proyectos'),{withFileTypes:true}))if(d.isDirectory())publicPages.push('proyectos/'+d.name+'/index.html');
  for(const p of publicPages){
    const file=path.join(output,p);let h;try{h=await readFile(file,'utf8');}catch(e){if(e.code==='ENOENT')continue;throw e;}
-   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-owner-form-20261127');
-   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=owner-form-20261127" data-zumi-v2 defer></script></body>');
-   h=h.replace(/(zumi-widget\.js)(?:\?[^"'\s>]*)?/g,'$1?v=owner-form-20261127');
+   if(/guzman-header\.js/i.test(h))h=h.replace(/(guzman-header\.js)(?:\?[^"'\s>]*)?/g,'$1?v=zumi-owner-original-20261127');
+   else if(!h.includes('data-zumi-v2'))h=h.replace(/<\/body>/i,'<script src="/zumi-widget.js?v=owner-original-20261127" data-zumi-v2 defer></script></body>');
+   h=h.replace(/(zumi-widget\.js)(?:\?[^"'\s>]*)?/g,'$1?v=owner-original-20261127');
    await writeFile(file,h);
  }
- for(const p of ['zumi-widget.js','assets/zumi.png','assets/zumi-body.png','assets/zumi-arm.png'])await access(path.join(output,p));
+ for(const p of ['zumi-widget.js','assets/zumi.png','assets/zumi-body.png','assets/zumi-arm.png','assets/planes-propietarios-original.jpg'])await access(path.join(output,p));
  new vm.Script(await readFile(path.join(output,'zumi-widget.js'),'utf8'),{filename:'zumi-widget.js'});
  new vm.Script(await readFile(path.join(output,'guzman-header.js'),'utf8'),{filename:'guzman-header.js'});
  console.log('Zumi v2 public integration packaged and syntax checked.');
