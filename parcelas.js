@@ -7,26 +7,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
 const nf = new Intl.NumberFormat('es-CL');
 
-const STATIC_PROJECTS = [{
-  id: 'campo-alto-roble',
-  title: 'Campo Alto Roble',
-  project: 'Proyecto de parcelas',
-  commune: 'Villarrica',
-  address: 'Camino Villarrica–Pucón, 2ª faja',
-  operation: 'parcela',
-  currency: 'UF',
-  priceValue: 2400,
-  priceTo: 3100,
-  availableParcels: 36,
-  surfaceTotal: 5000,
-  coverPhoto: 'assets/parc/car-hero.jpg',
-  photos: ['assets/parc/car-hero.jpg'],
-  features: ['5.000 m²', 'Urbanizado', 'Agua', 'Electricidad', 'Fibra óptica'],
-  detailUrl: '/parcelas/campo-alto-roble',
-  featuredProject: true,
-  projectLead: 'Parcelas urbanizadas de 5.000 m² con agua, electricidad y fibra óptica, a minutos de Villarrica.',
-  coverPhoto: '/assets/parc/car-hero.jpg'
-}];
+const STATIC_PROJECTS=Object.entries(window.PARCELA_PROYECTOS||{}).filter(([id,p])=>p.activa!==false&&p.name&&p.desdeUF).map(([id,p])=>{
+ const available=(p.parcelas||[]).filter(x=>(x.status||'disponible')==='disponible'&&x.uf>0);
+ const prices=available.map(x=>x.uf);
+ return {id,title:p.name,project:'Proyecto de parcelas',commune:p.sector,address:p.address,operation:'parcela',currency:'UF',priceValue:prices.length?Math.min(...prices):p.desdeUF,priceTo:prices.length?Math.max(...prices):p.desdeUF,availableParcels:available.length,surfaceTotal:p.supParcela,coverPhoto:p.heroImg,photos:[p.heroImg],features:[nf.format(p.supParcela||0)+' m²',...(p.urbanizacion||[]).map(x=>x.t)],detailUrl:p.detalle||p.ficha||'/parcelas/'+id,featuredProject:true,projectLead:p.lead};
+});
 
 let ALL = [];
 const STATE = { q: '', supMin: 0, supMax: null, prMin: null, prMax: null, prMoneda: 'UF', sector: '', carac: [], sort: 'rel' };
@@ -43,7 +28,7 @@ async function init() {
   try {
     await GZ.loadConfig();
     const { data = [], live = false } = await GZ.loadProperties();
-    ALL = [...STATIC_PROJECTS, ...data.filter(p => p.operation === 'parcela')];
+    ALL = [...STATIC_PROJECTS, ...data.filter(p => (p.operation === 'parcela'||(p.operation==='venta'&&String(p.propertyType||'').toLowerCase()==='parcela'))&&!/reservad|vendid|arrendad|inactiv|retirad|eliminad|no disponible|borrador|privad|ocult/i.test(p.status||'')).map(p=>({...p,surfaceTotal:p.surfaceTotal||p.totalArea||p.usableArea}))];
     if (typeof GZ.banner === 'function') GZ.banner(live, ALL.length);
   } catch (error) {
     if (typeof GZ.banner === 'function') GZ.banner(false, ALL.length);
@@ -140,7 +125,7 @@ function featCard(p) {
   a.href = detailHref(p);
   const chars = (p.features || []).slice(0, 4).map(f => `<span class="fc">${f}</span>`).join('');
   const priceLabel = p.featuredProject
-    ? `Desde UF ${nf.format(p.priceValue)}<span>Hasta UF ${nf.format(p.priceTo || p.priceValue)} · ${p.availableParcels || 36} parcelas disponibles</span>`
+    ? `Desde UF ${nf.format(p.priceValue)}<span>Hasta UF ${nf.format(p.priceTo || p.priceValue)} · ${p.availableParcels ?? 0} parcelas disponibles</span>`
     : `${priceText(p)}<span>${surfText(p)} · ${approxText(p)}</span>`;
   a.innerHTML = `
     <img src="${p.coverPhoto || (p.photos || [])[0] || ''}" alt="${p.title}">

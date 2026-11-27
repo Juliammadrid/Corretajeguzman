@@ -31,8 +31,13 @@
     window.PARCELA_PROYECTOS?Promise.resolve():loadScript('/data-parcelas-proyectos.js')
   ]);
   const PROJ=(window.PROYECTOS||[]).filter(x=>x&&x.activa!==false&&x.desdeUF&&sameSite(x.detalle)&&x.image).map(x=>({id:x.slug,t:x.name,c:x.commune,uf:x.desdeUF,ent:x.entrega,img:sameSite(x.image),href:sameSite(x.detalle)}));
-  const parcel=window.PARCELA_PROYECTOS?.['campo-alto-roble'];
-  if(parcel)PROJ.push({id:'car',t:parcel.name,c:parcel.sector,uf:parcel.desdeUF,ent:'parcela',img:sameSite(parcel.heroImg),href:PAGES.parcelas,parcela:true});
+  for(const [slug,p] of Object.entries(window.PARCELA_PROYECTOS||{})){
+    if(p.activa===false||!p.name||!p.desdeUF)continue;
+    const lots=(p.parcelas||[]).filter(x=>(x.status||'disponible')==='disponible'&&x.uf>0);
+    PROJ.push({id:'parcel:'+slug,t:p.name,c:p.sector,uf:lots.length?Math.min(...lots.map(x=>x.uf)):p.desdeUF,ent:'parcela',img:sameSite(p.heroImg),href:sameSite(p.detalle||p.ficha||'/parcelas/'+slug),parcela:true});
+  }
+  let knowledge=null;
+  const knowledgeReady=fetch('/zumi-knowledge.json',{cache:'no-cache',signal:AbortSignal.timeout(8000)}).then(r=>r.ok?r.json():null).then(j=>knowledge=j).catch(()=>null);
   const loadCatalog=async()=>{try{const r=await fetch('/.netlify/functions/zumi-catalog',{cache:'no-store',signal:AbortSignal.timeout(18000)});if(!r.ok)throw Error();const j=await r.json();if(!j.available)throw Error();R.length=0;V.length=0;ALL.length=0;for(const x of [...j.rent,...j.buy]){const href=sameSite(x.url);if(!href||!/^rec[a-zA-Z0-9]{14}$/.test(x.id)||!x.price)continue;const venta=x.kind==='buy';const y={id:x.id,op:venta?'venta':'arriendo',t:x.name,c:x.commune,dir:'',p:x.currency==='CLP'?x.price:null,uf:x.currency==='UF'?x.price:null,gc:x.commonExpensesCLP,d:x.beds,b:x.baths,e:/^(?:si|sí|[1-9]|incluido)/i.test(x.parking)?1:0,type:x.propertyType,pets:null,img:sameSite(x.image),href};(venta?V:R).push(y);ALL.push(y);}catalogAvailable=true;catalogFetchedAt=Date.now();}catch{catalogAvailable=false;}};
   let catalogReady=loadCatalog();let catalogRetryAt=0;
   async function ensureCatalog(){await catalogReady;if((!catalogAvailable||Date.now()-catalogFetchedAt>60000)&&Date.now()-catalogRetryAt>15000){catalogRetryAt=Date.now();catalogReady=loadCatalog();await catalogReady;}return catalogAvailable;}
@@ -67,6 +72,84 @@
     if(/ventas/i.test(p))return {type:'ventas'};
     return {type:'home'};
   }
+  // Section identity is independent from rental preferences and survives only on this page.
+  function sectionFromPath(pathname,query=''){
+    const p=norm(decodeURIComponent(pathname||'/')).replace(/\/+$/,'');
+    if(/^(?:\/propiedad(?:\/|$)|\/ficha(?:$|[ -]))/.test(p))return 'ficha';
+    if(/^\/parcelas?(?:[\/ -]|$)/.test(p))return 'parcelas';
+    if(/^\/proyectos?(?:[\/ .-]|$)/.test(p))return 'proyectos';
+    if(/^\/(?:comprar|ventas)(?:[\/ -]|$)/.test(p))return 'ventas';
+    if(/^\/arriendos(?:[\/ -]|$)/.test(p))return 'arriendos';
+    if(/^\/(?:propietarios|quiero arrendar|arrendar-mi)/.test(p))return 'propietario';
+    if(/^\/administracion/.test(p))return 'admin';
+    if(/^\/(?:corredores|se corredor|se-corredor)/.test(p))return 'corredor';
+    if(/^\/(?:solicitud|formulario de arriendo)/.test(p))return 'solicitud';
+    if(/^\/(?:simulador|cuanto-puedo)/.test(p))return 'simulador';
+    return 'home';
+  }
+  let section=sectionFromPath(location.pathname,location.search);
+  const specialist=()=>['parcelas','proyectos','propietario','admin','corredor','solicitud','simulador'].includes(section);
+  function sectionFocus(){
+    const p=decodeURIComponent(location.pathname).replace(/\/+$/,'');
+    const slug=new URLSearchParams(location.search).get('slug')||p.split('/').pop();
+    if(section==='parcelas')return PROJ.find(x=>x.parcela&&(x.id==='parcel:'+slug||x.id==='parcel:'+slug.replace(/^parcela-/,'').replace(/\.html$/,'')))?.id||'';
+    if(section==='proyectos')return PROJ.find(x=>!x.parcela&&x.id===slug)?.id||'';
+    return '';
+  }
+  const SECTION_UI={
+    parcelas:{hello:'Te ayudo a conocer nuestras parcelas. ¿Buscas un terreno para vivir o invertir?',options:[['Ver proyectos de parcelas','listar parcelas'],['Precios y disponibilidad','precios y disponibilidad de parcelas'],['Crédito directo','cómo funciona el crédito directo'],['Ubicación y urbanización','ubicación y servicios de las parcelas'],['Coordinar visita','quiero coordinar una visita a una parcela']],url:'/parcelas'},
+    proyectos:{hello:'Te ayudo a encontrar un proyecto nuevo. ¿Buscas primera vivienda o inversión?',options:[['Ver proyectos','listar proyectos'],['Buscar por comuna','buscar proyectos por comuna'],['Pie y financiamiento','cómo funciona el pie financiado'],['Cotizar proyecto','quiero cotizar un proyecto']],url:'/proyectos/'},
+    propietario:{hello:'Te ayudo a arrendar tu propiedad. ¿Quieres conocer los planes o iniciar la publicación?',options:[['Comparar planes','comparar planes de arriendo para propietarios'],['Publicar mi propiedad','iniciar publicación'],['Cómo funciona','cómo funciona el servicio de arriendo']],url:'/propietarios'},
+    admin:{hello:'Te ayudo con la administración de tu propiedad. ¿Quieres conocer los costos o qué incluye el servicio?',options:[['Tarifas de administración','cuánto cuesta administrar'],['Qué incluye','qué incluye administración'],['Ya tengo arrendatario','pueden administrar una propiedad ya arrendada'],['Solicitar administración','solicitar administración']],url:'/administracion'},
+    corredor:{hello:'¿Te interesa sumarte a Corretaje Guzmán como corredor? Te explico cómo empezar.',options:[['Comparar planes','comparar planes gratis y premium'],['Cómo gano dinero','cómo gano dinero como corredor'],['Requisitos','qué necesito para ser corredor'],['Postular','quiero postular como corredor']],url:'/corredores'},
+    solicitud:{hello:'Te ayudo con tu solicitud de arriendo. ¿Quieres conocer los requisitos o completar el formulario?',options:[['Cómo funciona','cómo funciona la solicitud de arriendo'],['Comisión','cuál es la comisión del arrendatario'],['Completar solicitud','completar solicitud de arriendo']],url:'/solicitud'},
+    simulador:{hello:'Te ayudo a estimar cuánto podrías comprar. ¿Quieres simular tu capacidad o conocer cómo funciona el pie?',options:[['Simular capacidad','abrir simulador'],['Cómo se calcula','cómo se calcula mi capacidad de compra'],['Pie financiado','cómo funciona el pie financiado']],url:'/simulador-capacidad/'},
+    ventas:{hello:'Te ayudo a encontrar una propiedad en venta. ¿En qué comuna buscas?',options:[['Buscar propiedades en venta','busco comprar'],['Proyectos nuevos','proyectos nuevos'],['Cuánto puedo comprar','cuanto puedo comprar']],url:'/comprar'}
+  };
+  function sectionRows(kind=section){
+    return kind==='parcelas'?PROJ.filter(x=>x.parcela).concat(V.filter(x=>norm(x.type)==='parcela')):kind==='proyectos'?PROJ.filter(x=>!x.parcela):[];
+  }
+  function sectionMenu(){
+    const ui=SECTION_UI[section];if(!ui)return false;
+    const focus=sectionRows().find(x=>x.id===sectionFocus());
+    add(focus?'Hola, estás viendo <b>'+esc(focus.t)+'</b>. ¿Quieres conocer precios, características o coordinar una visita?':esc(ui.hello));
+    chips(ui.options.map(([t,q])=>({t,q})).concat({t:'Otros servicios',act:'sectionhome'}));
+    return true;
+  }
+  function sectionContact(){
+    const ui=SECTION_UI[section];if(!ui)return;
+    const subject=sectionRows().find(x=>x.id===sectionFocus());
+    const message='Hola, vengo desde Zumi y quiero información sobre '+(subject?.t||ui.url.replaceAll('/',' ')||'el servicio')+'.';
+    chips([{t:'Contactar por WhatsApp',href:'/.netlify/functions/property-whatsapp?text='+encodeURIComponent(message),blank:true,cls:'wa'},{t:'Ver sección',href:ui.url}]);
+  }
+  function sectionFormChips(){
+    const ui=SECTION_UI[section];if(ui)chips([{t:section==='simulador'?'Abrir simulador':section==='corredor'?'Ir a postulación':section==='propietario'?'Publicar propiedad':section==='admin'?'Solicitar administración':'Completar solicitud',href:ui.url,cls:'pri'}]);
+  }
+  function explicitSectionSwitch(t){
+    const q=norm(t);
+    if(/^(?:volver al inicio|otros servicios|menu principal|empezar de nuevo)$/.test(q))return 'home';
+    if(/\b(?:busco arriendo|quiero arrendar (?:un|una)|buscar arriendo)\b/.test(q))return 'arriendos';
+    if(/\b(?:busco comprar|propiedades en venta|quiero comprar (?:una casa|un departamento))\b/.test(q))return 'ventas';
+    if(/^(?:parcelas|proyectos de parcelas|busco parcelas)$/.test(q))return 'parcelas';
+    if(/^(?:proyectos nuevos|ver proyectos nuevos)$/.test(q))return 'proyectos';
+    if(/^(?:arrendar mi propiedad|publicar mi propiedad)$/.test(q))return 'propietario';
+    if(/^(?:administracion de propiedades|quiero administrar mi propiedad)$/.test(q))return 'admin';
+    if(/^(?:se corredor|quiero ser corredor)$/.test(q))return 'corredor';
+    return '';
+  }
+  function switchSection(next){if(!next||next===section)return false;section=next;S.flow=null;S.await=null;S.sectionHist=[];if(next==='ventas')S.voiceOperation='buy';if(next==='arriendos')S.voiceOperation='rent';save();return true;}
+  async function askSpecial(v){
+    const q=norm(v);
+    if(/^(?:listar parcelas|listar proyectos)$/.test(q)){
+      await ensureCatalog();const rows=sectionRows();
+      return bot(rows.length?'Estas son las opciones publicadas actualmente.':'Por ahora no encontré proyectos publicados.',()=>{if(rows.length)showCards(rows);sectionContact();});
+    }
+    if(section==='propietario'&&q==='iniciar publicacion')return startFlow('owner');
+    if(/^(?:solicitar administracion|quiero postular como corredor|completar solicitud de arriendo|abrir simulador)$/.test(q))return bot('Te dejo el acceso directo para que puedas continuar.',sectionFormChips);
+    if(/^(?:coordinar visita|quiero coordinar una visita a una parcela|quiero cotizar un proyecto|hablar con un ejecutivo)$/.test(q))return bot('Te conecto con nuestro equipo para confirmar los detalles.',sectionContact);
+    return askAI(v,section);
+  }
+
   /* ---------- calculadora de compra (supuestos referenciales) ---------- */
   const CALC={div:0.25,anios:25,tasa:0.045,fin:0.80,uf:39500};
   function parseMoney(t){
@@ -817,15 +900,18 @@
     else if(T==='navigate'&&a.page){const u=PAGES[a.page]||a.url;if(u)setTimeout(()=>{location.href=u;},700);}
     else if(T==='lead'){try{fetch('/api/lead-zumi',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({origen:'Zumi',pagina:location.pathname,prefs:S.prefs},a.data||{}))});}catch(e){}}
   }
-  async function askAI(v){
+  async function askAI(v,domain=''){
     const ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),38000);
     const t=block('<div class="zw-typing"><span class="zw-tav"><img src="'+ZUMI_IMG+'" alt=""></span><i></i><i></i><i></i></div>');pose('think');
     try{
       const r=await fetch(AI,{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,
-        body:JSON.stringify({message:v.slice(0,1000),history:(S.hist||[]).slice(-8).map(m=>({role:m.role,content:String(m.content).slice(0,750)})),propertyId:pagePropertyId()||S.viewing||null})});
+        body:JSON.stringify({message:v.slice(0,1000),history:(domain?(S.sectionHist||[]):(S.hist||[])).slice(-8).map(m=>({role:m.role,content:String(m.content).slice(0,750)})),section:domain||undefined,focus:domain?sectionFocus():undefined,propertyId:pagePropertyId()||S.viewing||null})});
       clearTimeout(to);if(!r.ok)throw new Error('ai '+r.status);
-      const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';j.actions=[...(Array.isArray(j.ids)?[{type:'cards',items:j.ids.filter(id=>byId(id))}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:'human'}]}];
-      S.hist=(S.hist||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
+      const j=await r.json();await catalogReady;t.remove();j.text=typeof j.reply==='string'?j.reply:'';
+      const ids=Array.isArray(j.ids)?j.ids.filter(id=>domain?sectionRows(domain).some(x=>x.id===id):byId(id)):[];
+      j.actions=[...(ids.length?[{type:'cards',items:ids}]:[]),{type:'chips',items:[{t:'Hablar con un ejecutivo',act:domain?'sectioncontact':'human'},...(domain&&SECTION_UI[domain]?[{t:'Ver sección',href:SECTION_UI[domain].url}]:[])]}];
+      const histKey=domain?'sectionHist':'hist';
+      S[histKey]=(S[histKey]||[]).concat({role:'user',content:v},...(j.text?[{role:'assistant',content:j.text}]:[])).slice(-16);
       if(j.text){void say(j.text,false);pose('speak');const d=document.createElement('div');d.className='zw-m bot';msgs.appendChild(d);
         stream(d,esc(j.text).replace(/\n/g,"<br>"),()=>{fbBar(d);(j.actions||[]).forEach(render);pose('wait');save();});}
       else{(j.actions||[]).forEach(render);save();}
@@ -838,10 +924,10 @@
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
-    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
+    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');const next=explicitSectionSwitch(v);if(!S.flow&&next&&next!==section){switchSection(next);if(section==='home')return menu(true);if(specialist()||section==='ventas')return sectionMenu();}if(specialist()&&!S.flow&&!S.await)return askSpecial(v);await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
     if(u.comuna&&u.maximo>0){
       if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
-      const f=mergedSearchFilters(voiceFilters(),u,v);applyVoiceFilters(f);
+      const f=mergedSearchFilters({...voiceFilters(),...(section==='ventas'?{operacion:'buy'}:{})},u,v);applyVoiceFilters(f);
       const matches=voiceMatches(ALL,f);
       if(matches.length)return bot('Encontré <b>'+matches.length+' '+(matches.length===1?'propiedad':'propiedades')+'</b> que cumplen tus filtros.',()=>showCards(matches.slice(0,6)));
       return bot('No encontré propiedades que cumplan todos esos filtros. ¿Te gustaría cambiar alguno?',()=>chips(['Cambiar comuna','Cambiar presupuesto']));
@@ -852,14 +938,16 @@
   /* ---------- acciones de botones ---------- */
   function act(a,id,el){
     if(a==='start'&&id==='buy'){add('Comprar','me');return bot('¿Qué te gustaría comprar?',()=>chips([{t:'Propiedades en venta',q:'busco comprar'},{t:'Proyectos nuevos',q:'proyectos nuevos'}]));}
-    if(a==='start'&&id==='parcel'){add('Parcelas','me');return projects('parcela');}
+    if(a==='start'&&id==='parcel'){add('Parcelas','me');switchSection('parcelas');return sectionMenu();}
+    if(a==='sectionhome'){switchSection('home');return menu(true);}
+    if(a==='sectioncontact')return sectionContact();
     if(a==='start'&&id==='others'){add('Otros servicios','me');return bot('También te podemos ayudar con:<br>• <b>Administración de propiedades</b>: cobramos el arriendo, pagamos al propietario y enviamos la liquidación cada mes.<br>• <b>Ser corredor</b>: trabaja con nuestra cartera de propiedades y tu propio portal.',()=>chips([{t:'Administración de propiedades',href:'/Administracion%20de%20Propiedades%20-%20Corretaje%20Guzman.html'},{t:'Quiero ser corredor',href:'/Se%20Corredor%20-%20Corretaje%20Guzman.html'},{t:'Hablar con un ejecutivo',act:'human'}]));}
     if(a==='start'){const map={owner:'owner',rent:'rent',buy:'buy'};if(id==='proj'){add('Proyectos nuevos','me');return route('proyectos nuevos');}add(esc(el&&el.dataset.label||id),'me');return startFlow(map[id]);}
     if(a==='fav'){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);else S.favs.push(id);root.querySelectorAll('.fav[data-id="'+id+'"]').forEach(b=>b.classList.toggle('on',i<0));save();if(i<0)pose('success',1200);return;}
     if(a==='view'){S.viewing=id;close();return;}
     if(a==='pagevisit')return contextVisit(true);
     if(a==='visit'){const x=byId(id);if(!x)return;add('Agendar visita · '+esc(x.t),'me');return showVisitForm(x);}
-    if(a==='info'){const x=PROJ.find(p=>p.id===id);add('Solicitar información · '+esc(x?x.t:''),'me');return handoff();}
+    if(a==='info'){const x=PROJ.find(p=>p.id===id);add('Solicitar información · '+esc(x?x.t:''),'me');if(x){const msg='Hola, me interesa '+x.t+'. ¿Me pueden enviar información y coordinar una visita?';return bot('Te dejo el contacto para que nuestro equipo te asesore.',()=>chips([{t:'Contactar por WhatsApp',href:'/.netlify/functions/property-whatsapp?text='+encodeURIComponent(msg),blank:true,cls:'wa'}]));}return handoff();}
     if(a==='vconfirm'){return submitVisit();}
     if(a==='vchange'){if(S.visit){S.flow={name:'visit',step:2,data:S.visit};save();}return nextStep();}
     if(a==='vcancel'){if(S.visit?.sent)return bot('La solicitud ya fue enviada. Contacta al ejecutivo para cancelarla.');S.visit=null;save();return bot('Listo, descarté el borrador. ¿Te ayudo con algo más?',()=>chips(['Ver más propiedades','Volver al inicio']));}
@@ -877,6 +965,7 @@
 
   /* ---------- menú inicial ---------- */
   function menu(again){
+    if(sectionMenu())return;
     const X=pageCtx();
     const back=!again&&S.prefs&&(S.prefs.comuna||S.calc);
     const ctxT={
@@ -922,7 +1011,11 @@
     setPanelOpen(true);
     pose('point',1800);chime();
     void restoreCards();
+    const sectionKey=section+':'+sectionFocus();
     if(!S.started){S.started=true;if(!pagePropertyId())menu(false);}
+    else if(S.sectionKey!==sectionKey&&!pagePropertyId()&&SECTION_UI[section]){S.sectionHist=[];S.flow=null;S.await=null;sectionMenu();}
+    S.sectionKey=sectionKey;
+    if(section==='ventas')S.voiceOperation='buy';
     if(pagePropertyId())void contextVisit(direct===true);
     save();scroll();
     setTimeout(()=>{if(matchMedia('(min-width:641px)').matches)g('#zwInput').focus({preventScroll:true});},460);
@@ -1127,7 +1220,7 @@
     });
   }
   const VOICE_GREETING='Hola, ¿cómo estás? Cuéntame, ¿qué estás buscando? ¿Arrendar, comprar o quizás una parcela?';
-  function greetingLine(onProperty){return onProperty?'Hola, ¿cómo estás? ¿Te gustaría conocer más sobre esta propiedad o coordinar una visita?':VOICE_GREETING;}
+  function greetingLine(onProperty){return onProperty?'Hola, ¿cómo estás? ¿Te gustaría conocer más sobre esta propiedad o coordinar una visita?':SECTION_UI[section]?'Hola, ¿cómo estás? '+SECTION_UI[section].hello:VOICE_GREETING;}
   function sendGreeting(c){
     if(call!==c||c.greetingSent)return;
     c.greetingSent=true;clearTimeout(c.configTimer);
@@ -1184,6 +1277,18 @@
           c.nextSpokenSearch=spokenSearchResult(list,matches.length);
           out={total:matches.length,propiedades:list.map(voiceRow),filtros:f,fraseRecomendada:c.nextSpokenSearch,nota:'Resultado verificado. Si total es positivo, informa las propiedades encontradas y sus precios; nunca digas que no hay resultados. El presupuesto de arriendo es el canon sin gastos comunes. Si total es cero, pregunta qué filtro flexibilizar.'};
         }
+      }else if(j.name==='mostrar_seccion'){
+        const requested=String(a.seccion||section);
+        if(!SECTION_UI[requested]){out={error:'seccion_desconocida'};}
+        else{
+          switchSection(requested);compactVoice();
+          if(a.accion==='contacto'){sectionContact();out={mostrado:true,nota:'Se mostró el contacto, no se ha confirmado ninguna visita.'};}
+          else if(a.accion==='formulario'){sectionFormChips();out={mostrado:true,nota:'Se mostró el acceso al formulario.'};}
+          else{await ensureCatalog();await knowledgeReady;const rows=sectionRows();const selected=Array.isArray(a.ids)&&a.ids.length?rows.filter(x=>a.ids.includes(x.id)):rows.slice(0,6);
+            if(selected.length)showCards(selected);
+            out={total:selected.length,mostrado:!!selected.length,proyectos:selected.map(x=>({id:x.id,nombre:x.t,comuna:x.c,desdeUF:x.uf,precioCLP:x.p,datos:[...(knowledge?.parcelas||[]),...(knowledge?.proyectos||[])].find(k=>k.id===x.id)||null}))};
+          }
+        }
       }else if(j.name==='abrir_ficha'||j.name==='consultar_ficha'||j.name==='preparar_visita'){
         const id=String(a.id||c.selected||S.viewing||'');const x=byId(id);
         if(!x||!c.known.has(id))out={error:'ficha_no_identificada',mensaje:'Pregunta cuál de las propiedades mostradas desea.'};
@@ -1234,8 +1339,15 @@
           if(call!==c)return;
           const recent=(S.last||[]).map(byId).filter(Boolean).slice(0,3);recent.forEach(x=>c.known.add(x.id));
           const selected=byId(pagePropertyId()||S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
-          const context='Contexto guardado, no es una solicitud nueva: '+JSON.stringify({filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha:selected?voiceRow(selected):null})+'. Después del saludo espera una intervención real del cliente. Nunca expliques limitaciones del catálogo sin que el cliente haya solicitado buscar. Para buscar usa buscar_propiedades y sus resultados verificados. Si cambia de comuna o hace una nueva búsqueda con comuna y precio, elimina los dormitorios anteriores salvo que pida conservarlos. No apliques requisitos no pedidos. Si dice propiedad o inmueble no es un tipo. '+VOICE_STYLE;
+          const context='Contexto guardado, no es una solicitud nueva: '+JSON.stringify({seccion:section,filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha:selected?voiceRow(selected):null})+'. Después del saludo espera una intervención real del cliente. Nunca expliques limitaciones del catálogo sin que el cliente haya solicitado buscar. Para buscar usa buscar_propiedades y sus resultados verificados. Si cambia de comuna o hace una nueva búsqueda con comuna y precio, elimina los dormitorios anteriores salvo que pida conservarlos. No apliques requisitos no pedidos. Si dice propiedad o inmueble no es un tipo. '+VOICE_STYLE;
           voiceContext(c,context);
+        });
+        void knowledgeReady.then(k=>{
+          if(call!==c||!k)return;
+          const focus=sectionFocus();
+          const projectSummaries=(k.proyectos||[]).map(x=>({id:x.id,nombre:x.nombre,comuna:x.comuna,desdeUF:x.desdeUF,entrega:x.entrega,especificaciones:x.especificaciones}));
+          const data={seccion:section,parcelas:k.parcelas,proyectos:projectSummaries,proyectoEnPantalla:(k.proyectos||[]).find(x=>x.id===focus)||null,servicios:k.servicios};
+          voiceContext(c,'Información comercial pública del sitio: '+JSON.stringify(data)+'. En secciones de parcelas, proyectos o servicios responde usando estos datos, no la búsqueda de arriendos. Para mostrar tarjetas o derivar a formulario usa mostrar_seccion. Nunca inventes disponibilidad, tasas, precios o confirmaciones. Si falta un dato ofrece consultar al equipo.');
         });
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);

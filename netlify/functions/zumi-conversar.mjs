@@ -4,7 +4,7 @@ async function publicListings(){
   if(cached && cached.until>Date.now())return cached.rows;
   const catalog=await readPublicCatalog();
   if(!catalog)return null;
-  const rows=[...catalog.rent,...catalog.buy].map(({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind})=>({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind}));
+  const rows=[...catalog.rent,...catalog.buy].map(({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind,propertyType})=>({id,name,commune,beds,price,currency,baths,parking,commonExpensesCLP,kind,propertyType}));
   cached={until:Date.now()+120000,rows};return rows;
 }
 const backend = 'https://aoemvstjbwvkoqjoirsx.supabase.co/functions/v1/zumi-asistente';
@@ -19,7 +19,8 @@ export default async function handler(req){
     let data;
     try{data=JSON.parse(new TextDecoder().decode(body));}catch{return new Response(null,{status:400});}
     if(typeof data?.message!=='string')return new Response(null,{status:400});
-    body=JSON.stringify({message:data.message,history:data.history,propertyId:data.propertyId,rows:await publicListings().catch(()=>null)});
+    const section=['parcelas','proyectos','propietario','admin','corredor','solicitud','simulador'].includes(data.section)?data.section:'';
+    body=JSON.stringify({message:data.message,history:data.history,propertyId:data.propertyId,section,focus:typeof data.focus==='string'?data.focus.slice(0,100):'',rows:section&&section!=='parcelas'?null:await publicListings().catch(()=>null)});
   }
   const token=process.env.ZUMI_BRIDGE_TOKEN;
   if(!token)return Response.json({error:'Servicio temporalmente no disponible.'},{status:503});
