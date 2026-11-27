@@ -13,8 +13,8 @@ export function makeKnowledge(window){
  const proyectos=(window.PROYECTOS||[]).filter(p=>p.activa!==false).map(p=>{
    const d=window.PROYECTO_FICHAS?.[p.slug]||{};
    const confirmadas=window.TIPOLOGIAS_CONFIRMADAS?.[p.slug]||[];
-   return {id:p.slug,nombre:p.name,comuna:p.commune,direccion:p.address,desdeUF:p.desdeUF,entrega:p.entrega,especificaciones:p.specs,url:p.detalle,imagen:p.image,cotizacion:'/cotizacion.html?slug='+encodeURIComponent(p.slug),
-    ...pick(d,['lead','reserva','subsidioTasa','caracteristicas','cerca','off']),comunes:labels(d.comunes),
+   return {id:p.slug,nombre:p.name,comuna:p.commune,direccion:p.address,desdeUF:confirmadas.some(x=>Number(x.desdeUF)>0)?Math.min(...confirmadas.map(x=>Number(x.desdeUF)).filter(x=>x>0)):d.desdeUF||p.desdeUF,entrega:d.entrega||p.entrega,especificaciones:p.specs,url:p.detalle,imagen:p.image,cotizacion:'/cotizacion.html?slug='+encodeURIComponent(p.slug),
+    ...pick(d,['lead','reserva','subsidioTasa','caracteristicas','cerca','off','matterport','fotos','comunesFotos','financiamiento','pie','entregaFecha']),comunes:labels(d.comunes),
     tipologias:(d.tipologias||[]).map(x=>pick(x,['id','nombre','m2int','m2tot','desdeUF','hastaUF','plano','orientacion'])),
     tipologiasConfirmadas:confirmadas.map(x=>pick(x,['id','nombre','planta','m2int','m2tot','terraza','orientacion','desdeUF','plano']))};
  });
