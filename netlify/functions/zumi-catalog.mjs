@@ -7,9 +7,21 @@ const SOURCE=[{name:'Propiedades en arriendo',kind:'rent',link:'Link de la web'}
 function safeURL(url){try{const u=new URL(url);return u.protocol==='https:'&&u.hostname.replace(/^www\./,'')==='corretajeguzman.com'?u.href:'';}catch{return '';}}
 function number(v){if(typeof v==='number')return Number.isFinite(v)?v:0;const n=Number(String(v??'').replace(/[^\d.,]/g,'').replace(/\.(?=\d{3}(?:\D|$))/g,'').replace(',','.'));return Number.isFinite(n)?n:0;}
 const enumName=v=>typeof v==='object'&&v!==null?String(v.name||''):String(v||'');
-function mapRow(r,kind,link){const f=r.fields||{};const url=safeURL(f[link]);
- if(!url||!url.includes(r.id))return null;
- const status=enumName(f.Estado)||'Por confirmar';if(/reservad|vendid|arrendad|inactiv|retirad|eliminad/i.test(status))return null;
+// The public property route resolves by record ID and redirects to the canonical
+// slug. A manually maintained link is optional, never a prerequisite for listing.
+function propertyURL(id,kind,stored){
+ if(!/^rec[A-Za-z0-9]{14}$/.test(id||''))return '';
+ const url=safeURL(stored);
+ if(url){
+  const u=new URL(url);
+  if((/^\/propiedad(?:\/|$)/i.test(u.pathname)||/Ficha%20Propiedad/i.test(u.pathname)) &&
+    (u.searchParams.get('id')===id||u.pathname.endsWith('-'+id)||u.pathname.endsWith('-'+id+'/')))return url;
+ }
+ return 'https://corretajeguzman.com/propiedad/'+(kind==='buy'?'venta':'arriendo')+'-'+id;
+}
+function mapRow(r,kind,link){const f=r.fields||{};const url=propertyURL(r.id,kind,f[link]);
+ if(!url)return null;
+ const status=enumName(f.Estado)||'Por confirmar';if(/reservad|vendid|arrendad|inactiv|retirad|eliminad|no disponible|borrador|privad|ocult/i.test(status))return null;
  const pictures=Array.isArray(f.Fotos)?f.Fotos:[];
  // Use a stable same-origin route, not short-lived Airtable signed image URLs.
  const images=pictures.slice(0,4).map((_,index)=>`/.netlify/functions/zumi-photo?kind=${kind}&id=${encodeURIComponent(r.id)}&index=${index}`);
