@@ -14,7 +14,7 @@ export default async function handler(req){
   const text=typeof body.text==='string'?body.text.trim():'';
   if(!text||text.length>650)return json(400,{error:'text'});
   try{
-    const upstream=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+VOICE+'?output_format=mp3_44100_64',{
+    const upstream=await fetch('https://api.elevenlabs.io/v1/text-to-speech/'+VOICE+'/stream?output_format=mp3_44100_64',{
       method:'POST',headers:{'xi-api-key':key,'content-type':'application/json',accept:'audio/mpeg'},
       body:JSON.stringify({text,model_id:'eleven_flash_v2_5',language_code:'es',voice_settings:{stability:0.55,similarity_boost:0.8,speed:0.98}}),
       signal:AbortSignal.timeout(8000)
@@ -24,4 +24,4 @@ export default async function handler(req){
     return new Response(upstream.body,{headers:{'content-type':'audio/mpeg','cache-control':'no-store','x-content-type-options':'nosniff'}});
   }catch{return json(503,{error:'voice_unavailable'});}
 }
-export const config={rateLimit:{action:'rate_limit',aggregateBy:['ip','domain'],windowSize:60,windowLimit:6}};
+export const config={rateLimit:{action:'rate_limit',aggregateBy:['ip','domain'],windowSize:60,windowLimit:15}};

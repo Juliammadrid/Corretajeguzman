@@ -12,7 +12,7 @@ export default async function handler(req) {
     body: offer, signal: AbortSignal.timeout(25000)
   });
   return new Response(response.ok ? response.body : null, {status: response.status, headers: {
-    'content-type':'application/sdp','cache-control':'no-store'
+    'content-type':'application/sdp','cache-control':'no-store',...(response.headers.get('x-zumi-voice')?{'x-zumi-voice':response.headers.get('x-zumi-voice')}: {})
   }});
 }
 export const config = {rateLimit:{action:'rate_limit',aggregateBy:['ip','domain'],windowSize:600,windowLimit:4}};

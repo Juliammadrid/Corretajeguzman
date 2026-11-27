@@ -1622,11 +1622,83 @@
     g('#zwBars').style.visibility=['speaking','listening','hearing','greeting','unclear'].includes(phase)?'visible':'hidden';
     pose(state[2]);c.phase=phase;
   }
+  // Katty uses the existing OpenAI audio input + tools, but text output
+  // is synthesized server-side by ElevenLabs. Never play OpenAI audio too.
+  function kattyMode(c){return c.settings?.voice==='katty';}
+  function kattyParts(text){
+    const pieces=[];let rest=String(text||'').trim();
+    while(rest.length>650){let i=rest.lastIndexOf(' ',650);if(i<200)i=650;pieces.push(rest.slice(0,i).trim());rest=rest.slice(i).trim();}
+    if(rest)pieces.push(rest);return pieces;
+  }
+  function stopKattyCall(c){
+    c.kattyEpoch=(c.kattyEpoch||0)+1;
+    c.kattyAbort?.abort();c.kattyAbort=null;
+    if(c.kattySource){try{c.kattySource.stop();}catch{}c.kattySource=null;}
+    if(c.kattyResolve){c.kattyResolve();c.kattyResolve=null;}
+    if(kattyMode(c))c.audioPlaying=false;
+  }
+  async function playKatty(c,text,intro=false){
+    if(call!==c||!kattyMode(c))return;
+    stopKattyCall(c);const epoch=c.kattyEpoch,turn=c.turn;
+    const valid=()=>call===c&&c.kattyEpoch===epoch&&c.turn===turn;
+    const parts=kattyParts(text);if(!parts.length)return;
+    c.audioPlaying=true;voiceStatus(c,intro?'connecting':'thinking');
+    try{
+      if(!c.kattyCtx)throw Error('Audio no disponible');
+      let started=false;
+      for(const part of parts){
+        if(!valid())return;
+        const ctl=new AbortController();c.kattyAbort=ctl;const timeout=setTimeout(()=>ctl.abort(),12000);
+        let bytes;
+        try{
+          const r=await fetch('/.netlify/functions/zumi-tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:part}),signal:ctl.signal});
+          if(!r.ok||!/^audio\//i.test(r.headers.get('content-type')||''))throw Error('Katty no disponible');
+          bytes=await r.arrayBuffer();
+        }finally{clearTimeout(timeout);if(c.kattyAbort===ctl)c.kattyAbort=null;}
+        if(!valid())return;
+        const buffer=await c.kattyCtx.decodeAudioData(bytes);
+        if(!valid())return;
+        if(c.kattyCtx.state!=='running'){
+          await Promise.race([c.kattyCtx.resume(),new Promise((_,reject)=>setTimeout(()=>reject(Error('Audio bloqueado')),3000))]);
+        }
+        if(!valid())return;
+        const source=c.kattyCtx.createBufferSource();c.kattySource=source;source.buffer=buffer;source.connect(c.kattyCtx.destination);
+        await new Promise((resolve,reject)=>{
+          let finished=false;
+          const done=()=>{if(finished)return;finished=true;clearTimeout(timer);if(c.kattyResolve===done)c.kattyResolve=null;if(c.kattySource===source)c.kattySource=null;try{source.disconnect();}catch{}resolve();};
+          const timer=setTimeout(()=>{if(finished)return;try{source.stop();}catch{}done();reject(Error('Audio agotado'));},Math.ceil(buffer.duration*1000)+5000);
+          c.kattyResolve=done;source.onended=done;
+          try{source.start();}catch(e){done();reject(e);return;}
+          if(!started){
+            started=true;
+            if(intro){c.greetingStarted=true;c.playbackReady=true;metric('greeting_latency',performance.now()-c.startedAt,null,'voice');voiceStatus(c,'greeting');}
+            else{if(c.latencyAt!=null){metric('voice_latency',performance.now()-c.latencyAt,null,'voice');c.latencyAt=null;}voiceStatus(c,'speaking');}
+          }
+        });
+      }
+      if(!valid())return;
+      c.audioPlaying=false;
+      if(intro){c.greetingStopped=true;finishGreeting(c);}
+      else{if(!c.pending&&!c.transcriptionPending&&!c.generating)voiceStatus(c,'listening');continueVoice(c);}
+    }catch{
+      if(!valid())return;
+      stopKattyCall(c);
+      endCall('No pude reproducir la voz Katty. Puedes continuar por texto o volver a llamar cuando esté disponible.');
+    }
+  }
+  function kattyResponseText(response){
+    return (response?.output||[]).filter(x=>x.type==='message'&&x.role==='assistant').flatMap(x=>x.content||[]).filter(x=>x.type==='output_text'||x.type==='text').map(x=>x.text||'').join(' ').trim();
+  }
+
   function sendGreeting(c){
-    if(call!==c||c.greetingSent||!c.channelReady||!c.manualTurns||!c.audioAttached)return;
+    if(call!==c||c.greetingSent||!c.channelReady||!c.manualTurns||(!kattyMode(c)&&!c.audioAttached))return;
     clearTimeout(c.configTimer);
     // Explicit audio and an isolated input keep prior chat history out of the greeting.
     const text=greetingLine(c);
+    if(kattyMode(c)){
+      c.greetingSent=true;c.greetingTimer=setTimeout(()=>{if(call===c&&c.intro)endCall('No pude reproducir el saludo de Katty.');},25000);
+      add(esc(text),'bot');voiceHistory('assistant',text);void playKatty(c,text,true);return;
+    }
     const sent=voiceSend(c,{type:'response.create',response:{conversation:'none',input:[],output_modalities:['audio'],tool_choice:'none',instructions:'Pronuncia solamente esta frase con tono cálido y chileno, sin añadir nada. No hagas otra pregunta, espera después: '+JSON.stringify(text)}});
     if(!sent)return;
     c.greetingSent=true;c.generating=true;voiceStatus(c,'connecting');
@@ -1641,14 +1713,16 @@
     clearTimeout(c.greetingTimer);clearTimeout(c.configTimer);c.intro=false;c.awaitingGreetingAnswer=true;c.generating=false;c.audioPlaying=false;
     syncCallMic(c);if(!c.connectedMetric){c.connectedMetric=true;metric('call_connected',null,null,'voice');}
     for(const text of c.contextQueue.splice(0))voiceContext(c,text);
-    voiceContext(c,'Ya saludaste diciendo únicamente «Hola, ¿cómo estás?». Espera la respuesta real del cliente. Si te cuenta qué busca, atiende directamente esa solicitud. Si responde solamente al saludo, contesta con naturalidad y recién pregunta qué necesita. Haz una pregunta a la vez.');
+    voiceContext(c,'Ya saludaste diciendo únicamente '+JSON.stringify(greetingLine(c))+'. Espera la respuesta real del cliente. Si te cuenta qué busca, atiende directamente esa solicitud. Si responde solamente al saludo, contesta con naturalidad y recién pregunta qué necesita. Haz una pregunta a la vez.');
     voiceStatus(c,'listening');continueVoice(c);
   }
   function voiceSend(c,event){if(call===c&&c.dc?.readyState==='open'){c.dc.send(JSON.stringify(event));return true;}return false;}
   function continueVoice(c){
     if(call!==c||c.intro||!c.needsResponse||c.generating||c.audioPlaying||c.pending||c.transcriptionPending)return;
     const line=c.nextSocialLine||c.nextSpokenSearch;
-    const event=line?{type:'response.create',response:{output_modalities:['audio'],tool_choice:'none',instructions:VOICE_STYLE+' Pronuncia únicamente esta respuesta, con naturalidad, y espera: '+JSON.stringify(line)}}:{type:'response.create',response:{output_modalities:['audio']}};
+    const modalities=kattyMode(c)?['text']:['audio'];
+    const event=line?{type:'response.create',response:{output_modalities:modalities,tool_choice:'none',instructions:VOICE_STYLE+' Pronuncia únicamente esta respuesta, con naturalidad, y espera: '+JSON.stringify(line)}}:{type:'response.create',response:{output_modalities:modalities}};
+    c.responseTurn=c.turn;
     if(voiceSend(c,event)){c.needsResponse=false;c.nextSocialLine=null;c.nextSpokenSearch=null;c.generating=true;voiceStatus(c,'thinking');}
   }
   function voiceContext(c,text){voiceSend(c,{type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text}]}});}
@@ -1727,23 +1801,29 @@
     }
   }
   function endCall(msg){
-    const c=call;call=null;if(c){metric('call_end',c.secs||0,null,'voice');if(!c.connectedMetric||/No pude|bloqueó|perdió|cerró|falló/i.test(msg||''))metric('call_error',null,null,'voice');clearTimeout(c.disconnectTimer);clearInterval(c.timer);clearTimeout(c.timeout);clearTimeout(c.configTimer);clearTimeout(c.greetingTimer);clearTimeout(c.transcribeTimer);c.abort.abort();c.viewer?.remove();c.dc?.close();c.pc?.close();c.stream?.getTracks().forEach(t=>t.stop());c.audio?.remove();}
+    const c=call;call=null;if(c){metric('call_end',c.secs||0,null,'voice');if(!c.connectedMetric||/No pude|bloqueó|perdió|cerró|falló/i.test(msg||''))metric('call_error',null,null,'voice');clearTimeout(c.disconnectTimer);clearInterval(c.timer);clearTimeout(c.timeout);clearTimeout(c.configTimer);clearTimeout(c.greetingTimer);clearTimeout(c.transcribeTimer);c.abort.abort();stopKattyCall(c);if(c.kattyCtx)void c.kattyCtx.close().catch(()=>{});c.viewer?.remove();c.dc?.close();c.pc?.close();c.stream?.getTracks().forEach(t=>t.stop());c.audio?.remove();}
     g('#zwVoice').classList.remove('on','compact');g('#zwVmute').classList.remove('on');pose('wait');if(msg)add(msg,'sys');
   }
   g('#zwVsee').onclick=compactVoice;
   function formatCallTime(seconds){return String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');}
   g('#zwCall').onclick=async()=>{
     if(call){g('#zwVoice').classList.toggle('compact');return;}
-    await refreshControl();if(call)return;if(!liveControl.calls_enabled){add('Las llamadas están temporalmente pausadas. Podemos seguir conversando por texto.');return;}stopSpeech();
+    // Unlock Web Audio on the user's click, before awaiting network or mic.
+    let kattyCtx=null;const unlock=()=>{try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;const ctx=new AC();void ctx.resume().catch(()=>{});return ctx;}catch{return null;}};
+    if(liveControl.voice==='katty')kattyCtx=unlock();
+    await refreshControl();if(call){if(kattyCtx)void kattyCtx.close().catch(()=>{});return;}if(!liveControl.calls_enabled){if(kattyCtx)void kattyCtx.close().catch(()=>{});add('Las llamadas están temporalmente pausadas. Podemos seguir conversando por texto.');return;}stopSpeech();
+    if(liveControl.voice==='katty'&&!kattyCtx)kattyCtx=unlock();
+    if(liveControl.voice!=='katty'&&kattyCtx){void kattyCtx.close().catch(()=>{});kattyCtx=null;}
+    if(liveControl.voice==='katty'&&!kattyCtx){add('Este navegador no admite la reproducción de Katty. Puedes seguir por texto.','sys');return;}
     const c={abort:new AbortController(),secs:0,calls:new Set(),known:new Set(),filters:voiceFilters(),pending:0,generating:false,needsResponse:false,intro:true,muted:false,manualTurns:false,greetingSent:false,channelReady:false,audioAttached:false,playbackReady:false,greetingStarted:false,greetingStopped:false,audioPlaying:false,contextQueue:[],spokenItems:new Set(),seenTranscripts:new Set()};
-    call=c;c.settings={...liveControl};c.usageResponses=new Set();c.startedAt=performance.now();c.turn=0;metric('call_attempt',null,null,'voice');g('#zwVoice').classList.remove('compact');g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / '+formatCallTime(c.settings.max_call_seconds);
+    call=c;c.settings={...liveControl};c.kattyCtx=kattyCtx;c.usageResponses=new Set();c.startedAt=performance.now();c.turn=0;metric('call_attempt',null,null,'voice');g('#zwVoice').classList.remove('compact');g('#zwVoice').classList.add('on');g('#zwVst').textContent='Conectando…';g('#zwVsub').textContent='Preparando la conversación';g('#zwBars').style.visibility='hidden';g('#zwVt').textContent='00:00 / '+formatCallTime(c.settings.max_call_seconds);
     c.timeout=setTimeout(()=>{if(call===c)endCall('No pude conectar la llamada. Inténtalo nuevamente.');},35000);
     try{
       c.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
       if(call!==c){c.stream.getTracks().forEach(t=>t.stop());return;}
       c.pc=new RTCPeerConnection();c.audio=document.createElement('audio');c.audio.autoplay=true;c.audio.setAttribute('playsinline','');c.audio.muted=false;document.body.append(c.audio);
       c.pc.ontrack=e=>{
-        if(call!==c)return;c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audioAttached=true;
+        if(call!==c)return;if(kattyMode(c)){c.audio.muted=true;return;}c.audio.srcObject=e.streams[0]||new MediaStream([e.track]);c.audioAttached=true;
         c.audio.play().then(()=>{if(call===c){c.playbackReady=true;finishGreeting(c);}}).catch(()=>{if(call===c)endCall('El navegador bloqueó la reproducción de audio. Vuelve a iniciar la llamada.');});
         sendGreeting(c);
       };
@@ -1779,6 +1859,7 @@
           if(vad?.create_response===false){c.manualTurns=true;sendGreeting(c);}
         }
         if(j.type==='input_audio_buffer.speech_started'&&!c.intro&&!c.muted){
+          if(kattyMode(c))stopKattyCall(c);
           c.lastUser='';c.turn=(c.turn||0)+1;c.needsResponse=false;c.nextSocialLine=null;c.nextSpokenSearch=null;c.latencyAt=null;c.transcriptionPending=true;
           if(j.item_id)c.spokenItems.add(j.item_id);voiceStatus(c,'hearing');
         }
@@ -1800,13 +1881,13 @@
             add(esc(words),'me');voiceHistory('user',words);acceptVoiceTurn(c,words);
           }else if(!c.intro&&!c.generating&&!c.audioPlaying)voiceStatus(c,'listening');
         }
-        if(j.type==='response.output_audio_transcript.done'&&j.transcript){add(esc(j.transcript),'bot');voiceHistory('assistant',j.transcript);}
+        if(!kattyMode(c)&&j.type==='response.output_audio_transcript.done'&&j.transcript){add(esc(j.transcript),'bot');voiceHistory('assistant',j.transcript);}
         if(j.type==='response.created'){
           c.generating=true;
           if(c.intro&&c.greetingSent)c.greetingResponseId=j.response?.id;
           if(!c.intro)voiceStatus(c,'thinking');
         }
-        if(j.type==='output_audio_buffer.started'){
+        if(!kattyMode(c)&&j.type==='output_audio_buffer.started'){
           c.audioPlaying=true;
           if(c.intro&&c.greetingSent&&(!c.greetingResponseId||j.response_id===c.greetingResponseId)){c.greetingStarted=true;metric('greeting_latency',performance.now()-c.startedAt,null,'voice');voiceStatus(c,'greeting');}
           else if(!c.intro){if(c.latencyAt!=null){metric('voice_latency',performance.now()-c.latencyAt,null,'voice');c.latencyAt=null;}voiceStatus(c,'speaking');}
@@ -1815,6 +1896,13 @@
           const u=j.response?.usage,rid=j.response?.id;
           if(u&&rid&&!c.usageResponses.has(rid)){c.usageResponses.add(rid);for(const [ev,v] of [['voice_input_audio',u.input_token_details?.audio_tokens],['voice_output_audio',u.output_token_details?.audio_tokens],['voice_input_text',u.input_token_details?.text_tokens],['voice_output_text',u.output_token_details?.text_tokens]])if(Number.isInteger(v)&&v>=0)metric(ev,v,null,'voice');}
           c.generating=false;
+          if(kattyMode(c)){
+            const response=j.response;
+            if(!c.intro&&response?.status==='completed'&&c.responseTurn===c.turn&&!c.transcriptionPending&&!response.output?.some(x=>x.type==='function_call')){
+              const text=kattyResponseText(response);if(text){add(esc(text),'bot');voiceHistory('assistant',text);void playKatty(c,text);return;}
+            }
+            if(!c.intro&&!c.pending&&!c.transcriptionPending&&!c.audioPlaying)voiceStatus(c,'listening');continueVoice(c);return;
+          }
           if(c.intro){
             if(['failed','cancelled','incomplete'].includes(j.response?.status))endCall('No pude completar el saludo. Intenta nuevamente.');
           }else{
@@ -1823,12 +1911,12 @@
             continueVoice(c);
           }
         }
-        if(j.type==='output_audio_buffer.stopped'){
+        if(!kattyMode(c)&&j.type==='output_audio_buffer.stopped'){
           c.audioPlaying=false;
           if(c.intro&&c.greetingStarted&&(!c.greetingResponseId||j.response_id===c.greetingResponseId)){c.greetingStopped=true;finishGreeting(c);}
           else if(!c.intro){if(!c.generating&&!c.pending&&!c.transcriptionPending)voiceStatus(c,'listening');continueVoice(c);}
         }
-        if(j.type==='output_audio_buffer.cleared'&&!c.intro){c.audioPlaying=false;continueVoice(c);}
+        if(!kattyMode(c)&&j.type==='output_audio_buffer.cleared'&&!c.intro){c.audioPlaying=false;continueVoice(c);}
         if(j.type==='response.function_call_arguments.done'&&!c.intro)void runVoiceTool(c,j);
         if(j.type==='error'){
           c.generating=false;
@@ -1839,7 +1927,7 @@
       dc.onclose=()=>{if(call===c)endCall('Se cerró la conexión de voz.');};
       const offer=await c.pc.createOffer();await c.pc.setLocalDescription(offer);
       const r=await fetch('/.netlify/functions/zumi-voz',{method:'POST',headers:{'Content-Type':'application/sdp'},body:offer.sdp,signal:c.abort.signal});
-      if(!r.ok)throw Error();if(call===c)await c.pc.setRemoteDescription({type:'answer',sdp:await r.text()});
+      if(!r.ok)throw Error();if(call===c){const provider=r.headers.get('x-zumi-voice');if(provider&&provider!==c.settings.voice){controlAt=0;endCall('La configuración de voz cambió. Vuelve a iniciar la llamada.');return;}await c.pc.setRemoteDescription({type:'answer',sdp:await r.text()});}
     }catch{if(call===c)endCall('No pude iniciar la llamada. Puedes usar el chat de texto.');}
   };
   g('#zwVend').onclick=()=>endCall('Llamada finalizada');g('#zwVtxt').onclick=()=>endCall('Seguimos por texto');g('#zwVmute').onclick=()=>{if(call){call.muted=!call.muted;syncCallMic(call);if(!call.intro&&!call.generating&&!call.audioPlaying)voiceStatus(call,'listening');}};
