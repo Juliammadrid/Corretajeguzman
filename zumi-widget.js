@@ -710,6 +710,8 @@
     if(!x)return;
     if(call){call.viewer?.close();compactVoice();call.known.add(x.id);call.selected=x.id;}
     S.viewing=x.id;S.flow=null;
+    const existing=Array.from(msgs.querySelectorAll('form[data-visit-form]')).find(el=>el.dataset.visitForm===x.id);
+    if(existing){save();existing.scrollIntoView({block:'nearest'});return;}
     msgs.querySelectorAll('form[data-visit-form]').forEach(el=>el.parentElement.remove());
     const days=nextDays().map(d=>'<option>'+esc(d)+'</option>').join('');
     const hours=['10:00','11:30','16:30','18:30','Por coordinar'];
@@ -728,8 +730,8 @@
   function visitWhatsAppChip(v,x){return {t:'Abrir WhatsApp para coordinar visita',href:visitWhatsAppUrl(v,x),blank:true,cls:'wa'};}
   async function contextVisit(direct=false){
     const id=pagePropertyId();if(!id)return;
-    if(!await ensureCatalog()){if(direct)bot('No pude verificar esta ficha. Inténtalo de nuevo o habla con un ejecutivo.',()=>chips([{t:'Reintentar',act:'pagevisit'},{t:'Hablar con un ejecutivo',act:'human'}]));return;}
-    const x=byId(id);if(!x){if(direct)bot('Esta ficha no está disponible en el catálogo actual.',()=>chips([{t:'Hablar con un ejecutivo',act:'human'}]));return;}
+    if(!await ensureCatalog()){bot('No pude verificar esta ficha. Inténtalo de nuevo o habla con un ejecutivo.',()=>chips([{t:'Reintentar',act:'pagevisit'},{t:'Hablar con un ejecutivo',act:'human'}]));return;}
+    const x=byId(id);if(!x){bot('Esta ficha no está disponible en el catálogo actual.',()=>chips([{t:'Hablar con un ejecutivo',act:'human'},{t:'Ver otras propiedades',q:'busco arriendo'}]));return;}
     S.viewing=x.id;
     if(direct){S.contextOffer=id;save();return showVisitForm(x);}
     if(S.contextOffer===id)return;
@@ -864,7 +866,12 @@
       add('Tuve un problema para responder. ¿Lo intentamos de nuevo o prefieres hablar con un ejecutivo?','sys');
       chips([{t:'Reintentar',q:v},{t:'Hablar con un ejecutivo',act:'human'}]);pose('wait');save();}
   }
-  async function ask(t){const v=String(t).trim();if(!v)return;if(call&&S.flow?.name!=='visit'){add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);Object.assign(S.prefs,parse(v));save();return askAI(v);}
+  async function ask(t){const v=String(t).trim();if(!v)return;
+    const pId=pagePropertyId(),lastBot=Array.from(msgs.querySelectorAll('.zw-m.bot')).pop()?.textContent||'';
+    if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
+      add(esc(v),'me');return contextVisit(true);
+    }
+    if(call&&S.flow?.name!=='visit'){add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);Object.assign(S.prefs,parse(v));save();return askAI(v);}
   window.Zumi=Object.assign(window.Zumi||{},{render,ask,open:()=>open(),state:()=>S,context:pageCtx});
 
   /* ---------- acciones de botones ---------- */
@@ -967,11 +974,15 @@
     const d=new FormData(form),nombre=String(d.get('nombre')||'').trim(),tel=String(d.get('tel')||'').trim();
     if(!nombre||tel.replace(/\D/g,'').length<8){add('Revisa tu nombre y teléfono antes de continuar.','sys');return;}
     form.dataset.submitting='1';form.querySelector('button').disabled=true;
-    const id=form.dataset.visitForm;
-    if(!await ensureCatalog()||!byId(id)){form.dataset.submitting='0';form.querySelector('button').disabled=false;add('No pude verificar esta propiedad. Inténtalo otra vez.','sys');return;}
+    const id=form.dataset.visitForm,x=byId(id);
+    if(!x){form.dataset.submitting='0';form.querySelector('button').disabled=false;add('No pude verificar esta propiedad. Inténtalo otra vez.','sys');return;}
     S.visit={id,nombre,tel,dia:String(d.get('dia')),hora:String(d.get('hora'))};S.viewing=id;
     form.parentElement.remove();save();
-    await submitVisit();
+    const registering=submitVisit();
+    // This explicit submit is a user gesture: open WhatsApp without waiting for the
+    // lead request, which would risk losing browser popup permission on mobile.
+    window.open(visitWhatsAppUrl(S.visit,x),'_blank','noopener,noreferrer');
+    await registering;
   });
   g('#zwForm').onsubmit=e=>{e.preventDefault();const v=g('#zwInput').value;g('#zwInput').value='';ask(v);};
 
@@ -1100,7 +1111,7 @@
         const selected=byId(pagePropertyId()||S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
         voiceContext(c,'Contexto de búsqueda guardado: '+JSON.stringify({filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha: selected?voiceRow(selected):null})+'. Respeta las correcciones nuevas del cliente por encima de estos datos. Para buscar, usa buscar_propiedades con filtros actualizados. No inventes fichas.');
         g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');
-        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. Si está en una ficha individual, ofrece coordinar una visita a esa propiedad. Si no, y ya hay filtros, pregunta si quiere continuar o cambiarlos. No inventes precios ni propiedades.'}});
+        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. '+(pagePropertyId()&&selected?'La persona está en una ficha individual. Ofrece coordinar una visita a esa propiedad. ':'Si ya hay filtros, pregunta si quiere continuar o cambiarlos. ')+'No inventes precios ni propiedades.'}});
         c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
