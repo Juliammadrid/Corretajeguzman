@@ -871,8 +871,8 @@
     if(!call&&pId&&!S.flow&&(/^(?:si|claro|por supuesto|me gustaria|dale|bueno)[.!\s]*$/.test(norm(v))&&/^¿Te gustaría agendar una visita/.test(lastBot)||/^(?:si[, ]+)?(?:quiero |me gustaria |podemos )?(?:agendar|coordinar|solicitar) (?:una |la |mi )?visita(?: a (?:esta propiedad|este departamento|esta casa))?[.!?]*$/.test(norm(v)))){
       add(esc(v),'me');return contextVisit(true);
     }
-    if(call&&S.flow?.name!=='visit'){call.lastUser=v;add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
-    if(u.comuna&&u.dormitorios!=null&&u.maximo>0){
+    if(call&&S.flow?.name!=='visit'){call.lastUser=v;call.transcriptionPending=false;call.transcriptReady?.();add(esc(v),'me');voiceHistory('user',v);voiceSend(call,{type:'conversation.item.create',item:{type:'message',role:'user',content:[{type:'input_text',text:v}]}});call.needsResponse=true;continueVoice(call);return;}add(esc(v),'me');await ensureCatalog();if(S.flow||S.await||/compar|favorit|mas barat|ver mas propiedades|gastos comunes|gasto comun|volver al inicio|nueva conversacion|empezar de nuevo|arrendar mi propiedad|proyectos nuevos|parcela|cuanto puedo comprar|me alcanza|hablar con|ejecutivo|cambiar presupuesto|cambiar comuna|ampliar presupuesto|otras comunas/i.test(norm(v)))return route(v);const u=userSearchCriteria(v);
+    if(u.comuna&&u.maximo>0){
       if(!catalogAvailable)return bot('No pude verificar el catálogo en este momento. Inténtalo nuevamente.',()=>chips([{t:'Reintentar',q:v}]));
       const f=mergedSearchFilters(voiceFilters(),u,v);applyVoiceFilters(f);
       const matches=voiceMatches(ALL,f);
@@ -1061,27 +1061,29 @@
     save();
   }
   function mergedSearchFilters(previous,a,utterance=''){
-    const u=userSearchCriteria(utterance), f={...previous};
+    const u=userSearchCriteria(utterance), f={...previous}, t=norm(utterance);
     const nextCommune=u.comuna??a.comuna;
     const nextOp=u.operacion??a.operacion;
-    const complete=(u.comuna&&u.dormitorios!=null&&u.maximo>0)||
-      (a.comuna&&Number.isInteger(a.dormitorios)&&a.maximo>0&&!utterance);
     const changed=nextCommune&&communeKey(nextCommune)!==communeKey(f.comuna);
     const opChanged=['rent','buy'].includes(nextOp)&&nextOp!==f.operacion;
-    if(complete||changed||opChanged){
-      delete f.banos;delete f.estacionamiento;delete f.tipo;
+    const retain=/\b(?:mismos?|mismas?|manteniendo|mantener|igual que|con los mismos filtros|como antes)\b/.test(t);
+    const fresh=!retain&&(changed||opChanged||(u.comuna&&u.maximo>0)||
+      (!utterance&&a.comuna&&a.maximo>0&&changed));
+    if(fresh){
+      delete f.dormitorios;delete f.banos;delete f.estacionamiento;delete f.tipo;
       if(opChanged){delete f.maximo;delete f.moneda;}
     }
     if(['rent','buy'].includes(nextOp))f.operacion=nextOp;
     if(typeof nextCommune==='string')f.comuna=nextCommune.trim().slice(0,80);
-    const dorm=u.dormitorios??a.dormitorios;
+    // For a new search, do not reintroduce constraints carried by the AI
+    // from previous turns. The current transcript takes precedence.
+    const dorm=u.dormitorios??(!fresh?a.dormitorios:(!utterance&&a.dormitorios!==previous.dormitorios?a.dormitorios:undefined));
     if(Number.isInteger(dorm)&&dorm>=0&&dorm<=30)f.dormitorios=dorm;
+    if(/\b(?:cualquier cantidad de dormitorios|cualquier numero de dormitorios|sin importar los dormitorios|da lo mismo cuantos dormitorios|sin filtro de dormitorios)\b/.test(t))delete f.dormitorios;
     const max=u.maximo??a.maximo;
     if(Number.isFinite(max)&&max>0){f.maximo=max;f.moneda=(u.moneda??a.moneda)==='UF'?'UF':'CLP';}
-    // When a new search is spoken, accept optional constraints only if the
-    // visitor actually said them; avoid inherited or model-invented exclusions.
     for(const k of ['banos','estacionamiento','tipo']){
-      const v=u[k]??((!utterance||(!complete&&!changed&&!opChanged))?a[k]:undefined);
+      const v=u[k]??(!fresh?a[k]:undefined);
       if(k==='banos'&&Number.isInteger(v)&&v>=0&&v<=30)f.banos=v;
       if(k==='estacionamiento'&&typeof v==='boolean')f.estacionamiento=v;
       if(k==='tipo'&&typeof v==='string'){const type=voiceType(v);if(type)f.tipo=type;else delete f.tipo;}
@@ -1096,9 +1098,53 @@
     root.classList.add('open');root.classList.remove('gone');S.open=true;S.hidden=false;
     g('#zwVoice').classList.add('compact');save();scroll();requestAnimationFrame(scroll);
   }}
-  function voiceRow(x){return {id:x.id,name:x.t,commune:x.c,beds:x.d,baths:x.b,price:x.uf??x.p,currency:x.uf!=null?'UF':'CLP',parking:x.e?'Sí':'Por confirmar',commonExpensesCLP:x.gc??null,kind:x.op==='venta'?'buy':'rent',url:x.href};}
+  const VOICE_STYLE='Habla como una asesora chilena de Santiago, con tuteo natural. Usa «ya», «te muestro», «arriendo», «gastos comunes». No uses voseo rioplatense («querés», «tenés»). Pronuncia cien mil pesos (nunca ciento mil), novecientos cincuenta mil pesos y cuatrocientos mil pesos. Nunca digas «cuatrocientos pesos» por 400.000. Respeta literalmente los montos en palabras proporcionados; no leas dígitos ni el símbolo de moneda.';
+  function spokenNumber(n){
+    if(!Number.isFinite(n)||n<0||!Number.isSafeInteger(n))return '';
+    const small=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'];
+    const tens=['','','','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+    const hundreds=['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+    const apocope=v=>v.replace(/veintiuno$/,'veintiún').replace(/ y uno$/,' y un').replace(/(^| )uno$/,'$1un');
+    if(n<30)return small[n];
+    if(n<100)return tens[Math.floor(n/10)]+(n%10?' y '+small[n%10]:'');
+    if(n===100)return 'cien';
+    if(n<1000)return hundreds[Math.floor(n/100)]+(n%100?' '+spokenNumber(n%100):'');
+    if(n<1000000){const q=Math.floor(n/1000);return (q===1?'mil':apocope(spokenNumber(q))+' mil')+(n%1000?' '+spokenNumber(n%1000):'');}
+    if(n<1000000000000){const q=Math.floor(n/1000000);return (q===1?'un millón':apocope(spokenNumber(q))+' millones')+(n%1000000?' '+spokenNumber(n%1000000):'');}
+    return '';
+  }
+  function spokenPrice(n,currency='CLP'){
+    if(n==null||!Number.isFinite(n))return 'por confirmar';
+    if(currency==='UF'){
+      const whole=Math.floor(n), fraction=String(n).split('.')[1];
+      return (spokenNumber(whole)||String(whole))+(fraction?' coma '+fraction.split('').map(v=>spokenNumber(Number(v))).join(' '):'')+' unidades de fomento';
+    }
+    const words=spokenNumber(Math.round(n));
+    return words?words.replace(/veintiuno$/,'veintiún').replace(/ y uno$/,' y un').replace(/(^| )uno$/,'$1un')+(Math.round(n)%1000000===0&&n>=1000000?' de pesos':n===1?' peso':' pesos'):'por confirmar';
+  }
+  function voiceRow(x){const currency=x.uf!=null?'UF':'CLP';return {id:x.id,name:x.t,commune:x.c,beds:x.d,baths:x.b,price:x.uf??x.p,currency,precioHablado:spokenPrice(x.uf??x.p,currency),parking:x.e?'Sí':'Por confirmar',commonExpensesCLP:x.gc??null,gastosComunesHablados:spokenPrice(x.gc),kind:x.op==='venta'?'buy':'rent',url:x.href};}
+  function spokenSearchResult(list,total){
+    if(!total)return 'No encontré propiedades con esos filtros. ¿Quieres que revisemos otras opciones?';
+    const count=total===1?'una':spokenNumber(total);
+    if(total===1){const x=list[0],r=voiceRow(x);return 'Ya, encontré una opción '+(x.op==='arriendo'?'de arriendo ':'')+'por '+r.precioHablado+'. '+(x.op==='arriendo'?'Los gastos comunes '+(x.gc!=null?'son de '+r.gastosComunesHablados:'están por confirmar')+'. ':'')+'Te dejé la ficha en pantalla. ¿Quieres revisarla?';}
+    const prices=list.map(voiceRow),same=prices.every(x=>x.currency===prices[0].currency);
+    const range=same&&total===list.length?' Los valores '+(prices[0].price===prices.at(-1).price?'son de '+prices[0].precioHablado:'van desde '+prices[0].precioHablado+' hasta '+prices.at(-1).precioHablado)+'.':'';
+    return 'Ya, encontré '+count+' opciones.'+range+' Te dejé las fichas en pantalla. ¿Quieres revisar alguna?';
+  }
+  function awaitCurrentTranscript(c){
+    if(!c.transcriptionPending)return Promise.resolve();
+    return new Promise(resolve=>{
+      let finished=false;
+      const done=()=>{if(finished)return;finished=true;clearTimeout(timer);if(c.transcriptReady===done)c.transcriptReady=null;resolve();};
+      const timer=setTimeout(done,2000);c.transcriptReady=done;
+    });
+  }
   function voiceSend(c,event){if(call===c&&c.dc?.readyState==='open'){c.dc.send(JSON.stringify(event));return true;}return false;}
-  function continueVoice(c){if(call===c&&c.needsResponse&&!c.generating&&!c.pending){c.needsResponse=false;voiceSend(c,{type:'response.create'});}}
+  function continueVoice(c){if(call===c&&c.needsResponse&&!c.generating&&!c.pending){
+    c.needsResponse=false;
+    const line=c.nextSpokenSearch;c.nextSpokenSearch=null;
+    voiceSend(c,line?{type:'response.create',response:{tool_choice:'none',instructions:VOICE_STYLE+' Lee únicamente este resultado verificado, con naturalidad, sin modificar los números: '+JSON.stringify(line)}}:{type:'response.create'});
+  }}
   function voiceContext(c,text){voiceSend(c,{type:'conversation.item.create',item:{type:'message',role:'system',content:[{type:'input_text',text}]}});}
   function voiceHistory(role,content){S.hist=(S.hist||[]).concat({role,content:String(content).slice(0,750)}).slice(-16);save();}
   function openVoiceProperty(c,x){
@@ -1120,14 +1166,16 @@
     try{
       const a=JSON.parse(j.arguments||'{}');
       if(j.name==='buscar_propiedades'){
-        const f=mergeVoiceFilters(c,a);
         c.viewer?.close();compactVoice();
+        await awaitCurrentTranscript(c);if(call!==c)return;
+        const f=mergeVoiceFilters(c,a);
         if(!await ensureCatalog()){out={error:'catalogo_temporalmente_no_disponible',mensaje:'No se pudo verificar el inventario. No inventes resultados.'};}
         else if(call===c){
-          const matches=voiceMatches(ALL,f),list=matches.slice(0,3);
+          const matches=voiceMatches(ALL,f),list=matches.slice(0,6);
           if(list.length){list.forEach(x=>c.known.add(x.id));add('Encontré <b>'+matches.length+' '+(matches.length===1?'propiedad':'propiedades')+'</b> que cumplen tus filtros.');showCards(list);compactVoice();}
           else{S.last=[];save();compactVoice();}
-          out={total:matches.length,propiedades:list.map(voiceRow),filtros:f,nota:'Resultado verificado. Si total es positivo, informa las propiedades encontradas y sus precios; nunca digas que no hay resultados. El presupuesto de arriendo es el canon sin gastos comunes. Si total es cero, pregunta qué filtro flexibilizar.'};
+          c.nextSpokenSearch=spokenSearchResult(list,matches.length);
+          out={total:matches.length,propiedades:list.map(voiceRow),filtros:f,fraseRecomendada:c.nextSpokenSearch,nota:'Resultado verificado. Si total es positivo, informa las propiedades encontradas y sus precios; nunca digas que no hay resultados. El presupuesto de arriendo es el canon sin gastos comunes. Si total es cero, pregunta qué filtro flexibilizar.'};
         }
       }else if(j.name==='abrir_ficha'||j.name==='consultar_ficha'||j.name==='preparar_visita'){
         const id=String(a.id||c.selected||S.viewing||'');const x=byId(id);
@@ -1171,13 +1219,15 @@
         if(call!==c)return;clearTimeout(c.timeout);await ensureCatalog();if(call!==c)return;
         const recent=(S.last||[]).map(byId).filter(Boolean).slice(0,3);recent.forEach(x=>c.known.add(x.id));
         const selected=byId(pagePropertyId()||S.viewing);if(selected){c.known.add(selected.id);c.selected=selected.id;}
-        voiceContext(c,'Contexto de búsqueda guardado: '+JSON.stringify({filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha: selected?voiceRow(selected):null})+'. Respeta las correcciones nuevas del cliente por encima de estos datos. Para buscar, usa buscar_propiedades con filtros actualizados. No inventes fichas. En cada búsqueda usa buscar_propiedades; el total y propiedades devueltos son la única fuente autorizada. No apliques baños, estacionamiento ni tipo si el usuario no los pide. Si dice propiedad o inmueble, no es un tipo.');
+        voiceContext(c,'Contexto de búsqueda guardado: '+JSON.stringify({filtros:c.filters,propiedadesMostradas:recent.map(voiceRow),ficha: selected?voiceRow(selected):null})+'. Respeta las correcciones nuevas del cliente por encima de estos datos. Para buscar, usa buscar_propiedades con filtros actualizados. No inventes fichas. En cada búsqueda usa buscar_propiedades; el total y propiedades devueltos son la única fuente autorizada. No apliques baños, estacionamiento ni tipo si el usuario no los pide. Si dice propiedad o inmueble, no es un tipo. Si el cliente cambia de comuna o indica una nueva búsqueda con comuna y precio, elimina los dormitorios anteriores salvo que los vuelva a pedir o diga que mantiene los filtros. '+VOICE_STYLE);
         g('#zwVst').textContent='Te escucho…';g('#zwVsub').textContent='Habla cuando quieras.';g('#zwBars').style.visibility='visible';pose('listen');
-        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. '+(pagePropertyId()&&selected?'La persona está en una ficha individual. Ofrece coordinar una visita a esa propiedad. ':'Si ya hay filtros, pregunta si quiere continuar o cambiarlos. ')+'No inventes precios ni propiedades.'}});
+        voiceSend(c,{type:'response.create',response:{tool_choice:'none',instructions:'Saluda brevemente en español chileno. '+(pagePropertyId()&&selected?'La persona está en una ficha individual. Ofrece coordinar una visita a esa propiedad. ':'Si ya hay filtros, pregunta si quiere continuar o cambiarlos. ')+'No inventes precios ni propiedades. '+VOICE_STYLE}});
         c.timer=setInterval(()=>{if(call!==c)return;c.secs++;g('#zwVt').textContent=String(Math.floor(c.secs/60)).padStart(2,'0')+':'+String(c.secs%60).padStart(2,'0')+' / 05:00';if(c.secs>=300)endCall('Llamada finalizada');},1000);
       };
       dc.onmessage=e=>{try{if(call!==c)return;const j=JSON.parse(e.data);
-        if(j.type==='conversation.item.input_audio_transcription.completed'&&j.transcript){c.lastUser=j.transcript;add(esc(j.transcript),'me');voiceHistory('user',j.transcript);}
+        if(j.type==='input_audio_buffer.speech_started'){c.lastUser='';c.transcriptionPending=true;}
+        if(j.type==='conversation.item.input_audio_transcription.failed'){c.transcriptionPending=false;c.transcriptReady?.();}
+        if(j.type==='conversation.item.input_audio_transcription.completed'&&j.transcript){c.lastUser=j.transcript;c.transcriptionPending=false;c.transcriptReady?.();add(esc(j.transcript),'me');voiceHistory('user',j.transcript);}
         if(j.type==='response.output_audio_transcript.done'&&j.transcript){add(esc(j.transcript),'bot');voiceHistory('assistant',j.transcript);}
         if(j.type==='response.created'){c.generating=true;pose('speak');}
         if(j.type==='response.done'){c.generating=false;pose('listen');continueVoice(c);}
