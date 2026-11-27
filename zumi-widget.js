@@ -1665,10 +1665,10 @@
         const source=c.kattyCtx.createBufferSource();c.kattySource=source;source.buffer=buffer;source.connect(c.kattyCtx.destination);
         await new Promise((resolve,reject)=>{
           let finished=false;
-          const done=()=>{if(finished)return;finished=true;clearTimeout(timer);if(c.kattyResolve===done)c.kattyResolve=null;if(c.kattySource===source)c.kattySource=null;try{source.disconnect();}catch{}resolve();};
-          const timer=setTimeout(()=>{if(finished)return;try{source.stop();}catch{}done();reject(Error('Audio agotado'));},Math.ceil(buffer.duration*1000)+5000);
-          c.kattyResolve=done;source.onended=done;
-          try{source.start();}catch(e){done();reject(e);return;}
+          const done=(error)=>{if(finished)return;finished=true;clearTimeout(timer);if(c.kattyResolve===done)c.kattyResolve=null;if(c.kattySource===source)c.kattySource=null;try{source.disconnect();}catch{}if(error)reject(error);else resolve();};
+          const timer=setTimeout(()=>{if(finished)return;done(Error('Audio agotado'));try{source.stop();}catch{}},Math.ceil(buffer.duration*1000)+5000);
+          c.kattyResolve=done;source.onended=()=>done();
+          try{source.start();}catch(e){done(e);return;}
           if(!started){
             started=true;
             if(intro){c.greetingStarted=true;c.playbackReady=true;metric('greeting_latency',performance.now()-c.startedAt,null,'voice');voiceStatus(c,'greeting');}
