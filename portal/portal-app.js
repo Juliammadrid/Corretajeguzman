@@ -81,6 +81,7 @@ import { connectDesign } from './design-data.mjs';
   function parseHash(){const h=(location.hash||'').replace(/^#\/?/,'');const [path,q]=h.split('?');return {path:path||'inicio',q:new URLSearchParams(q||'')};}
   function chrome(active){
     const items=isAdmin()?NAV_A:NAV_B;
+    const analyticsLink=$('#zumiAnalyticsLink');if(analyticsLink){analyticsLink.hidden=!isAdmin();analyticsLink.style.display=isAdmin()?'':'none';}
     const html=items.map(([k,l,ic])=>'<a href="#/'+k+'"'+(k===active?' class="on"':'')+'><i data-lucide="'+ic+'" class="ico"></i>'+l+'</a>').join('');
     $('#tabbar').style.setProperty('--nav-count',items.length);
     $('#nav').innerHTML=html; $('#tabbar').innerHTML=html.replace('>Mis visitas<','>Visitas<');

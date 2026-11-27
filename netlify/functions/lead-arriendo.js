@@ -12,6 +12,11 @@ exports.handler=async function(event){
   try{data=JSON.parse(event.body||"{}");}catch(e){return {statusCode:400,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:"JSON inválido"})};}
   if(data._gotcha) return {statusCode:200,headers:{"Content-Type":"application/json"},body:JSON.stringify({ok:true})};
 
+  if(data.origen==='Zumi · Solicitud de arriendo'){
+    const communes=["Santiago (Centro)","Cerrillos","Cerro Navia","Conchalí","El Bosque","Estación Central","Huechuraba","Independencia","La Cisterna","La Florida","La Granja","La Pintana","La Reina","Las Condes","Lo Barnechea","Lo Espejo","Lo Prado","Macul","Maipú","Ñuñoa","Pedro Aguirre Cerda","Peñalolén","Providencia","Pudahuel","Quilicura","Quinta Normal","Recoleta","Renca","San Joaquín","San Miguel","San Ramón","Vitacura","Puente Alto","Pirque","San José de Maipo","San Bernardo","Buin","Calera de Tango","Paine","Talagante","El Monte","Isla de Maipo","Padre Hurtado","Peñaflor","Melipilla","Alhué","Curacaví","María Pinto","San Pedro","Colina","Lampa","Tiltil"];
+    const opts={dormitorios:['Indiferente','1 dormitorio','2 dormitorios','3 dormitorios','4 o más'],estacionamiento:['Sí, obligatorio','Sí, idealmente','No necesito'],personas:['1 persona','2 personas','3 personas','4 personas','5 o más'],complementa:['Sí','No'],mascotas:['No','Sí, una','Sí, dos o más']};
+    if(!String(data.nombre||'').trim()||!/^\+569\d{8}$/.test(data.whatsapp||'')||!/^\S+@\S+\.\S+$/.test(data.email||'')||!/^\d{4}-(0[1-9]|1[0-2])$/.test(data.fecha_cambio||'')||!Array.isArray(data.comunas)||!data.comunas.length||data.comunas.some(x=>!communes.includes(x))||!Number.isSafeInteger(data.presupuesto)||data.presupuesto<=0||!Number.isSafeInteger(data.renta)||data.renta<=0||data.acepta!==true||Object.entries(opts).some(([k,a])=>!a.includes(data[k])))return {statusCode:400,body:JSON.stringify({error:'Datos incompletos o condiciones pendientes'})};
+  }
   const dorm=String(data.dormitorios||"").toLowerCase().includes("indiferente")?undefined:firstNumber(data.dormitorios);
   const personas=firstNumber(data.personas);
   const fields={
@@ -37,10 +42,11 @@ exports.handler=async function(event){
   try{
     const r=await fetch("https://api.airtable.com/v0/"+base+"/"+table,{method:"POST",headers:{Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({records:[{fields}],typecast:true})});
     const text=await r.text();
-    if(!r.ok) return {statusCode:502,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:"Airtable "+r.status,detail:text})};
+    if(!r.ok) return {statusCode:502,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:"No se pudo registrar la solicitud"})};
     let j={};try{j=JSON.parse(text)}catch(e){}
-    return {statusCode:200,headers:{"Content-Type":"application/json"},body:JSON.stringify({ok:true,id:j.records&&j.records[0]&&j.records[0].id})};
+    const id=j.records?.[0]?.id;if(!/^rec[A-Za-z0-9]{14}$/.test(id||""))return {statusCode:502,body:JSON.stringify({error:"Registro no confirmado"})};
+    return {statusCode:200,headers:{"Content-Type":"application/json"},body:JSON.stringify({ok:true,id})};
   }catch(e){
-    return {statusCode:502,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:String(e.message||e)})};
+    return {statusCode:502,headers:{"Content-Type":"application/json"},body:JSON.stringify({error:"No se pudo confirmar el registro"})};
   }
 };
